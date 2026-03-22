@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Post, Get, Body, Req, Res, HttpCode } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../auth/user.entity';
-import * as twilio from 'twilio';
+import * as TwilioSDK from 'twilio';
+const twilio = (TwilioSDK as any).default || TwilioSDK;
 import Groq from 'groq-sdk';
 require('dotenv').config();
 
@@ -29,6 +30,63 @@ export class VoiceController {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
+
+  // ─── GET: Fetch all registered workers (for Employer Screen) ──────────
+  @Get('workers')
+  async getWorkers(@Res() res: any) {
+    try {
+      const workers = await this.userRepository.find({
+        where: { role: 'worker' },
+        select: ['id', 'full_name', 'skill_category', 'current_location', 'phone_number', 'is_available', 'rating', 'registration_source'],
+        order: { created_at: 'DESC' },
+      });
+      return res.json({ success: true, workers });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
+  // ─── NEW: Flutter App triggers this to call a worker ──────────────────
+  @Post('call-worker')
+  @HttpCode(200)
+  async callWorker(@Body() body: { phone: string }, @Res() res: any) {
+    const targetPhone = body.phone;
+    if (!targetPhone) {
+      return res.status(400).json({ success: false, message: 'Phone number is required' });
+    }
+
+    try {
+      const twilioClient = twilio(
+        process.env.TWILIO_ACCOUNT_SID,
+        process.env.TWILIO_AUTH_TOKEN,
+      );
+
+      // Get our Twilio number
+      const numbers = await twilioClient.incomingPhoneNumbers.list({ limit: 1 });
+      const fromNumber = numbers[0]?.phoneNumber;
+      if (!fromNumber) throw new Error('No Twilio number available');
+
+      // Get current ngrok URL from ngrok API (auto-detect!)
+      let webhookUrl = 'https://concretionary-alberta-mineralogically.ngrok-free.dev';
+      try {
+        const ngrokRes = await fetch('http://127.0.0.1:4040/api/tunnels');
+        const ngrokData: any = await ngrokRes.json();
+        webhookUrl = ngrokData.tunnels[0]?.public_url || webhookUrl;
+      } catch (_) { /* use fallback */ }
+
+      const call = await twilioClient.calls.create({
+        to: targetPhone,
+        from: fromNumber,
+        url: `${webhookUrl}/voice/incoming`,
+      });
+
+      console.log(`\n📞 [OUTBOUND CALL] Calling ${targetPhone}... SID: ${call.sid}`);
+      return res.json({ success: true, callSid: call.sid, message: `Calling ${targetPhone}` });
+    } catch (err) {
+      console.error('[Call Error]', err.message);
+      return res.status(500).json({ success: false, message: err.message });
+    }
+  }
 
   // Step 1: Twilio calls this when a call comes in
   @Post('incoming')
