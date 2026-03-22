@@ -21,6 +21,9 @@ build/
 backend/node_modules/
 backend/dist/
 backend/.env
+backend/cloudflare.log
+backend/cloudflare2.log
+backend/checkDb.js
 
 # Custom Flutter SDK ignored completely
 flutter_sdk/

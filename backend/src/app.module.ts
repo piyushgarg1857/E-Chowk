@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { VoiceModule } from './voice/voice.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     
     // 2. Connect to Azure PostgreSQL
+    // 2. Connect to Azure PostgreSQL
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,14 +22,16 @@ import { AuthModule } from './auth/auth.module';
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         ssl: {
-          rejectUnauthorized: false, // Required for Azure PostgreSQL
+          rejectUnauthorized: false,
         },
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, // Turned off since schema.sql is already executed
+        synchronize: false,
       }),
     }),
     
     AuthModule,
+    
+    VoiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
