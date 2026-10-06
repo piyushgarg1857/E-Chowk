@@ -97,9 +97,9 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
 
     try {
       final response = await http.post(
-        Uri.parse('$apiUrl/voice/call-worker'),
+        Uri.parse('$apiUrl/voice/register-call'),
         headers: AppSession.authHeaders,
-        body: jsonEncode({'phone': phone}),
+        body: jsonEncode({}),
       );
 
       final data = jsonDecode(response.body);
