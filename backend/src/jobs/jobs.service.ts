@@ -5,6 +5,7 @@ import { Job } from './job.entity';
 import { JobApplication } from './application.entity';
 import { CreateJobDto, SearchJobsDto } from './job.dto';
 import { User } from '../auth/user.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class JobsService {
@@ -12,6 +13,7 @@ export class JobsService {
     @InjectRepository(Job) private readonly jobs: Repository<Job>,
     @InjectRepository(JobApplication) private readonly applications: Repository<JobApplication>,
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async create(employerId: string, dto: CreateJobDto) {
@@ -51,7 +53,9 @@ export class JobsService {
 
     const existing = await this.applications.findOne({ where: { job_id: jobId, worker_id: workerId } });
     if (existing) return existing;
-    return this.applications.save(this.applications.create({ job_id: jobId, worker_id: workerId, status: 'pending' }));
+    const application = await this.applications.save(this.applications.create({ job_id: jobId, worker_id: workerId, status: 'pending' }));
+    await this.notifications.create(job.employer_id, 'job_application', 'New worker application', 'A worker applied for your job.');
+    return application;
   }
 
   async listApplications(employerId: string, jobId: string) {
@@ -74,7 +78,18 @@ export class JobsService {
     } else {
       app.status = 'rejected';
     }
-    return this.applications.save(app);
+    const saved = await this.applications.save(app);
+    await this.notifications.create(app.worker_id, 'application_update', 'Application update', status === 'accepted' ? 'Your application was accepted.' : 'Your application was rejected.');
+    return saved;
+  }
+
+  async start(workerId: string, jobId: string) {
+    const app = await this.applications.findOne({ where: { job_id: jobId, worker_id: workerId, status: 'accepted' } });
+    if (!app) throw new ForbiddenException('Accepted assignment not found');
+    const job = await this.get(jobId);
+    job.status = 'in_progress';
+    await this.jobs.save(job);
+    return job;
   }
 
   async complete(workerId: string, jobId: string) {
@@ -85,6 +100,8 @@ export class JobsService {
     app.status = 'completed';
     app.completed_at = new Date();
     await this.jobs.save(job);
-    return this.applications.save(app);
+    const saved = await this.applications.save(app);
+    await this.notifications.create(job.employer_id, 'job_completed', 'Job completed', 'The assigned worker marked the job completed.');
+    return saved;
   }
 }
