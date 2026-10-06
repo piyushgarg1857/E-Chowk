@@ -9,6 +9,7 @@ import { AgentService } from '../agent/agent.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Roles, CurrentUser } from '../auth/auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { TwilioSignatureGuard } from './twilio-signature.guard';
 import { UseGuards } from '@nestjs/common';
 require('dotenv').config();
 
@@ -121,6 +122,7 @@ export class VoiceController {
 
   // New agent-backed phone conversation. This is the target voice path.
   @Post('agent-incoming')
+  @UseGuards(TwilioSignatureGuard)
   agentIncoming(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid;
     const from = req.body?.From;
@@ -133,6 +135,7 @@ export class VoiceController {
   }
 
   @Post('agent-respond')
+  @UseGuards(TwilioSignatureGuard)
   async agentRespond(@Req() req: any, @Res() res: any) {
     const callSid = req.query?.callSid || req.body?.CallSid;
     const from = req.body?.From;
@@ -157,6 +160,7 @@ export class VoiceController {
 
   // Step 1: Twilio calls this when a call comes in
   @Post('incoming')
+  @UseGuards(TwilioSignatureGuard)
   incomingCall(@Req() req: any, @Res() res: any) {
     console.log('\n🔥 [CALL INCOMING] CallSid:', req.body?.CallSid);
     const callSid = req.body?.CallSid;
@@ -187,6 +191,7 @@ export class VoiceController {
 
   // Step 2: Called every time the user finishes saying something
   @Post('respond')
+  @UseGuards(TwilioSignatureGuard)
   async handleResponse(@Req() req: any, @Res() res: any) {
     const callSid = req.query?.callSid || req.body?.CallSid;
     const userSpeech = req.body?.SpeechResult || '';
