@@ -359,6 +359,24 @@ Do this only after real usage data exists.
 
 **Important:** Do not train an LLM from scratch for E-Chowk. First optimize the agent, tools, memory, retrieval and prompts. Fine-tune only when evidence shows a benefit.
 
+## 5.5 Execution status — development branch
+
+The planned engineering phases have now been implemented to the extent possible inside the repository:
+
+- **Phase 0 — Foundation:** implemented; CI/release hardening remains deployment-specific.
+- **Phase 1 — Identity & profile:** implemented with phone OTP, UUID identity, role selection, protected profile APIs.
+- **Phase 2 — AI Agent Core:** implemented with Groq tool calling, session memory, tool authorization boundaries, confirmation policy and evaluation dataset.
+- **Phase 3 — Phone Voice Agent:** implemented with Twilio webhooks, Hindi speech flow, agent-backed phone path and webhook signature validation.
+- **Phase 4 — Marketplace:** implemented with jobs, applications, accept/reject, start, completion, notifications, matching and ratings.
+- **Phase 5 — Mobile:** authenticated API session, configurable API URL, worker availability persistence and real worker registration call.
+- **Phase 6 — Web:** Flutter web remains the shared client surface; production deployment/operational console hardening remains environment-specific.
+- **Phase 7 — WhatsApp:** implemented as a Twilio webhook channel over the same Agent + backend.
+- **Phase 8 — Matching:** explainable V1 skill/location/rating scoring implemented.
+- **Phase 9 — Trust/payments/production:** audit logging, notifications, ratings and payment ledger abstraction implemented; real payment settlement, load testing, backups and deployment require external infrastructure.
+- **Phase 10 — AI specialization:** evaluation assets and specialization policy implemented; fine-tuning is intentionally deferred until real consented data exists.
+
+The repository must not claim external infrastructure is live until the production release gate is actually passed.
+
 ## 6. AI tool contract
 
 The LLM must never directly execute SQL.
