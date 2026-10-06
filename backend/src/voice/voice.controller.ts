@@ -5,6 +5,11 @@ import { User } from '../auth/user.entity';
 import * as TwilioSDK from 'twilio';
 const twilio = (TwilioSDK as any).default || TwilioSDK;
 import Groq from 'groq-sdk';
+import { AgentService } from '../agent/agent.service';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles, CurrentUser } from '../auth/auth.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UseGuards } from '@nestjs/common';
 require('dotenv').config();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
@@ -29,10 +34,12 @@ export class VoiceController {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly agent: AgentService,
   ) {}
 
   // ─── GET: Fetch all registered workers (for Employer Screen) ──────────
   @Get('workers')
+  @UseGuards(AuthGuard)
   async getWorkers(@Res() res: any) {
     try {
       const workers = await this.userRepository.find({
@@ -48,6 +55,8 @@ export class VoiceController {
 
   // ─── NEW: Flutter App triggers this to call a worker ──────────────────
   @Post('call-worker')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('employer', 'admin')
   @HttpCode(200)
   async callWorker(@Body() body: { phone: string }, @Res() res: any) {
     const targetPhone = body.phone;
@@ -85,6 +94,42 @@ export class VoiceController {
       console.error('[Call Error]', err.message);
       return res.status(500).json({ success: false, message: err.message });
     }
+  }
+
+  // New agent-backed phone conversation. This is the target voice path.
+  @Post('agent-incoming')
+  agentIncoming(@Req() req: any, @Res() res: any) {
+    const callSid = req.body?.CallSid;
+    const from = req.body?.From;
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga. Aap kya karna chahte hain?');
+    response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+    res.type('text/xml').send(response.toString());
+    void from;
+  }
+
+  @Post('agent-respond')
+  async agentRespond(@Req() req: any, @Res() res: any) {
+    const callSid = req.query?.callSid || req.body?.CallSid;
+    const from = req.body?.From;
+    const speech = req.body?.SpeechResult?.trim();
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+    if (!from || !speech) {
+      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');
+      response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+      return res.type('text/xml').send(response.toString());
+    }
+    try {
+      const result = await this.agent.chatForPhone(from, speech);
+      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, result.reply || 'Ji, batayein.');
+      response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+    } catch (error) {
+      console.error('[Agent Voice Error]', error);
+      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, technical dikkat aa gayi hai. Kripya thodi der baad dobara call karein.');
+    }
+    return res.type('text/xml').send(response.toString());
   }
 
   // Step 1: Twilio calls this when a call comes in
