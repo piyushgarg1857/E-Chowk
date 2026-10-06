@@ -66,13 +66,12 @@ export class VoiceController {
       const fromNumber = numbers[0]?.phoneNumber;
       if (!fromNumber) throw new Error('No Twilio number available');
 
-      // Get current ngrok URL from ngrok API (auto-detect!)
-      let webhookUrl = 'https://concretionary-alberta-mineralogically.ngrok-free.dev';
-      try {
-        const ngrokRes = await fetch('http://127.0.0.1:4040/api/tunnels');
-        const ngrokData: any = await ngrokRes.json();
-        webhookUrl = ngrokData.tunnels[0]?.public_url || webhookUrl;
-      } catch (_) { /* use fallback */ }
+      // Twilio must use an explicitly configured public HTTPS URL.
+      // Never fall back to a hard-coded tunnel URL.
+      const webhookUrl = process.env.PUBLIC_BASE_URL?.replace(/\\/$/, '');
+      if (!webhookUrl) {
+        throw new Error('PUBLIC_BASE_URL is not configured for Twilio webhooks');
+      }
 
       const call = await twilioClient.calls.create({
         to: targetPhone,
