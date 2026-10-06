@@ -44,10 +44,11 @@ export class AuthService {
       if (result.status !== 'approved') throw new UnauthorizedException('Invalid or expired OTP');
 
       let user = await this.userRepository.findOne({ where: { phone_number: formattedPhone } });
-      if (!user) {
-        user = this.userRepository.create({ phone_number: formattedPhone, role: 'worker' });
-        user = await this.userRepository.save(user);
-      }
+      if (!user) user = this.userRepository.create({ phone_number: formattedPhone, role: 'worker' });
+      user.phone_verified_at = new Date();
+      user.last_seen_at = new Date();
+      user.is_active = true;
+      user = await this.userRepository.save(user);
 
       return {
         success: true,
