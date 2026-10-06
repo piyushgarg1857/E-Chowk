@@ -114,7 +114,7 @@ export class VoiceController {
 
       console.log(`\n📞 [OUTBOUND CALL] Calling ${targetPhone}... SID: ${call.sid}`);
       return res.json({ success: true, callSid: call.sid, message: `Calling ${targetPhone}` });
-    } catch (err) {
+    } catch (err: any) {
       console.error('[Call Error]', err.message);
       return res.status(500).json({ success: false, message: err.message });
     }
@@ -151,7 +151,7 @@ export class VoiceController {
       const result = await this.agent.chatForPhone(from, speech);
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, result.reply || 'Ji, batayein.');
       response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
-    } catch (error) {
+    } catch (error: any) {
       console.error('[Agent Voice Error]', error);
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, technical dikkat aa gayi hai. Kripya thodi der baad dobara call karein.');
     }
@@ -273,7 +273,7 @@ export class VoiceController {
         delete conversations[callSid];
       }
 
-    } catch (err) {
+    } catch (err: any) {
       console.error('[Server Error]', err);
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maafi kijiye, kuch takneeki gadbad ho gayi. Thodi der baad call karein.');
     }
@@ -302,7 +302,7 @@ export class VoiceController {
       
       await this.userRepository.save(user);
       console.log(`\n💾 [DATABASE SUCCESS] Worker ${data.name} saved to Azure PostgreSQL Database successfully! ✅\n`);
-    } catch (error) {
+    } catch (error: any) {
       console.error(`\n❌ [DATABASE ERROR] Could not save to Azure DB (Check IP Firewall).`, error.message);
     }
   }
