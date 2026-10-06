@@ -10,15 +10,22 @@ export interface AuthTokenPayload {
 
 @Injectable()
 export class AuthTokenService {
-  private readonly secret = process.env.AUTH_TOKEN_SECRET || 'development-only-change-me';
+  private readonly secret: string;
+
+  constructor() {
+    const configured = process.env.AUTH_TOKEN_SECRET;
+    if (!configured && process.env.NODE_ENV === 'production') {
+      throw new Error('AUTH_TOKEN_SECRET must be configured in production');
+    }
+    this.secret = configured || 'development-only-change-me';
+  }
 
   sign(payload: Omit<AuthTokenPayload, 'iat' | 'exp'>, ttlSeconds = 60 * 60 * 24 * 7): string {
     const header = this.encode({ alg: 'HS256', typ: 'JWT' });
     const now = Math.floor(Date.now() / 1000);
     const body = this.encode({ ...payload, iat: now, exp: now + ttlSeconds });
     const unsigned = header + '.' + body;
-    const signature = this.signValue(unsigned);
-    return unsigned + '.' + signature;
+    return unsigned + '.' + this.signValue(unsigned);
   }
 
   verify(token: string): AuthTokenPayload {
