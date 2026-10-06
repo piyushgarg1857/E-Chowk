@@ -6,6 +6,7 @@ import { JobApplication } from './application.entity';
 import { CreateJobDto, SearchJobsDto } from './job.dto';
 import { User } from '../auth/user.entity';
 import { NotificationsService } from '../notifications/notifications.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class JobsService {
@@ -14,6 +15,7 @@ export class JobsService {
     @InjectRepository(JobApplication) private readonly applications: Repository<JobApplication>,
     @InjectRepository(User) private readonly users: Repository<User>,
     private readonly notifications: NotificationsService,
+    private readonly audit: AuditService,
   ) {}
 
   async create(employerId: string, dto: CreateJobDto) {
@@ -29,7 +31,9 @@ export class JobsService {
       starts_at: dto.starts_at ? new Date(dto.starts_at) : null,
       status: 'open',
     });
-    return this.jobs.save(job);
+    const saved = await this.jobs.save(job);
+    await this.audit.record(employerId, 'job.created', 'job', saved.id, { required_skill: saved.required_skill, location: saved.location });
+    return saved;
   }
 
   async search(dto: SearchJobsDto) {
@@ -55,6 +59,7 @@ export class JobsService {
     if (existing) return existing;
     const application = await this.applications.save(this.applications.create({ job_id: jobId, worker_id: workerId, status: 'pending' }));
     await this.notifications.create(job.employer_id, 'job_application', 'New worker application', 'A worker applied for your job.');
+    await this.audit.record(workerId, 'job.application_created', 'job_application', application.id, { job_id: jobId });
     return application;
   }
 
@@ -85,6 +90,7 @@ export class JobsService {
       app.status = 'rejected';
     }
     const saved = await this.applications.save(app);
+    await this.audit.record(employerId, 'job.application_decided', 'job_application', saved.id, { status });
     await this.notifications.create(app.worker_id, 'application_update', 'Application update', status === 'accepted' ? 'Your application was accepted.' : 'Your application was rejected.');
     return saved;
   }
@@ -95,6 +101,7 @@ export class JobsService {
     const job = await this.get(jobId);
     job.status = 'in_progress';
     await this.jobs.save(job);
+    await this.audit.record(workerId, 'job.started', 'job', job.id);
     return job;
   }
 
@@ -108,6 +115,7 @@ export class JobsService {
     await this.jobs.save(job);
     const saved = await this.applications.save(app);
     await this.notifications.create(job.employer_id, 'job_completed', 'Job completed', 'The assigned worker marked the job completed.');
+    await this.audit.record(workerId, 'job.completed', 'job', job.id);
     return saved;
   }
 }
