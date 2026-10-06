@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'worker_screen.dart';
 import 'employer_screen.dart';
+import 'config.dart';
+import 'services/session.dart';
 
 void main() {
   runApp(const LabourChowkApp());
@@ -50,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _otpSent = false;
 
-  final String apiUrl = 'http://127.0.0.1:3000/auth'; // Using IP prevents Chrome IPv6 bugs
+  final String apiUrl = '$apiBaseUrl/auth';
 
   Future<void> sendOtp() async {
     final phone = _phoneController.text.trim();
@@ -72,11 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (data['success'] == true) {
         setState(() { _otpSent = true; });
-        // Auto-fill OTP field for testing purposes since SMS is not actually hooked up
-        if (data['otp'] != null) {
-          _otpController.text = data['otp'];
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('OTP Sent: ${data['otp']}')));
-        }
+
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data['message'] ?? 'Failed to send OTP')));
       }
@@ -108,7 +106,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final data = jsonDecode(response.body);
 
-      if (data['success'] == true || response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode >= 200 && response.statusCode < 300 && data['success'] == true) {
+        AppSession.setAuth(data);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login Successful!')));
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const RoleSelectionScreen()));
       } else {
