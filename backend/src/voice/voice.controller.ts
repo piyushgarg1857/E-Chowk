@@ -177,7 +177,7 @@ export class VoiceController {
 
     response.gather({
       input: ['speech'],
-      action: `/voice/respond?callSid=${callSid}`,
+      action: `/voice/agent-respond?callSid=${callSid}`,
       method: 'POST',
       language: 'hi-IN',
       speechTimeout: 'auto',
