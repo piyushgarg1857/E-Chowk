@@ -12,6 +12,8 @@ import { AgentModule } from './agent/agent.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { MatchingModule } from './matching/matching.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { TrustModule } from './trust/trust.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     WhatsappModule,
     MatchingModule,
     NotificationsModule,
+    TrustModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
