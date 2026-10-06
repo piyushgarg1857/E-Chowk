@@ -66,6 +66,7 @@ export class AgentService {
       { type: 'function', function: { name: 'search_jobs', description: 'Search open jobs by skill and/or location.', parameters: { type: 'object', properties: { skill: { type: 'string' }, location: { type: 'string' }, limit: { type: 'integer' } }, additionalProperties: false } } },
       { type: 'function', function: { name: 'get_job', description: 'Get a job by ID.', parameters: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'], additionalProperties: false } } },
       { type: 'function', function: { name: 'apply_for_job', description: 'Apply for a job ONLY after the user explicitly confirms the application.', parameters: { type: 'object', properties: { job_id: { type: 'string' }, confirmed: { type: 'boolean' } }, required: ['job_id', 'confirmed'], additionalProperties: false } } },
+      { type: 'function', function: { name: 'get_application_status', description: 'Get current application status for the worker.', parameters: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'], additionalProperties: false } } },
       { type: 'function', function: { name: 'create_job', description: 'Create an employer job ONLY after the employer explicitly confirms all details.', parameters: { type: 'object', properties: { required_skill: { type: 'string' }, location: { type: 'string' }, description: { type: 'string' }, offered_wage: { type: 'number' }, duration_days: { type: 'integer' }, confirmed: { type: 'boolean' } }, required: ['required_skill', 'location', 'confirmed'], additionalProperties: false } } },
     ];
   }
@@ -77,6 +78,7 @@ export class AgentService {
       case 'update_availability': return this.users.update(userId, { is_available: args.is_available });
       case 'search_jobs': return this.jobs.search(args);
       case 'get_job': return this.jobs.get(args.job_id);
+      case 'get_application_status': return this.jobs.applicationStatus(userId, args.job_id);
       case 'apply_for_job':
         if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the worker to explicitly confirm before applying.' };
         return this.jobs.apply(userId, args.job_id);
