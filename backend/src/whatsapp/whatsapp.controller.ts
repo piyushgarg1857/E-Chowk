@@ -1,6 +1,8 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
 import { AgentService } from '../agent/agent.service';
 import * as TwilioSDK from 'twilio';
+import { UseGuards } from '@nestjs/common';
+import { TwilioSignatureGuard } from '../voice/twilio-signature.guard';
 const twilio = (TwilioSDK as any).default || TwilioSDK;
 
 @Controller('whatsapp')
@@ -8,6 +10,7 @@ export class WhatsappController {
   constructor(private readonly agent: AgentService) {}
 
   @Post('incoming')
+  @UseGuards(TwilioSignatureGuard)
   async incoming(@Req() req: any, @Res() res: any) {
     const from = String(req.body?.From || '').replace(/^whatsapp:/, '');
     const body = String(req.body?.Body || '').trim();
