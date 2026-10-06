@@ -250,3 +250,22 @@ Measure:
 ## 13. Golden rule
 
 **The LLM decides what the user means. The backend decides what the system is allowed to do.**
+
+## Implemented development modules
+
+The current development branch includes these backend boundaries:
+
+- auth — OTP, UUID identity, signed access tokens, role selection and guards
+- users — protected profile and availability APIs
+- jobs — job creation/search, applications and lifecycle transitions
+- matching — explainable candidate ranking
+- agent — Groq tool-calling agent with confirmation policy
+- voice — Twilio phone integration and signature validation
+- whatsapp — Twilio WhatsApp channel using the same agent
+- notifications — user notification inbox
+- trust — post-completion ratings
+- payments — payment ledger abstraction
+- audit — consequential action audit events
+- health — operational health endpoint
+
+External provider credentials and production infrastructure remain environment/deployment concerns.
