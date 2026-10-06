@@ -22,7 +22,7 @@ jobs:
       - run: npm install
       - run: npm run typecheck
       - run: node node_modules/jest/bin/jest.js --runInBand
-      - run: npm run build
+      - run: node node_modules/@nestjs/cli/bin/nest.js build
 
   flutter:
     runs-on: ubuntu-latest
