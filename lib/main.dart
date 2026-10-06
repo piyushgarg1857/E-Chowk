@@ -210,6 +210,24 @@ class _LoginScreenState extends State<LoginScreen> {
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({Key? key}) : super(key: key);
 
+  Future<void> _selectRole(BuildContext context, String role) async {
+    final response = await http.patch(
+      Uri.parse('$apiBaseUrl/auth/role'),
+      headers: AppSession.authHeaders,
+      body: jsonEncode({'role': role}),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      AppSession.setAuth(jsonDecode(response.body));
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => role == 'worker' ? const WorkerScreen() : const EmployerScreen()),
+      );
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Role save नहीं हो पाया')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,7 +263,7 @@ class RoleSelectionScreen extends StatelessWidget {
                 title: 'काम चाहिए (Worker)',
                 subtitle: 'Press 1 on Keypad',
                 icon: Icons.handyman,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkerScreen())),
+                onTap: () => _selectRole(context, 'worker'),
               ),
               const SizedBox(height: 20),
               _buildRoleCard(
@@ -253,7 +271,7 @@ class RoleSelectionScreen extends StatelessWidget {
                 title: 'काम देना है (Employer)',
                 subtitle: 'Press 2 on Keypad',
                 icon: Icons.business_center,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EmployerScreen())),
+                onTap: () => _selectRole(context, 'employer'),
               ),
             ],
           ),
