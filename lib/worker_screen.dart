@@ -36,8 +36,24 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  void toggleAvailability() {
-    setState(() { isAvailable = !isAvailable; });
+  Future<void> toggleAvailability() async {
+    final next = !isAvailable;
+    try {
+      final response = await http.patch(
+        Uri.parse('$apiUrl/users/me'),
+        headers: AppSession.authHeaders,
+        body: jsonEncode({'is_available': next}),
+      );
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (mounted) setState(() => isAvailable = next);
+      } else {
+        throw Exception('Availability update failed');
+      }
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Availability update नहीं हो पाया')),
+      );
+    }
   }
 
   // 🔥 REAL API CALL - registers worker via AI Voice Call
