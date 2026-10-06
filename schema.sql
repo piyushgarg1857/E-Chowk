@@ -1,62 +1,93 @@
--- ==============================================
--- 🛠️ E-Chowk: PostgreSQL Database Schema (Azure)
--- ==============================================
+-- E-Chowk canonical PostgreSQL schema
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- 1. Users Table (Workers & Employers combined for simplicity)
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    phone_number VARCHAR(15) UNIQUE NOT NULL,
-    full_name VARCHAR(100),
-    role VARCHAR(20) CHECK (role IN ('worker', 'employer', 'admin')) NOT NULL,
-    
-    -- Specific info for workers
-    skill_category VARCHAR(50), 
-    daily_wage DECIMAL(10, 2),
-    is_available BOOLEAN DEFAULT true,
-    rating FLOAT DEFAULT 0.0,
-    
-    -- Common fields
-    current_location VARCHAR(200),
-    registration_source VARCHAR(20) CHECK (registration_source IN ('voice', 'whatsapp', 'app')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now()),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now())
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  phone_number VARCHAR(15) UNIQUE NOT NULL,
+  full_name VARCHAR(100),
+  role VARCHAR(20) CHECK (role IN ('worker','employer','admin')) NOT NULL DEFAULT 'worker',
+  skill_category VARCHAR(50),
+  daily_wage DECIMAL(10,2),
+  is_available BOOLEAN NOT NULL DEFAULT true,
+  rating FLOAT NOT NULL DEFAULT 0,
+  current_location VARCHAR(200),
+  registration_source VARCHAR(20) CHECK (registration_source IN ('voice','whatsapp','app')),
+  phone_verified_at TIMESTAMPTZ,
+  last_seen_at TIMESTAMPTZ,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now()),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
 );
 
--- 2. OTP Sessions (For Custom Auth logic since we aren't using Supabase Auth anymore)
-CREATE TABLE otp_sessions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    phone_number VARCHAR(15) NOT NULL,
-    otp_code VARCHAR(6) NOT NULL,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    is_used BOOLEAN DEFAULT false,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now())
+CREATE TABLE IF NOT EXISTS otp_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  phone_number VARCHAR(15) NOT NULL,
+  otp_code VARCHAR(6),
+  expires_at TIMESTAMPTZ NOT NULL,
+  is_used BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
 );
 
--- 3. Jobs Table (Employers posting requirements)
-CREATE TABLE jobs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employer_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    required_skill VARCHAR(50) NOT NULL,
-    description TEXT,
-    location VARCHAR(200) NOT NULL,
-    offered_wage DECIMAL(10, 2),
-    duration_days INT DEFAULT 1,
-    status VARCHAR(20) CHECK (status IN ('open', 'assigned', 'completed', 'cancelled')) DEFAULT 'open',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now()),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now())
+CREATE TABLE IF NOT EXISTS jobs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  employer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  required_skill VARCHAR(50) NOT NULL,
+  description TEXT,
+  location VARCHAR(200) NOT NULL,
+  offered_wage DECIMAL(10,2),
+  duration_days INT NOT NULL DEFAULT 1,
+  starts_at TIMESTAMPTZ,
+  status VARCHAR(20) NOT NULL DEFAULT 'open'
+    CHECK (status IN ('draft','open','assigned','in_progress','completed','cancelled')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now()),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
 );
 
--- 4. Job Applications / Matches (Linking Jobs with Workers)
-CREATE TABLE job_applications (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
-    worker_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    status VARCHAR(20) CHECK (status IN ('pending', 'accepted', 'rejected', 'completed')) DEFAULT 'pending',
-    applied_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now()),
-    completed_at TIMESTAMP WITH TIME ZONE
+CREATE TABLE IF NOT EXISTS job_applications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+  worker_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending','accepted','rejected','completed')),
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now()),
+  completed_at TIMESTAMPTZ,
+  UNIQUE(job_id, worker_id)
 );
 
--- Indexes for fast searching based on location and skill
-CREATE INDEX idx_users_role_location ON users(role, current_location);
-CREATE INDEX idx_users_skill ON users(skill_category);
-CREATE INDEX idx_jobs_status_skill ON jobs(status, required_skill);
+CREATE TABLE IF NOT EXISTS audit_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  actor_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  action VARCHAR(100) NOT NULL,
+  entity_type VARCHAR(50),
+  entity_id UUID,
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
+);
+
+CREATE TABLE IF NOT EXISTS agent_conversations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  channel VARCHAR(30) NOT NULL,
+  session_id VARCHAR(120) NOT NULL,
+  role VARCHAR(20) NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(50) NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  body TEXT NOT NULL,
+  read_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_role_location ON users(role, current_location);
+CREATE INDEX IF NOT EXISTS idx_users_skill ON users(skill_category);
+CREATE INDEX IF NOT EXISTS idx_jobs_status_skill ON jobs(status, required_skill);
+CREATE INDEX IF NOT EXISTS idx_jobs_location ON jobs(location);
+CREATE INDEX IF NOT EXISTS idx_jobs_employer_status ON jobs(employer_id, status);
+CREATE INDEX IF NOT EXISTS idx_audit_actor_created ON audit_events(actor_user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_agent_conversations_session ON agent_conversations(session_id, created_at);
