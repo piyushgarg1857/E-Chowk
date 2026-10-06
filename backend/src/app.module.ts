@@ -9,6 +9,9 @@ import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
 import { JobsModule } from './jobs/jobs.module';
 import { AgentModule } from './agent/agent.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { MatchingModule } from './matching/matching.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -40,6 +43,9 @@ import { AgentModule } from './agent/agent.module';
     UsersModule,
     JobsModule,
     AgentModule,
+    WhatsappModule,
+    MatchingModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
