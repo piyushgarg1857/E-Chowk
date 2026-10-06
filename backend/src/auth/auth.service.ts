@@ -1,82 +1,83 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import * as twilio from 'twilio';
+import { AuthTokenService } from './auth-token.service';
 
 @Injectable()
 export class AuthService {
-  private twilioClient: twilio.Twilio;
+  private readonly twilioClient?: twilio.Twilio;
 
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly tokens: AuthTokenService,
   ) {
-    // We get these from the .env file
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
-    
-    // Fallback error to warn if env is missing
-    if (!accountSid || !authToken) {
-      console.warn("⚠️ TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN is missing in .env!");
-    } else {
-      this.twilioClient = new twilio.Twilio(accountSid, authToken);
-    }
+    if (accountSid && authToken) this.twilioClient = new twilio.Twilio(accountSid, authToken);
   }
 
-  async sendOtp(phone: string): Promise<{ success: boolean; message: string }> {
-    try {
-      const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
-      
-      if (!this.twilioClient || !verifyServiceSid) {
-        throw new Error("Twilio Client or Service SID is not configured!");
-      }
-
-      // Ensure phone number has country code (like +91)
-      const formattedPhone = phone.startsWith('+') ? phone : '+91' + phone;
-
-      // 1. Call Twilio Verify API to perfectly send a real SMS code
-      const verification = await this.twilioClient.verify.v2
-        .services(verifyServiceSid)
-        .verifications.create({ to: formattedPhone, channel: 'sms' });
-
-      return { 
-        success: true, 
-        message: `असली OTP '${formattedPhone}' पर भेज दिया गया है! Status: ${verification.status}` 
-      };
-
-    } catch (error) {
-      console.error("Twilio Send Error:", error);
-      return { success: false, message: 'Twilio से OTP भेजने में गलती हुई: ' + error.message };
+  async sendOtp(phone: string) {
+    const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+    if (!this.twilioClient || !verifyServiceSid) {
+      throw new BadRequestException('OTP service is not configured');
     }
+    const formattedPhone = this.normalizePhone(phone);
+    const verification = await this.twilioClient.verify.v2
+      .services(verifyServiceSid)
+      .verifications.create({ to: formattedPhone, channel: 'sms' });
+    return { success: true, message: 'OTP sent', status: verification.status };
   }
 
   async verifyOtp(phone: string, otp: string) {
-    try {
-      const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
-      const formattedPhone = phone.startsWith('+') ? phone : '+91' + phone;
+    if (!this.twilioClient || !process.env.TWILIO_VERIFY_SERVICE_SID) {
+      throw new BadRequestException('OTP service is not configured');
+    }
 
-      // 1. Call Twilio Verify API to perfectly check if the SMS code is correct
-      const verificationCheck = await this.twilioClient.verify.v2
-        .services(verifyServiceSid!)
+    const formattedPhone = this.normalizePhone(phone);
+    try {
+      const result = await this.twilioClient.verify.v2
+        .services(process.env.TWILIO_VERIFY_SERVICE_SID)
         .verificationChecks.create({ to: formattedPhone, code: otp });
 
-      if (verificationCheck.status !== 'approved') {
-        throw new BadRequestException('Invalid or expired OTP (Twilio Verify failed)');
-      }
+      if (result.status !== 'approved') throw new UnauthorizedException('Invalid or expired OTP');
 
-      // 2. Focus perfectly on E-Chowk User Creation if Twilio Approved
       let user = await this.userRepository.findOne({ where: { phone_number: formattedPhone } });
       if (!user) {
-        user = this.userRepository.create({ phone_number: formattedPhone, role: 'worker' }); // Default role
-        await this.userRepository.save(user);
+        user = this.userRepository.create({ phone_number: formattedPhone, role: 'worker' });
+        user = await this.userRepository.save(user);
       }
 
-      // TODO: Generate and Return JWT Bearer token here
-      return { success: true, message: 'OTP Verified (via Twilio) & Login successful!', data: user };
-      
+      return {
+        success: true,
+        access_token: this.tokens.sign({ sub: user.id, role: user.role }),
+        user: this.publicUser(user),
+      };
     } catch (error) {
-      console.error("Twilio Check Error:", error);
-      throw new BadRequestException('OTP वेरिफिकेशन फेल हो गया: ' + error.message);
+      if (error instanceof UnauthorizedException) throw error;
+      throw new BadRequestException('OTP verification failed');
     }
+  }
+
+  async setRole(id: string, role: 'worker' | 'employer') {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new UnauthorizedException('User not found');
+    user.role = role;
+    const saved = await this.userRepository.save(user);
+    return {
+      success: true,
+      access_token: this.tokens.sign({ sub: saved.id, role: saved.role }),
+      user: this.publicUser(saved),
+    };
+  }
+
+  private normalizePhone(phone: string) {
+    return phone.startsWith('+') ? phone : '+91' + phone;
+  }
+
+  private publicUser(user: User) {
+    const { phone_number, ...safe } = user;
+    return safe;
   }
 }
