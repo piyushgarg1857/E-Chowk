@@ -58,57 +58,6 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
 
   // 🔥 REAL API CALL - registers worker via AI Voice Call
   Future<void> startAIRegistration() async {
-    // Ask the user for their phone number
-    final TextEditingController phoneCtrl = TextEditingController();
-    final phone = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Icons.phone_in_talk, color: Color(0xFF3F51B5), size: 28),
-            SizedBox(width: 10),
-            Text('AI Registration Call', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'हम आपको AI Voice Call करेंगे।\nकॉल उठाके Hindi में बात करें!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15, color: Colors.black87),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: phoneCtrl,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: 'आपका मोबाइल नंबर',
-                prefixText: '+91 ',
-                prefixIcon: const Icon(Icons.phone, color: Color(0xFF3F51B5)),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              style: const TextStyle(fontSize: 16, letterSpacing: 2),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, '+91${phoneCtrl.text.trim()}'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3F51B5),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Text('Call करें!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-
-    if (phone == null || phone.length < 10) return;
-
     setState(() { _isCallingAI = true; });
 
     try {
@@ -117,46 +66,28 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
         headers: AppSession.authHeaders,
         body: jsonEncode({}),
       );
-
       final data = jsonDecode(response.body);
 
-      if (data['success'] == true) {
+      if (response.statusCode >= 200 && response.statusCode < 300 && data['success'] == true) {
         if (mounted) {
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              title: const Row(
-                children: [
-                  Icon(Icons.check_circle, color: Colors.green, size: 30),
-                  SizedBox(width: 8),
-                  Text('Call हो गई!', style: TextStyle(color: Colors.green)),
-                ],
-              ),
-              content: const Text(
-                'आपके फोन पर AI Call आ रही है!\nउठाइए और Hindi में बात कीजिए।\n\nनाम, Skill और शहर बताने पर\nE-Chowk पर register हो जाएंगे! 🎉',
-                style: TextStyle(fontSize: 15),
-              ),
+              title: const Text('AI Call शुरू हो गई'),
+              content: const Text('अपने registered mobile number पर call उठाइए और Hindi में AI से बात कीजिए।'),
               actions: [
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text('OK 👍', style: TextStyle(color: Colors.white)),
-                ),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK')),
               ],
             ),
           );
         }
       } else {
-        throw Exception(data['message'] ?? 'Unknown error');
+        throw Exception(data['message'] ?? 'Unable to start call');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('AI Call शुरू नहीं हो पाई: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
