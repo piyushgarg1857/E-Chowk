@@ -32,7 +32,16 @@ export class User {
   current_location: string;
 
   @Column({ length: 20, nullable: true })
-  registration_source: string; // 'voice', 'whatsapp', 'app'
+  registration_source: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  phone_verified_at: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  last_seen_at: Date;
+
+  @Column({ default: true })
+  is_active: boolean;
 
   @CreateDateColumn()
   created_at: Date;
