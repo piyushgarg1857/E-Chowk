@@ -53,6 +53,29 @@ export class VoiceController {
     }
   }
 
+  @Post('register-call')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('worker')
+  async registerCall(@CurrentUser() user: { sub: string }, @Res() res: any) {
+    const worker = await this.userRepository.findOne({ where: { id: user.sub } });
+    if (!worker) return res.status(404).json({ success: false, message: 'Worker not found' });
+    try {
+      const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+      const numbers = await twilioClient.incomingPhoneNumbers.list({ limit: 1 });
+      const fromNumber = numbers[0]?.phoneNumber;
+      const webhookUrl = process.env.PUBLIC_BASE_URL?.replace(/\/$/, '');
+      if (!fromNumber || !webhookUrl) throw new Error('Voice service is not configured');
+      const call = await twilioClient.calls.create({
+        to: worker.phone_number,
+        from: fromNumber,
+        url: `${webhookUrl}/voice/agent-incoming`,
+      });
+      return res.json({ success: true, callSid: call.sid, message: 'AI registration call started' });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Unable to start AI registration call' });
+    }
+  }
+
   // ─── NEW: Flutter App triggers this to call a worker ──────────────────
   @Post('call-worker')
   @UseGuards(AuthGuard, RolesGuard)
