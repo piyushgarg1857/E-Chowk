@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'config.dart';
+import 'services/session.dart';
 
 class EmployerScreen extends StatefulWidget {
   const EmployerScreen({Key? key}) : super(key: key);
@@ -10,7 +12,7 @@ class EmployerScreen extends StatefulWidget {
 }
 
 class _EmployerScreenState extends State<EmployerScreen> {
-  final String apiUrl = 'http://127.0.0.1:3000';
+  final String apiUrl = apiBaseUrl;
   List<Map<String, dynamic>> _allWorkers = [];
   List<Map<String, dynamic>> _filteredWorkers = [];
   bool _isLoading = true;
@@ -39,7 +41,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
   Future<void> _loadWorkers() async {
     setState(() => _isLoading = true);
     try {
-      final response = await http.get(Uri.parse('$apiUrl/voice/workers'));
+      final response = await http.get(Uri.parse('$apiUrl/voice/workers'), headers: AppSession.authHeaders);
       final data = jsonDecode(response.body);
       if (data['success'] == true) {
         setState(() {
@@ -48,14 +50,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
         });
       }
     } catch (e) {
-      // Show dummy workers if API fails
-      setState(() {
-        _allWorkers = [
-          {'id': '1', 'full_name': 'रौनक', 'skill_category': 'Electrician', 'current_location': 'Jaipur', 'phone_number': '+918764336371', 'is_available': true, 'rating': 4.5},
-          {'id': '2', 'full_name': 'Suresh Kumar', 'skill_category': 'Plumber', 'current_location': 'Delhi', 'phone_number': '+919999999999', 'is_available': true, 'rating': 4.2},
-        ];
-        _filteredWorkers = _allWorkers;
-      });
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Workers load नहीं हो पाए')));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -107,7 +102,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
     try {
       final response = await http.post(
         Uri.parse('$apiUrl/voice/call-worker'),
-        headers: {'Content-Type': 'application/json'},
+        headers: AppSession.authHeaders,
         body: jsonEncode({'phone': phone}),
       );
       final data = jsonDecode(response.body);
