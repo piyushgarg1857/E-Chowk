@@ -1,177 +1,638 @@
 # E-Chowk
 
-**A voice-first, AI-assisted labour platform concept designed to make work opportunities more accessible to India's informal workforce.**
+> **AI-first labour marketplace for India — voice, phone, mobile and web in one system.**
 
-E-Chowk explores how workers and people looking to hire them can connect through a simple, inclusive digital experience. The project places accessibility at the center: workers should not need to be comfortable with complex apps or forms to express their skills and find work.
+E-Chowk is being developed as a multi-channel AI labour marketplace where a worker or employer can interact through **natural voice conversation, phone calls, mobile app or web**, while every channel uses the same backend, identity, marketplace data and AI agent.
 
-> **Project status:** Work in progress. This repository contains an evolving Flutter application and supporting project materials. The complete voice, messaging, backend, and booking ecosystem is not yet implemented or production-ready. Features described as planned below are part of the product vision, not claims of completed functionality.
+**Development branch:** \`development\`  
+**Stable branch:** \`main\`
 
----
-
-## The problem
-
-Many workers in the informal sector may face barriers when using digital labour platforms, including:
-
-- Limited familiarity with smartphones and app-based forms.
-- Language and literacy barriers.
-- Difficulty keeping profiles, skills, location, and availability up to date.
-- Limited access to timely and relevant work information.
-
-E-Chowk aims to reduce these barriers with familiar, low-friction ways to interact with a labour platform.
-
-## Product vision
-
-The long-term concept brings together three connected experiences backed by a shared system.
-
-### 1. Voice assistant for workers
-
-A worker could call a phone number and speak naturally in Hindi or a supported regional language. A voice assistant could guide the worker through tasks such as:
-
-- Registering and sharing basic details.
-- Describing skills and work experience.
-- Sharing location, expected wages, and availability.
-- Reviewing and confirming information before it is saved.
-- Receiving information about relevant work opportunities.
-
-The voice flow is planned; telephony and AI integrations are not represented as complete.
-
-### 2. WhatsApp-based updates
-
-A WhatsApp interface is envisioned for workers who prefer messaging. Potential use cases include:
-
-- Updating availability and work location.
-- Receiving job alerts and booking updates.
-- Confirming or responding to relevant requests.
-
-This is a planned integration.
-
-### 3. Mobile experience for workers and hirers
-
-The Flutter application is intended to support a more visual workflow for people comfortable using a mobile app. The broader product vision includes:
-
-- Worker profiles and skill information.
-- Search and discovery for hirers.
-- Work requests and booking workflows.
-- Ratings and reviews.
-- Payment-related workflows.
-
-The exact availability of these features depends on the current implementation. See the repository code for what is presently built.
+[![Branch](https://img.shields.io/badge/branch-development-blue)](https://github.com/piyushgarg1857/E-Chowk/tree/development)
+[![Status](https://img.shields.io/badge/status-active%20development-orange)](https://github.com/piyushgarg1857/E-Chowk)
+[![Flutter](https://img.shields.io/badge/mobile-Flutter-02569B)](https://flutter.dev/)
+[![Backend](https://img.shields.io/badge/backend-NestJS-E0234E)](https://nestjs.com/)
+[![Database](https://img.shields.io/badge/database-PostgreSQL-336791)](https://www.postgresql.org/)
 
 ---
 
-## Proposed system architecture
+## 1. What E-Chowk is
 
-The following is the intended architecture and technology direction. Components may change as the project evolves.
+The goal is simple:
 
-| Layer | Proposed technology | Purpose |
-| --- | --- | --- |
-| Mobile app | Flutter / Dart | Cross-platform application |
-| Backend API | Node.js / NestJS | Business logic and integrations |
-| Database | Supabase / PostgreSQL | Shared application data |
-| Voice agent | Vapi.ai + Gemini Flash (to evaluate) | Conversational registration and assistance |
-| Telephony | Twilio or Exotel (to evaluate) | Inbound and outbound calls |
-| Messaging | Meta WhatsApp Cloud API | Worker updates and notifications |
-| Authentication | Supabase Auth / OTP (to evaluate) | Secure user access |
+> **A worker should be able to say what work they need. An employer should be able to say what worker they need. E-Chowk's AI should understand the request and operate the marketplace.**
 
-### High-level interaction flow
+Example worker conversation:
 
-```mermaid
-flowchart TD
-    W[Worker] --> V[Planned voice assistant]
-    W --> M[Planned WhatsApp interface]
-    H[Hirer] --> A[Flutter application]
-    V --> B[Backend API]
-    M --> B
-    A --> B
-    B --> D[(Shared PostgreSQL database)]
-    B --> N[Planned job matching and notifications]
-```
+> **Worker:** "Bhai mujhe kal Jaipur mein plumber ka kaam chahiye."
 
-This diagram describes the target design, not a deployed production system.
+The AI should understand:
 
----
+~~~text
+intent        = find_job
+skill         = plumber
+location      = Jaipur
+availability  = tomorrow
+~~~
 
-## Data model direction
+Then it should call the marketplace backend, find relevant jobs, explain the best options and, after confirmation, apply on the worker's behalf.
 
-A shared data layer is planned so information can be used consistently across the different interfaces.
+The same task should eventually work through:
 
-Potential worker profile fields include:
-
-| Field | Description |
-| --- | --- |
-| `id` | Unique internal identifier (UUID) |
-| `phone_number` | Contact number, subject to verification and privacy controls |
-| `name` | Worker name |
-| `skills` | One or more skills or trade categories |
-| `location` | Preferred work area |
-| `expected_wage` | Expected wage and wage unit |
-| `availability` | Current availability |
-| `verification_status` | Verification state, if a verification process is implemented |
-| `registration_source` | App, voice, or WhatsApp, when applicable |
-
-This is a conceptual model. The actual database schema and implementation may differ. A phone number should be treated as a unique contact attribute—not as the database's primary key. Use an internal UUID as the primary key and apply appropriate authentication, consent, access controls, and data protection.
+~~~text
+📞 Phone AI
+   ↓
+📱 Flutter App
+   ↓
+🌐 Web
+   ↓
+💬 WhatsApp
+   ↓
+        ONE E-CHOWK BACKEND
+~~~
 
 ---
 
-## Development roadmap
+# 2. Product architecture
 
-The roadmap is iterative and may change based on testing and feedback.
+~~~text
+                         E-CHOWK
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+       📞 PHONE           📱 APP            🌐 WEB
+       AI Agent          Flutter          Responsive
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+                     NestJS Backend
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+    🤖 AI AGENT        🧰 MARKETPLACE        🔐 AUTH
+        │                   │                   │
+    LLM + Tools       Jobs / Matching       OTP / RBAC
+        │                   │                   │
+        └───────────────────┼───────────────────┘
+                            │
+                     PostgreSQL
+                            │
+             ┌──────────────┼──────────────┐
+             │              │              │
+        Notifications    Audit/Logs    Observability
+~~~
 
-- [ ] Review and stabilize the current Flutter application.
-- [ ] Define the first end-to-end use case and its acceptance criteria.
-- [ ] Finalize the database model, authentication, and access rules.
-- [ ] Connect the app to the backend and validate profile workflows.
-- [ ] Build a small voice-registration prototype.
-- [ ] Test Hindi conversation quality, confirmation, and error recovery.
-- [ ] Explore WhatsApp updates and notification workflows.
-- [ ] Prototype worker discovery and a basic hiring flow.
-- [ ] Test with users and improve accessibility, privacy, and reliability.
+### Golden rule
 
-## Getting started
+**LLM decides what the user means. Backend decides what the system is allowed to do.**
 
-This project uses Flutter. To explore the current application:
-
-1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install) and the required platform tooling.
-2. Clone the repository.
-3. From the repository directory, install dependencies:
-
-   ```bash
-   flutter pub get
-   ```
-
-4. Run the application on a configured device or emulator:
-
-   ```bash
-   flutter run
-   ```
-
-These are standard Flutter commands. Additional setup may be required as backend services and environment configuration are developed. Do not commit API keys, credentials, or private environment files.
-
-## Design principles
-
-- **Accessibility first:** Keep interactions simple and support voice and local languages.
-- **Respect and clarity:** Use a friendly, dignified tone and confirm important details with workers.
-- **Human control:** Workers should be able to review and correct profile information.
-- **Privacy by design:** Collect only necessary data and protect personal information.
-- **Practical development:** Validate a small working flow before expanding the platform.
-- **Honest status reporting:** Clearly distinguish implemented features from ideas and future integrations.
-
-## Current scope and limitations
-
-E-Chowk is an evolving project, not a launched labour marketplace. The complete voice-call registration, AI job matching, WhatsApp automation, booking, payment, identity verification, and large-scale infrastructure described in the vision are not claimed to be operational.
-
-Any future identity verification should use a lawful, consent-based process and should not assume that Aadhaar integration is required. Likewise, commission models and scale targets need validation before being treated as product commitments.
-
-## Contributing and feedback
-
-Feedback on accessibility, architecture, voice interaction design, and the worker onboarding experience is welcome. If you are interested in discussing the concept or collaborating, please reach out through the repository owner’s GitHub profile.
-
-## About
-
-**E-Chowk** is an independent, ongoing project by **Piyush Garg**, a B.Tech student specializing in Artificial Intelligence and Data Science.
-
-The project explores ways AI and accessible technology could help connect workers with work opportunities. It is not affiliated with or officially integrated into Digital Labour Chowk.
+The LLM must never directly execute SQL or bypass authorization.
 
 ---
 
-*Built as an ongoing learning and development project with a focus on digital inclusion.*
+# 3. AI agent model
+
+E-Chowk is **not** being designed as:
+
+~~~text
+User → Form → Data → AI → Fixed Response
+~~~
+
+It is being designed as:
+
+~~~text
+User
+ ↓
+Natural conversation
+ ↓
+STT / text
+ ↓
+AI Agent
+ ↓
+Context + user memory
+ ↓
+Intent understanding
+ ↓
+Tool selection
+ ↓
+Backend validation
+ ↓
+Marketplace / Database
+ ↓
+Tool result
+ ↓
+AI response
+ ↓
+TTS / text
+ ↓
+User
+~~~
+
+### Core agent tools
+
+- [ ] \`get_current_user()\`
+- [ ] \`get_worker_profile()\`
+- [ ] \`update_worker_profile()\`
+- [ ] \`search_jobs()\`
+- [ ] \`get_job()\`
+- [ ] \`create_job()\`
+- [ ] \`apply_for_job()\`
+- [ ] \`get_application_status()\`
+- [ ] \`accept_job_request()\`
+- [ ] \`reject_job_request()\`
+- [ ] \`update_availability()\`
+
+Tool calls will be schema-validated and permission-checked by the backend.
+
+---
+
+# 4. Main user workflows
+
+## Worker
+
+~~~text
+Phone / App / Web
+       ↓
+Login / identify
+       ↓
+Worker profile
+       ↓
+Available for work
+       ↓
+Find job
+       ↓
+AI / search / matching
+       ↓
+Job details
+       ↓
+Apply
+       ↓
+Employer response
+       ↓
+Accepted
+       ↓
+Work
+       ↓
+Completed
+       ↓
+Rating / payment record
+~~~
+
+## Employer
+
+~~~text
+Login
+ ↓
+Employer profile
+ ↓
+Create job
+ ↓
+Skill + location + wage + date
+ ↓
+Publish
+ ↓
+AI / matching engine
+ ↓
+Candidate workers
+ ↓
+Select worker
+ ↓
+Send request
+ ↓
+Worker accepts
+ ↓
+Job assigned
+ ↓
+Completed
+ ↓
+Rating / payment record
+~~~
+
+## Phone AI onboarding
+
+~~~text
+Worker calls E-Chowk
+       ↓
+Phone identified
+       ↓
+AI: "Namaste! Aapka naam?"
+       ↓
+Name
+       ↓
+Skill
+       ↓
+City
+       ↓
+Wage / availability
+       ↓
+AI reads summary
+       ↓
+Worker confirms/corrects
+       ↓
+Tool: save_worker_profile()
+       ↓
+Database
+       ↓
+Registration complete
+~~~
+
+---
+
+# 5. Development status
+
+Status is tracked with a strict rule:
+
+- [x] **Baseline exists** — code/prototype is present.
+- [~] **In development** — implementation is active but not accepted as complete.
+- [ ] **Not started / incomplete** — no production-ready implementation yet.
+
+| Area | Status | Current meaning |
+|---|:---:|---|
+| Flutter shell | [x] | Existing |
+| Phone OTP prototype | [x] | Existing |
+| Worker UI | [x] | Prototype |
+| Employer UI | [x] | Prototype |
+| NestJS backend | [x] | Existing |
+| PostgreSQL schema | [x] | Existing |
+| Twilio voice prototype | [x] | Existing |
+| Groq LLM prototype | [x] | Existing |
+| Hindi voice flow | [x] | Prototype |
+| Proper AI tool calling | [ ] | Next AI core task |
+| Agent memory | [ ] | Required |
+| Worker profile service | [~] | Needs production workflow |
+| Job creation | [ ] | Required |
+| Job search | [ ] | Required |
+| Matching engine | [ ] | Required |
+| Application workflow | [ ] | Required |
+| Hiring workflow | [ ] | Required |
+| Job completion | [ ] | Required |
+| Production mobile workflow | [ ] | Required |
+| Production web workflow | [ ] | Required |
+| WhatsApp | [ ] | Later phase |
+| Payments | [ ] | Later phase |
+| Production security/observability | [ ] | Required before real users |
+| AI evaluation suite | [ ] | Required |
+
+**Important:** Existing prototype code is not automatically considered production-complete.
+
+---
+
+# 6. Development roadmap
+
+## Phase 0 — Foundation & safety
+- [ ] Environment separation
+- [ ] Secrets/config management
+- [ ] API error contract
+- [ ] Request validation
+- [ ] RBAC
+- [ ] Logging
+- [ ] Migration strategy
+- [ ] API URL configuration
+- [ ] Development/testing rules
+
+**Gate:** local setup is reproducible and sensitive configuration is not hard-coded.
+
+## Phase 1 — Identity & profiles
+- [ ] Phone OTP
+- [ ] UUID identity
+- [ ] Worker profile
+- [ ] Employer profile
+- [ ] Skills
+- [ ] Location
+- [ ] Availability
+- [ ] Profile confirmation
+- [ ] Profile editing
+
+**Gate:** one verified user identity works consistently across app, web and agent.
+
+## Phase 2 — AI Agent Core
+- [ ] Agent service
+- [ ] Session model
+- [ ] Prompt/version management
+- [ ] Tool registry
+- [ ] Tool validation
+- [ ] Authorization
+- [ ] Memory
+- [ ] Confirmation policy
+- [ ] Error recovery
+- [ ] Evaluation dataset
+
+**Gate:** multi-turn AI task completes using real backend tools.
+
+## Phase 3 — Phone AI
+- [ ] Inbound calls
+- [ ] Outbound calls
+- [ ] STT
+- [ ] Agent
+- [ ] TTS
+- [ ] Call sessions
+- [ ] Silence/retry
+- [ ] Hindi/Hinglish testing
+- [ ] Noise/accent testing
+- [ ] Privacy/consent
+
+**Gate:** worker registration + simple job search works entirely by phone.
+
+## Phase 4 — Marketplace
+- [ ] Jobs
+- [ ] Applications
+- [ ] Matching
+- [ ] Employer requests
+- [ ] Worker accept/reject
+- [ ] Assignment
+- [ ] Cancellation
+- [ ] Completion
+- [ ] Ratings
+
+**Gate:** Worker → Job → Employer → Hire → Complete works without manual DB changes.
+
+## Phase 5 — Mobile
+- [ ] Worker dashboard
+- [ ] Worker profile
+- [ ] Job feed
+- [ ] Job details
+- [ ] Applications
+- [ ] Requests
+- [ ] Notifications
+- [ ] Employer dashboard
+- [ ] Job creation
+- [ ] Candidate matching
+- [ ] Hindi-first accessibility
+
+**Gate:** core journeys are usable without developer tools.
+
+## Phase 6 — Web
+- [ ] Responsive web app
+- [ ] Employer console
+- [ ] Operations/admin
+- [ ] Job management
+- [ ] Candidate search
+- [ ] Role-based routes
+- [ ] Audit views
+
+**Gate:** web supports required MVP operations.
+
+## Phase 7 — WhatsApp
+- [ ] Identity linking
+- [ ] Notifications
+- [ ] Job alerts
+- [ ] Accept/reject
+- [ ] Availability updates
+- [ ] Phone/app fallback
+
+**Gate:** WhatsApp uses the same backend workflow.
+
+## Phase 8 — Matching intelligence
+- [ ] Skill normalization
+- [ ] Location/distance
+- [ ] Availability
+- [ ] Wage compatibility
+- [ ] Rating
+- [ ] Reliability
+- [ ] Explainable score
+- [ ] Evaluation dataset
+
+**Gate:** relevant candidates are ranked consistently and explainably.
+
+## Phase 9 — Trust, payments & production
+- [ ] Verification strategy
+- [ ] Privacy/consent
+- [ ] Abuse prevention
+- [ ] Rate limiting
+- [ ] Fraud controls
+- [ ] Payment ledger
+- [ ] Disputes/refunds
+- [ ] Monitoring
+- [ ] Backups
+- [ ] Security review
+- [ ] Load testing
+
+**Gate:** controlled real-user MVP readiness.
+
+## Phase 10 — E-Chowk AI specialization
+- [ ] Consent-based conversation dataset
+- [ ] Redaction
+- [ ] Intent/entity labels
+- [ ] Hindi/Hinglish benchmark
+- [ ] Baseline evaluation
+- [ ] Fine-tuning decision
+- [ ] Regression tests
+- [ ] Model rollback
+
+**Rule:** do not train an LLM from scratch. First improve the agent, tools, memory, retrieval and prompts. Fine-tune only when evaluation proves it is useful.
+
+---
+
+# 7. Testing system
+
+Every feature follows:
+
+~~~text
+BUILD
+ ↓
+UNIT TEST
+ ↓
+INTEGRATION TEST
+ ↓
+AI TEST (if applicable)
+ ↓
+MANUAL E2E
+ ↓
+ACCEPTANCE CRITERIA
+ ↓
+DOCUMENT STATUS
+ ↓
+READY
+~~~
+
+### Universal checklist
+
+- [ ] Code builds
+- [ ] Unit tests pass
+- [ ] API tests pass
+- [ ] Database behavior verified
+- [ ] Authentication verified
+- [ ] Authorization verified
+- [ ] Error state verified
+- [ ] Retry verified
+- [ ] AI behavior evaluated
+- [ ] Hindi/Hinglish tested where relevant
+- [ ] Manual E2E passed
+- [ ] Documentation updated
+- [ ] No secrets committed
+
+See **[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md)** for the complete QA gate.
+
+---
+
+# 8. Definition of Done
+
+A feature cannot be marked complete until:
+
+- [ ] Code implemented
+- [ ] API contract documented
+- [ ] Database migration completed
+- [ ] Auth/RBAC checked
+- [ ] UI connected
+- [ ] Error states handled
+- [ ] Tests added
+- [ ] AI evaluated where applicable
+- [ ] Manual acceptance test passed
+- [ ] Documentation updated
+- [ ] No secrets committed
+- [ ] End-to-end demo works
+
+---
+
+# 9. Documentation
+
+| Document | Purpose |
+|---|---|
+| **README.md** | Product overview, status, roadmap and quick context |
+| **DEVELOPMENT_PLAN.md** | Detailed phases, acceptance criteria and engineering rules |
+| **ARCHITECTURE.md** | Technical architecture, agent boundaries, memory and security |
+| **TESTING_CHECKLIST.md** | QA, AI testing, security and release gates |
+
+---
+
+# 10. Branch strategy
+
+~~~text
+main
+ │
+ │ stable / releasable
+ │
+ └──── development
+          │
+          ├── feature/agent-core
+          ├── feature/jobs
+          ├── feature/matching
+          ├── feature/phone-agent
+          └── feature/web
+~~~
+
+### Rules
+
+- **main** = stable/releasable.
+- **development** = active integration/testing.
+- Feature branches may be created from development.
+- Experimental code should not go directly into main.
+- Main is updated only after development gates pass.
+
+---
+
+# 11. Current development priority
+
+Do **not** start by polishing every screen.
+
+The priority is:
+
+~~~text
+1. Foundation
+      ↓
+2. AI Agent + Tool Calling
+      ↓
+3. Worker Profile
+      ↓
+4. Jobs
+      ↓
+5. Matching
+      ↓
+6. Application
+      ↓
+7. Hiring
+      ↓
+8. Completion
+      ↓
+9. Mobile/Web polish
+      ↓
+10. WhatsApp + Payments
+~~~
+
+The first major milestone is:
+
+> **A worker can use E-Chowk through phone/app, find a real job, apply, and complete the hiring workflow while an employer can create and fill that job.**
+
+That is the first real product milestone—not merely a working AI demo.
+
+---
+
+# 12. Current prototype → target system
+
+### Current
+
+~~~text
+Twilio
+ ↓
+SpeechResult
+ ↓
+Groq LLM
+ ↓
+Regex JSON
+ ↓
+PostgreSQL
+~~~
+
+### Target
+
+~~~text
+Phone
+ ↓
+Streaming STT
+ ↓
+E-Chowk AI Agent
+ ↓
+Context + Memory
+ ↓
+Validated Tool Call
+ ↓
+NestJS Service
+ ↓
+PostgreSQL
+ ↓
+Tool Result
+ ↓
+AI Response
+ ↓
+Streaming TTS
+ ↓
+Worker
+~~~
+
+The existing prototype should be evolved incrementally rather than thrown away.
+
+---
+
+# 13. Product quality standard
+
+E-Chowk should feel:
+
+- **Simple** for workers.
+- **Fast** for employers.
+- **Natural** in Hindi/Hinglish.
+- **Trustworthy** when AI performs actions.
+- **Consistent** across phone, app and web.
+- **Observable** for developers/operators.
+- **Secure** with personal information.
+- **Professional** enough to become a real product.
+
+---
+
+## Quick links
+
+- [Development Plan](DEVELOPMENT_PLAN.md)
+- [Architecture](ARCHITECTURE.md)
+- [Testing Checklist](TESTING_CHECKLIST.md)
+- [Main Branch](https://github.com/piyushgarg1857/E-Chowk/tree/main)
+- [Development Branch](https://github.com/piyushgarg1857/E-Chowk/tree/development)
+
+---
+
+## Project owner
+
+**Piyush Garg**  
+B.Tech — Artificial Intelligence & Data Science  
+Global Institute of Technology, Jaipur
+
+E-Chowk is an independent ongoing project exploring AI-powered, accessible labour-market technology.
+
+> **Build the smallest complete workflow. Test it. Measure it. Then scale it.**
