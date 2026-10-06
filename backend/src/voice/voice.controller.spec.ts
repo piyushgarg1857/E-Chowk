@@ -16,11 +16,15 @@ describe('VoiceController', () => {
       providers: [
         { provide: getRepositoryToken(User), useValue: {} },
         { provide: AgentService, useValue: { chatForPhone: jest.fn() } },
-        { provide: AuthGuard, useValue: { canActivate: () => true } },
-        { provide: RolesGuard, useValue: { canActivate: () => true } },
-        { provide: TwilioSignatureGuard, useValue: { canActivate: () => true } },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(RolesGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(TwilioSignatureGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<VoiceController>(VoiceController);
   });
