@@ -12,6 +12,11 @@ export class AgentService {
 
   constructor(private readonly jobs: JobsService, private readonly users: UsersService) {}
 
+  async chatForPhone(phone: string, message: string) {
+    const user = await this.users.findOrCreateByPhone(phone);
+    return this.chat(user.id, message);
+  }
+
   async chat(userId: string, message: string) {
     if (!process.env.GROQ_API_KEY) throw new BadRequestException('AI service is not configured');
 
