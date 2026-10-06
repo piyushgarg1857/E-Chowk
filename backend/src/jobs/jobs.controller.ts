@@ -35,6 +35,11 @@ export class JobsController {
     return this.jobs.decide(user.sub, applicationId, dto.status);
   }
 
+  @Post(':id/start')
+  start(@CurrentUser() user: { sub: string }, @Param('id') id: string) {
+    return this.jobs.start(user.sub, id);
+  }
+
   @Post(':id/complete')
   complete(@CurrentUser() user: { sub: string }, @Param('id') id: string) {
     return this.jobs.complete(user.sub, id);
