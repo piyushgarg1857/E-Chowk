@@ -58,6 +58,12 @@ export class JobsService {
     return application;
   }
 
+  async applicationStatus(workerId: string, jobId: string) {
+    const application = await this.applications.findOne({ where: { worker_id: workerId, job_id: jobId } });
+    if (!application) throw new NotFoundException('Application not found');
+    return application;
+  }
+
   async listApplications(employerId: string, jobId: string) {
     const job = await this.get(jobId);
     if (job.employer_id !== employerId) throw new ForbiddenException('Not your job');
