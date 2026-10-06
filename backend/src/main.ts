@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { WsAdapter } from '@nestjs/platform-ws';
+import { HttpExceptionFilter } from './common/http/http-exception.filter';
 
 function getCorsOrigins(): string[] {
   return (process.env.CORS_ORIGINS ?? 'http://localhost:3000')
@@ -17,6 +18,8 @@ async function bootstrap() {
     origin: getCorsOrigins(),
     credentials: true,
   });
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({
