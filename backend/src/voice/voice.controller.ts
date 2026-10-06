@@ -49,7 +49,7 @@ export class VoiceController {
         order: { created_at: 'DESC' },
       });
       return res.json({ success: true, workers });
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).json({ success: false, message: err.message });
     }
   }
@@ -72,7 +72,7 @@ export class VoiceController {
         url: `${webhookUrl}/voice/agent-incoming`,
       });
       return res.json({ success: true, callSid: call.sid, message: 'AI registration call started' });
-    } catch (error) {
+    } catch (error: any) {
       return res.status(500).json({ success: false, message: 'Unable to start AI registration call' });
     }
   }
@@ -249,7 +249,7 @@ export class VoiceController {
           // Remove the JSON block so Twilio doesn't speak "bracket bracket Name"
           aiResponse = aiResponse.replace(/\[JSON_DATA:\s*({.*?})\s*\]/is, '').trim();
           
-        } catch (e) {
+        } catch (e: any) {
           console.error('[JSON Parse Error]', e);
         }
       }
