@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'config.dart';
+import 'services/session.dart';
 
 class WorkerScreen extends StatefulWidget {
   const WorkerScreen({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
-  final String apiUrl = 'http://127.0.0.1:3000';
+  final String apiUrl = apiBaseUrl;
 
   @override
   void initState() {
@@ -96,7 +98,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
     try {
       final response = await http.post(
         Uri.parse('$apiUrl/voice/call-worker'),
-        headers: {'Content-Type': 'application/json'},
+        headers: AppSession.authHeaders,
         body: jsonEncode({'phone': phone}),
       );
 
