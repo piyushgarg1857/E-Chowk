@@ -101,7 +101,7 @@ export class VoiceController {
 
       // Twilio must use an explicitly configured public HTTPS URL.
       // Never fall back to a hard-coded tunnel URL.
-      const webhookUrl = process.env.PUBLIC_BASE_URL?.replace(/\\/$/, '');
+      const webhookUrl = process.env.PUBLIC_BASE_URL?.replace(/\/$/, '');
       if (!webhookUrl) {
         throw new Error('PUBLIC_BASE_URL is not configured for Twilio webhooks');
       }
