@@ -8,6 +8,12 @@ import { UpdateProfileDto } from './profile.dto';
 export class UsersService {
   constructor(@InjectRepository(User) private readonly users: Repository<User>) {}
 
+  async findOrCreateByPhone(phone: string) {
+    let user = await this.users.findOne({ where: { phone_number: phone } });
+    if (!user) user = await this.users.save(this.users.create({ phone_number: phone, role: 'worker', registration_source: 'voice' }));
+    return user;
+  }
+
   async getById(id: string) {
     const user = await this.users.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
