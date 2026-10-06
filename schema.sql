@@ -91,3 +91,26 @@ CREATE INDEX IF NOT EXISTS idx_jobs_location ON jobs(location);
 CREATE INDEX IF NOT EXISTS idx_jobs_employer_status ON jobs(employer_id, status);
 CREATE INDEX IF NOT EXISTS idx_audit_actor_created ON audit_events(actor_user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_agent_conversations_session ON agent_conversations(session_id, created_at);
+
+CREATE TABLE IF NOT EXISTS ratings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+  from_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  to_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  score INT NOT NULL CHECK (score BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now()),
+  UNIQUE(job_id, from_user_id)
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+  payer_id UUID NOT NULL REFERENCES users(id),
+  payee_id UUID NOT NULL REFERENCES users(id),
+  amount DECIMAL(12,2) NOT NULL CHECK (amount >= 0),
+  status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  provider VARCHAR(40) NOT NULL DEFAULT 'manual',
+  provider_reference VARCHAR(120),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc', now())
+);
