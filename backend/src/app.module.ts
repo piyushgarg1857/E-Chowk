@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { VoiceModule } from './voice/voice.module';
 import { HealthModule } from './health/health.module';
+import { UsersModule } from './users/users.module';
+import { JobsModule } from './jobs/jobs.module';
+import { AgentModule } from './agent/agent.module';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { HealthModule } from './health/health.module';
     
     VoiceModule,
     HealthModule,
+    UsersModule,
+    JobsModule,
+    AgentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
