@@ -145,3 +145,31 @@ Final gate:
 - [ ] Rollback plan documented
 - [ ] Demo completed
 - [ ] Ready for merge to main
+
+## Development CI commands
+
+Backend:
+- `npm install`
+- `npm run typecheck`
+- `npm test -- --runInBand`
+- `npm run build`
+
+Flutter:
+- `flutter pub get`
+- `flutter analyze`
+- `flutter test`
+
+## Implemented end-to-end acceptance flow
+
+1. Phone OTP → authenticated user
+2. Worker/employer role selection → persisted role
+3. Worker profile/availability → protected API
+4. Employer creates job → OPEN
+5. Worker searches job → applies
+6. Employer reviews application → accepts/rejects
+7. Worker starts → IN_PROGRESS
+8. Worker completes → COMPLETED
+9. Notifications + audit event → recorded
+10. Rating → trust record
+11. Agent → tool call → same backend services
+12. Phone/WhatsApp → same agent path
