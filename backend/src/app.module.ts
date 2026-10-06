@@ -14,6 +14,7 @@ import { MatchingModule } from './matching/matching.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { TrustModule } from './trust/trust.module';
 import { PaymentsModule } from './payments/payments.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { PaymentsModule } from './payments/payments.module';
     NotificationsModule,
     TrustModule,
     PaymentsModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [AppService],
