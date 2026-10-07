@@ -31,3 +31,6 @@ flutter_sdk/
 # Archive / deployment files
 *.zip
 
+# Temporary Azure log/deployment dumps
+LogFiles/
+deployments/

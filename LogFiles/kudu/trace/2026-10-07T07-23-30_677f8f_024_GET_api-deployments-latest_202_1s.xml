@@ -1,8 +1,0 @@
-<step title="Incoming Request" date="2026-10-07T07:23:30.893" instance="677f8f" url="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-10-07_07-21-00Z" method="GET" type="request" pid="838,1,7" Host="echowk-dev-api.scm.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_1c9fb4782c4f1b14b7f3187f5c75797b10d1bd7de92c4e5cd0f84f7afcd355c9_v3.0.8" Authorization="Bea..." Content-Type="application/json; charset=utf-8" Cookie="ARRAffinity=677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d; ARRAffinitySameSite=677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d" Content-Length="0" X-ARR-LOG-ID="9b5e116c-75da-4353-9f7e-7f5119a423aa" CLIENT-IP="135.119.23.102:50237" X-SITE-DEPLOYMENT-ID="echowk-dev-api" WAS-DEFAULT-HOSTNAME="echowk-dev-api.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-10-07_07-21-00Z" X-Client-IP="135.119.23.102" X-Client-Port="50237" >
-  <step title="DeploymentService.GetResult" date="2026-10-07T07:23:30.943" >
-    <step title="DeploymentService.GetLatestDeployment" date="2026-10-07T07:23:30.969" >
-      <step title="DeploymentManager.GetResults" date="2026-10-07T07:23:31.008" /><!-- duration: 735ms -->
-    </step><!-- duration: 915ms -->
-  </step><!-- duration: 971ms -->
-  <step title="Outgoing response" date="2026-10-07T07:23:31.933" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 39ms -->
-</step><!-- duration: 1089ms -->
