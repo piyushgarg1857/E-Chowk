@@ -6,6 +6,7 @@ import * as TwilioSDK from 'twilio';
 const twilio = (TwilioSDK as any).default || TwilioSDK;
 import Groq from 'groq-sdk';
 import { AgentService } from '../agent/agent.service';
+import { ExotelService } from '../exotel/exotel.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Roles, CurrentUser } from '../auth/auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
@@ -36,6 +37,7 @@ export class VoiceController {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly agent: AgentService,
+    private readonly exotelService: ExotelService,
   ) {}
 
   // ─── GET: Fetch all registered workers (for Employer Screen) ──────────
