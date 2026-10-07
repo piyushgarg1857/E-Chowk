@@ -51,6 +51,7 @@ function useDemoState() {
   const [liveApps, setLiveApps] = useState<JobApplication[]>([]);
   const [liveNotes, setLiveNotes] = useState<typeof seedNotifications | null>(null);
   const [liveWorkers, setLiveWorkers] = useState<User[]>([]);
+  const [agentSessionId, setAgentSessionId] = useState<string | null>(null);
   useEffect(() => {
     setSessionState(getSession());
     return onSessionChange((s) => setSessionState(s)) as unknown as () => void;
@@ -241,17 +242,14 @@ function useDemoState() {
   async function sendAgentMessage(text: string) {
     if (live) {
       try {
-        const last = messages[messages.length - 1];
-        const result = last?.id?.startsWith("agent-session-")
-          ? await api.agentSessionMessage(last.id.replace("agent-session-", ""), text)
-          : await api.agentMessage(text);
+        const result = agentSessionId
+        ? await api.agentSessionMessage(agentSessionId, text)
+        : await api.agentMessage(text);
         setMessages((prev) => [
           ...prev,
           { id: crypto.randomUUID(), role: "assistant", parts: [{ type: "text", text: result.reply }] },
         ]);
-        if (result.session_id) {
-          setMessages((prev) => prev.map((m) => m.id === result.session_id ? { ...m, id: "agent-session-" + result.session_id } : m));
-        }
+        if (result.session_id) setAgentSessionId(result.session_id);
         return result;
       } catch (e) {
         toast.error(errText(e));
