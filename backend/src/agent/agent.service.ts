@@ -18,9 +18,9 @@ export class AgentService {
     private readonly sessions: Repository<ConversationSession>,
   ) {}
 
-  async chatForPhone(phone: string, message: string) {
+  async chatForPhone(phone: string, message: string, channel = 'voice') {
     const user = await this.users.findOrCreateByPhone(phone);
-    return this.chat(user.id, message, 'voice');
+    return this.chat(user.id, message, channel);
   }
 
   async chat(userId: string, message: string, channel = 'app') {
