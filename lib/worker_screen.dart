@@ -63,16 +63,21 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   // 🔥 REAL API CALL - registers worker via AI Voice Call
   Future<void> _loadJobs() async {
     try {
-      final response = await http.get(
-        Uri.parse('$apiUrl/jobs?limit=10'),
-        headers: AppSession.authHeaders,
-      );
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final data = jsonDecode(response.body);
-        if (data is List && mounted) {
-          setState(() => _jobs = List<Map<String, dynamic>>.from(data));
+      final responses = await Future.wait([
+        http.get(Uri.parse('$apiUrl/jobs?limit=10'), headers: AppSession.authHeaders),
+        http.get(Uri.parse('$apiUrl/jobs/my-work'), headers: AppSession.authHeaders),
+      ]);
+      final openData = jsonDecode(responses[0].body);
+      final workData = jsonDecode(responses[1].body);
+      final combined = <Map<String, dynamic>>[];
+      if (openData is List) combined.addAll(List<Map<String, dynamic>>.from(openData));
+      if (workData is List) {
+        final ids = combined.map((j) => j['id']?.toString()).toSet();
+        for (final job in List<Map<String, dynamic>>.from(workData)) {
+          if (!ids.contains(job['id']?.toString())) combined.add(job);
         }
       }
+      if (mounted) setState(() => _jobs = combined);
     } catch (_) {
       // Keep the dashboard usable if marketplace loading fails.
     } finally {
