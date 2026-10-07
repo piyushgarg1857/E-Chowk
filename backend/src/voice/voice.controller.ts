@@ -198,7 +198,7 @@ export class VoiceController {
   // Step 1: Twilio calls this when a call comes in
   @Post('incoming')
   @UseGuards(TwilioSignatureGuard)
-  agentAliasIncoming(@Req() req: any, @Res() res: any) {
+  async agentAliasIncoming(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid || '';
     const from = req.body?.From || null;
     const user = from ? await this.userRepository.findOne({ where: { phone_number: from } }) : null;
