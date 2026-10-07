@@ -10,15 +10,18 @@ export class MatchingController {
   constructor(private readonly matching: MatchingService) {}
 
   @Get('jobs/:jobId/workers')
+  @Roles('employer', 'admin')
   workers(@Param('jobId') jobId: string) { return this.matching.workersForJob(jobId); }
 
   @Get('workers')
+  @Roles('employer', 'admin')
   workersForQuery(@Query('jobId') jobId?: string) {
     if (!jobId) return [];
     return this.matching.workersForJob(jobId);
   }
 
   @Get('jobs')
+  @Roles('worker', 'admin')
   jobs(@CurrentUser() user: { sub: string }, @Query('workerId') workerId?: string, @Query('limit') limit?: string) {
     return this.matching.jobsForWorker(workerId || user.sub, Number(limit) || 20);
   }
