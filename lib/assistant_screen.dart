@@ -41,11 +41,30 @@ class _AssistantScreenState extends State<AssistantScreen> {
     }
   }
 
+  void _sendSuggestion(String text) {
+    _controller.text = text;
+    _controller.selection = TextSelection.collapsed(offset: text.length);
+    send();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('AI Assistant')),
       body: Column(children: [
+        if (_messages.isEmpty && !_sending)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ActionChip(label: const Text('मेरे लिए काम खोजो'), onPressed: () => _sendSuggestion('मेरे लिए electrician का काम खोजो')),
+                ActionChip(label: const Text('Application status'), onPressed: () => _sendSuggestion('मेरी latest job application का status बताओ')),
+                ActionChip(label: const Text('Profile update'), onPressed: () => _sendSuggestion('मेरी availability available कर दो')),
+              ],
+            ),
+          ),
         Expanded(
           child: _messages.isEmpty
               ? const _EmptyAssistant()
