@@ -2,13 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Job } from './job.entity';
 import { JobApplication } from './application.entity';
+import { JobAssignment } from './assignment.entity';
 import { User } from '../auth/user.entity';
 import { JobsController } from './jobs.controller';
 import { JobsService } from './jobs.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Job, JobApplication, User]), NotificationsModule],
+  imports: [TypeOrmModule.forFeature([Job, JobApplication, JobAssignment, User]), NotificationsModule],
   controllers: [JobsController],
   providers: [JobsService],
   exports: [JobsService],
