@@ -1,0 +1,36 @@
+<step title="BackgroundTrace" date="2026-10-07T07:20:59.839" instance="677f8f" url="/api/publish" method="POST" >
+  <step title="Creating temporary deployment - FetchDeploymentManager" date="2026-10-07T07:20:59.937" /><!-- duration: 4ms -->
+  <step title="Creating temporary deployment" date="2026-10-07T07:20:59.945" /><!-- duration: 56ms -->
+  <step title="Performing fetch based deployment" date="2026-10-07T07:21:00.080" >
+    <step title="Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/bcc54c15-b841-44e9-b44d-e2a3f1ef6508.zip (71.93 MB) to /tmp/zipdeploy/extracted" date="2026-10-07T07:21:01.430" >
+      <step title="ChmodRecursive Process exited with total time taken in ms: 691" date="2026-10-07T07:23:51.273" /><!-- duration: 14ms -->
+    </step><!-- duration: 169905ms -->
+    <step title="Deployment timer started" date="2026-10-07T07:23:53.689" >
+      <step title="DeploymentManager.Deploy(id:11cc3fc9-7abc-4ef8-ba8a-9ba5ac4516de)" date="2026-10-07T07:23:53.718" >
+        <step title="Collecting changeset information" date="2026-10-07T07:23:53.788" /><!-- duration: 191ms -->
+        <step title="Updating submodules" date="2026-10-07T07:23:54.015" /><!-- duration: 1355ms -->
+        <step title="Determining deployment builder" date="2026-10-07T07:23:55.738" >
+          <step title="Builder is OneDeployBuilder" date="2026-10-07T07:23:55.927" /><!-- duration: 38ms -->
+        </step><!-- duration: 294ms -->
+        <step title="PreDeployment: context.CleanOutputPath False" date="2026-10-07T07:23:56.337" >
+          <step title="PreDeployment: context.OutputPath /home/site/wwwroot" date="2026-10-07T07:23:56.669" >
+            <step title="Building" date="2026-10-07T07:23:57.134" >
+              <step title="Executing external process" date="2026-10-07T07:23:59.937" type="process" path="starter.sh" arguments="/opt/Kudu/Scripts/absoluteTar.sh /tmp/zipdeploy/extracted/node_modules /tmp/zipdeploy/extracted/node_modules.tar.gz" >
+                <step title="Cpu: gzip(1020,6.240s)+sh(1019,0.000s)+tar(1018,2.110s)+absoluteTar.sh(1017,0.010s)=total(8.330s)" date="2026-10-07T07:25:00.675" /><!-- duration: 46ms -->
+                <step title="starter.sh: no io activity for 61s, prev-cpu=-1.000s, current-cpu=8.330s" date="2026-10-07T07:25:00.780" /><!-- duration: 30ms -->
+                <step title="Cpu: gzip(1020,14.930s)+sh(1019,0.000s)+tar(1018,5.910s)+absoluteTar.sh(1017,0.010s)=total(20.850s)" date="2026-10-07T07:26:01.783" /><!-- duration: 57ms -->
+                <step title="starter.sh: no io activity for 122s, prev-cpu=8.330s, current-cpu=20.850s" date="2026-10-07T07:26:02.208" /><!-- duration: 57ms -->
+              </step><!-- duration: 165135ms -->
+              <step title="Executing external process" date="2026-10-07T07:26:45.420" type="process" path="starter.sh" arguments="/opt/Kudu/Scripts/parallel_rsync.sh /tmp/zipdeploy/extracted /home/site/wwwroot 8 /tmp/ False False node_modules " /><!-- duration: 17212ms -->
+              <step title="Modified file to trigger a restart of the app container." date="2026-10-07T07:27:03.722" /><!-- duration: 6ms -->
+              <step title="Skip function trigger and logicapp sync because function is not enabled." date="2026-10-07T07:27:03.748" /><!-- duration: 5ms -->
+            </step><!-- duration: 187439ms -->
+          </step><!-- duration: 187909ms -->
+          <step title="Cleaning up temp files" date="2026-10-07T07:27:04.582" /><!-- duration: 17ms -->
+          <step title="Cleaning up temp files" date="2026-10-07T07:27:04.609" /><!-- duration: 510ms -->
+          <step title="Reloading status file with latest updates" date="2026-10-07T07:27:05.147" >
+            <step title="WebHooksManager.PublishEventAsync: PostDeployment" date="2026-10-07T07:27:05.154" /><!-- duration: 140ms -->
+          </step><!-- duration: 152ms -->
+          <step title="Cleaning up temporary deployment - fetch deployment was successful" date="2026-10-07T07:27:05.306" /><!-- duration: 3ms -->
+        </step><!-- duration: 189062ms -->
+      </step><!-- duration: 191699ms -->

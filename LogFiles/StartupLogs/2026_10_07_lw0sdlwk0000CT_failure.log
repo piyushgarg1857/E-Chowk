@@ -1,0 +1,1129 @@
+========== New Cold Start Attempt (2026-10-07T07:07:31.3439645+00:00) ==========
+2026-10-07T07:07:31.3439645+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-10-07T07:07:35.0840410+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-10-07T07:07:35.0916252+00:00 ContainerStatus: Container start method called.
+2026-10-07T07:07:35.0925685+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:07:35.0926881+00:00 ContainerStatus: Establishing network.
+2026-10-07T07:07:35.1025602+00:00 ContainerStatus: Pulling image: appsvc/node:22-lts_20260710.3.tuxprod.
+2026-10-07T07:07:35.9058178+00:00 ContainerStatus: Image appsvc/node:22-lts_20260710.3.tuxprod is pulled from registry 10.1.0.5:13209
+2026-10-07T07:07:35.9159713+00:00 ContainerStatus: Container is starting.
+2026-10-07T07:07:35.9230697+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:07:35.9232474+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-10-07T07:07:35.9233143+00:00 ContainerStatus: Establishing network if not established already.
+2026-10-07T07:07:35.9233709+00:00 ContainerStatus: Mounting volumes.
+2026-10-07T07:07:36.0564821+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:07:36.1125943+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-10-07T07:07:36.2124760+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:07:36.3659102+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:07:36.4058780+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:07:36.4242656+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:07:36.8729813+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for echowk-dev-api. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-10-07T07:07:36.8731325+00:00 ContainerStatus: Creating container.
+2026-10-07T07:07:36.8732094+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-10-07T07:07:36.8732768+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/6bdd54629d23_echowk-dev-api/stdout_075d3449634c4b639ed4e45a882206a2.
+2026-10-07T07:07:36.8738695+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/6bdd54629d23_echowk-dev-api/stdout_075d3449634c4b639ed4e45a882206a2.
+2026-10-07T07:07:36.8739236+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/6bdd54629d23_echowk-dev-api/stdout_075d3449634c4b639ed4e45a882206a2 for reading in non-blocking mode.
+2026-10-07T07:07:36.8739829+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/6bdd54629d23_echowk-dev-api/stdout_075d3449634c4b639ed4e45a882206a2.
+2026-10-07T07:07:36.8740198+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/6bdd54629d23_echowk-dev-api/stdout_075d3449634c4b639ed4e45a882206a2.
+2026-10-07T07:07:36.8755288+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/6bdd54629d23_echowk-dev-api/stderr_3ac23be411804efa82f1928879b6dea2.
+2026-10-07T07:07:36.8838542+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/6bdd54629d23_echowk-dev-api/stderr_3ac23be411804efa82f1928879b6dea2.
+2026-10-07T07:07:36.8839188+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/6bdd54629d23_echowk-dev-api/stderr_3ac23be411804efa82f1928879b6dea2 for reading in non-blocking mode.
+2026-10-07T07:07:36.8839789+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/6bdd54629d23_echowk-dev-api/stderr_3ac23be411804efa82f1928879b6dea2.
+2026-10-07T07:07:36.8840169+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/6bdd54629d23_echowk-dev-api/stderr_3ac23be411804efa82f1928879b6dea2.
+2026-10-07T07:07:36.8846077+00:00 ContainerStatus: Creating container with image: appsvc/node:22-lts_20260710.3.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod
+2026-10-07T07:07:38.4989528+00:00 ContainerStatus: Starting container: 6bdd54629d23_echowk-dev-api.
+2026-10-07T07:07:38.6644123+00:00 ContainerStatus: Starting watchers and probes.
+2026-10-07T07:07:38.6728683+00:00 ContainerStatus: Starting metrics collection.
+2026-10-07T07:07:38.6745166+00:00 ContainerStatus: Container is running.
+2026-10-07T07:07:38.6747131+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:07:38.9248464+00:00 ContainerStatus: Container start method finished after 3832 ms.
+2026-10-07T07:07:38.9267189+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:07:38.9271842+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-10-07T07:07:40.2989922+00:00 ContainerStream:    _____                               
+2026-10-07T07:07:40.3066865+00:00 ContainerStream:   /  _  \ __________ _________   ____  
+2026-10-07T07:07:40.3067170+00:00 ContainerStream:  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-10-07T07:07:40.3067190+00:00 ContainerStream: /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-10-07T07:07:40.3067212+00:00 ContainerStream: \____|__  /_____ \____/ |__|    \___  >
+2026-10-07T07:07:40.3067268+00:00 ContainerStream:         \/      \/                  \/ 
+2026-10-07T07:07:40.3067371+00:00 ContainerStream: A P P   S E R V I C E   O N   L I N U X
+2026-10-07T07:07:40.3067388+00:00 ContainerStream: 
+2026-10-07T07:07:40.3067421+00:00 ContainerStream: Documentation    : http://aka.ms/webapp-linux
+2026-10-07T07:07:40.3067443+00:00 ContainerStream: NodeJS quickstart: https://aka.ms/node-qs
+2026-10-07T07:07:40.3067462+00:00 ContainerStream: NodeJS Version   : v22.23.1
+2026-10-07T07:07:40.3067492+00:00 ContainerStream: Instance Name    : lw0sdlwk0000CT
+2026-10-07T07:07:40.3067522+00:00 ContainerStream: Instance Id      : 677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d
+2026-10-07T07:07:40.3067562+00:00 ContainerStream: 
+2026-10-07T07:07:40.3067581+00:00 ContainerStream: Note: Any data outside '/home' is not persisted
+2026-10-07T07:07:42.5065284+00:00 ContainerStream: Starting OpenBSD Secure Shell server: sshd.
+2026-10-07T07:07:42.5282129+00:00 ContainerStream: WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-10-07T07:07:42.6332841+00:00 ContainerStream: Updating certificates in /etc/ssl/certs...
+2026-10-07T07:08:09.7758703+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-10-07T07:08:09.7770131+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-10-07T07:08:10.0282149+00:00 ContainerStream: rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-10-07T07:08:10.1221306+00:00 ContainerStream: 4 added, 0 removed; done.
+2026-10-07T07:08:10.1229772+00:00 ContainerStream: Running hooks in /etc/ca-certificates/update.d...
+2026-10-07T07:08:10.1428573+00:00 ContainerStream: done.
+2026-10-07T07:08:10.1779680+00:00 ContainerStream: CA certificates copied and updated successfully.
+2026-10-07T07:08:10.3813300+00:00 ContainerStream: Starting periodic command scheduler: cron.
+2026-10-07T07:08:10.5849200+00:00 ContainerStream: Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2026-10-07T07:08:10.6039848+00:00 ContainerStream: Could not find operation ID in manifest. Generating an operation id...
+2026-10-07T07:08:10.6046294+00:00 ContainerStream: Build Operation ID: 569a91fc-80ae-4253-bb6e-ba8c77afc8cb
+2026-10-07T07:08:11.4650612+00:00 ContainerStream: Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2026-10-07T07:08:11.6111417+00:00 ContainerStream: Writing output script to '/opt/startup/startup.sh'
+2026-10-07T07:08:11.7967785+00:00 ContainerStream: Running #!/bin/sh
+2026-10-07T07:08:11.7968377+00:00 ContainerStream: 
+2026-10-07T07:08:11.7968418+00:00 ContainerStream: # Enter the source directory to make sure the script runs where the user expects
+2026-10-07T07:08:11.7968560+00:00 ContainerStream: cd "/home/site/wwwroot"
+2026-10-07T07:08:11.7968576+00:00 ContainerStream: 
+2026-10-07T07:08:11.7968595+00:00 ContainerStream: export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2026-10-07T07:08:11.7968613+00:00 ContainerStream: if [ -z "$PORT" ]; then
+2026-10-07T07:08:11.7968630+00:00 ContainerStream: 		export PORT=8080
+2026-10-07T07:08:11.7968645+00:00 ContainerStream: fi
+2026-10-07T07:08:11.7968661+00:00 ContainerStream: 
+2026-10-07T07:08:11.7968679+00:00 ContainerStream: echo Found tar.gz based node_modules.
+2026-10-07T07:08:11.7968719+00:00 ContainerStream: extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2026-10-07T07:08:11.7968739+00:00 ContainerStream: echo "Removing existing modules directory from root..."
+2026-10-07T07:08:11.7968756+00:00 ContainerStream: rm -fr /node_modules
+2026-10-07T07:08:11.7968772+00:00 ContainerStream: mkdir -p /node_modules
+2026-10-07T07:08:11.7968789+00:00 ContainerStream: echo Extracting modules...
+2026-10-07T07:08:11.7968805+00:00 ContainerStream: $extractionCommand
+2026-10-07T07:08:11.7968937+00:00 ContainerStream: export NODE_PATH="/node_modules":$NODE_PATH
+2026-10-07T07:08:11.7968973+00:00 ContainerStream: export PATH=/node_modules/.bin:$PATH
+2026-10-07T07:08:11.7968991+00:00 ContainerStream: if [ -d node_modules ]; then
+2026-10-07T07:08:11.7969009+00:00 ContainerStream:     mv -f node_modules _del_node_modules || true
+2026-10-07T07:08:11.7969025+00:00 ContainerStream: fi
+2026-10-07T07:08:11.7969040+00:00 ContainerStream: 
+2026-10-07T07:08:11.7969057+00:00 ContainerStream: if [ -d /node_modules ]; then
+2026-10-07T07:08:11.7969074+00:00 ContainerStream:     ln -sfn /node_modules ./node_modules 
+2026-10-07T07:08:11.7969091+00:00 ContainerStream: fi
+2026-10-07T07:08:11.7969121+00:00 ContainerStream: 
+2026-10-07T07:08:11.7969138+00:00 ContainerStream: echo "Done."
+2026-10-07T07:08:11.8050606+00:00 ContainerStream: PATH="$PATH:/home/site/wwwroot" npm run start:prod
+2026-10-07T07:08:11.8249032+00:00 ContainerStream: Found tar.gz based node_modules.
+2026-10-07T07:08:11.8256966+00:00 ContainerStream: Removing existing modules directory from root...
+2026-10-07T07:08:11.8565141+00:00 ContainerStream: Extracting modules...
+2026-10-07T07:08:33.1274832+00:00 ContainerStream: Done.
+2026-10-07T07:08:34.6994712+00:00 ContainerStream: npm info using npm@10.9.2
+2026-10-07T07:08:34.7009700+00:00 ContainerStream: npm info using node@v22.23.1
+2026-10-07T07:08:37.4131747+00:00 ContainerStream: 
+2026-10-07T07:08:37.4132391+00:00 ContainerStream: > backend@0.0.1 start:prod
+2026-10-07T07:08:37.4132425+00:00 ContainerStream: > node dist/main
+2026-10-07T07:08:37.4132442+00:00 ContainerStream: 
+2026-10-07T07:08:49.9825898+00:00 ContainerStream: [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+2026-10-07T07:08:52.1949296+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+2026-10-07T07:08:52.2831420+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +94ms[39m
+2026-10-07T07:08:52.2929708+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +10ms[39m
+2026-10-07T07:08:52.3023117+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +2ms[39m
+2026-10-07T07:08:52.3300728+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +28ms[39m
+2026-10-07T07:08:52.3301391+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+2026-10-07T07:08:52.3301529+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+2026-10-07T07:08:52.8592289+00:00 ContainerStream: [31m[Nest] 1881  - [39m10/07/2026, 7:08:52 AM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the WhatsappController (?). Please make sure that the argument AgentService at index [0] is available in the WhatsappModule module.
+2026-10-07T07:08:52.8592879+00:00 ContainerStream: 
+2026-10-07T07:08:52.8592925+00:00 ContainerStream: Potential solutions:
+2026-10-07T07:08:52.8592948+00:00 ContainerStream: - Is WhatsappModule a valid NestJS module?
+2026-10-07T07:08:52.8593073+00:00 ContainerStream: - If AgentService is a provider, is it part of the current WhatsappModule?
+2026-10-07T07:08:52.8593097+00:00 ContainerStream: - If AgentService is exported from a separate @Module, is that module imported within WhatsappModule?
+2026-10-07T07:08:52.8593114+00:00 ContainerStream:   @Module({
+2026-10-07T07:08:52.8593134+00:00 ContainerStream:     imports: [ /* the Module containing AgentService */ ]
+2026-10-07T07:08:52.8593151+00:00 ContainerStream:   })
+2026-10-07T07:08:52.8593166+00:00 ContainerStream: 
+2026-10-07T07:08:52.8593187+00:00 ContainerStream: For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+2026-10-07T07:08:52.8593236+00:00 ContainerStream:     at Injector.lookupComponentInParentModules (/node_modules/[4m@nestjs/core[24m/injector/injector.js:290:19)
+2026-10-07T07:08:52.8593258+00:00 ContainerStream: [90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+2026-10-07T07:08:52.8593279+00:00 ContainerStream:     at async resolveParam (/node_modules/[4m@nestjs/core[24m/injector/injector.js:140:38)
+2026-10-07T07:08:52.8593296+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:08:52.8593319+00:00 ContainerStream:     at async Injector.resolveConstructorParams (/node_modules/[4m@nestjs/core[24m/injector/injector.js:169:27)
+2026-10-07T07:08:52.8593339+00:00 ContainerStream:     at async Injector.loadInstance (/node_modules/[4m@nestjs/core[24m/injector/injector.js:75:13)
+2026-10-07T07:08:52.8593380+00:00 ContainerStream:     at async Injector.loadController (/node_modules/[4m@nestjs/core[24m/injector/injector.js:94:9)
+2026-10-07T07:08:52.8593401+00:00 ContainerStream:     at async /node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:68:13
+2026-10-07T07:08:52.8593419+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:08:52.8593442+00:00 ContainerStream:     at async InstanceLoader.createInstancesOfControllers (/node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:67:9) {
+2026-10-07T07:08:52.8593460+00:00 ContainerStream:   type: [32m'WhatsappController'[39m,
+2026-10-07T07:08:52.8593477+00:00 ContainerStream:   context: {
+2026-10-07T07:08:52.8593494+00:00 ContainerStream:     index: [33m0[39m,
+2026-10-07T07:08:52.8593531+00:00 ContainerStream:     dependencies: [
+2026-10-07T07:08:52.8593550+00:00 ContainerStream:       [36m[class AgentService][39m
+2026-10-07T07:08:52.8593566+00:00 ContainerStream:     ],
+2026-10-07T07:08:52.8593585+00:00 ContainerStream:     name: [36m[class AgentService][39m
+2026-10-07T07:08:52.8593601+00:00 ContainerStream:   },
+2026-10-07T07:08:52.8593617+00:00 ContainerStream:   metadata: {
+2026-10-07T07:08:52.8593635+00:00 ContainerStream:     id: [32m'b2d0a5988072ca32ca8b6'[39m
+2026-10-07T07:08:52.8593651+00:00 ContainerStream:   },
+2026-10-07T07:08:52.8593800+00:00 ContainerStream:   moduleRef: {
+2026-10-07T07:08:52.8593841+00:00 ContainerStream:     id: [32m'064e1bb0fe39b1d9d93a7'[39m
+2026-10-07T07:08:52.8593858+00:00 ContainerStream:   }
+2026-10-07T07:08:52.8593874+00:00 ContainerStream: }
+2026-10-07T07:08:52.9191575+00:00 ContainerStream: npm http fetch GET 200 https://registry.npmjs.org/npm 1160ms
+2026-10-07T07:08:52.9386447+00:00 ContainerStream: npm notice
+2026-10-07T07:08:52.9387096+00:00 ContainerStream: npm notice New major version of npm available! 10.9.2 -> 12.2.0
+2026-10-07T07:08:52.9387134+00:00 ContainerStream: npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+2026-10-07T07:08:52.9387155+00:00 ContainerStream: npm notice To update run: npm install -g npm@12.2.0
+2026-10-07T07:08:52.9387172+00:00 ContainerStream: npm notice
+2026-10-07T07:08:53.2418152+00:00 ContainerStatus: Container has finished running with exit code: 1.
+2026-10-07T07:08:53.2596662+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-10-07T07:08:53.2701404+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-10-07T07:08:53.2706486+00:00 ContainerStatus: Stopping container: 6bdd54629d23_echowk-dev-api.
+2026-10-07T07:08:53.3790467+00:00 ContainerStatus: Deleting container: 6bdd54629d23_echowk-dev-api. Retry count = 0
+2026-10-07T07:08:57.3379072+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-10-07T07:08:57.3465258+00:00 ContainerStatus: Container is terminated. Total time elapsed: 4084 ms.
+2026-10-07T07:08:57.4261504+00:00 ContainerStatus: Site container: echowk-dev-api terminated during site startup.
+2026-10-07T07:08:57.4562507+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:08:57.5347963+00:00 ContainerStatus: Site startup probe failed after 78.5109097 seconds.
+2026-10-07T07:08:57.9255725+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:08:57.9493217+00:00 ContainerStatus: Failed to start site. Revert by stopping site.
+2026-10-07T07:08:57.9577604+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:08:58.0088231+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:08:58.0160183+00:00 ContainerStatus: Site: echowk-dev-api stopped.
+========== New Cold Start Attempt (2026-10-07T07:08:58.0369786+00:00) ==========
+2026-10-07T07:08:58.0369786+00:00 ContainerStatus: State: Stopping, Action: UnmountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:08:58.8758599+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:08:59.1747945+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:08:59 (UTC), DetailsLevel: ERR
+2026-10-07T07:09:00.6369075+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:08:59 (UTC), DetailsLevel: ERR
+2026-10-07T07:09:01.5264580+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:08:59 (UTC), DetailsLevel: ERR
+2026-10-07T07:09:03.6842955+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:08:59 (UTC), DetailsLevel: ERR
+2026-10-07T07:09:03.6843848+00:00 ContainerStatus: Container start method called.
+2026-10-07T07:09:03.6844246+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:09:03.6923962+00:00 ContainerStatus: Establishing network.
+2026-10-07T07:09:03.6925969+00:00 ContainerStatus: Pulling image: appsvc/node:22-lts_20260710.3.tuxprod.
+2026-10-07T07:09:04.2375789+00:00 ContainerStatus: Container is starting.
+2026-10-07T07:09:04.2447497+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Mounting volumes for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:09:04.2449906+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-10-07T07:09:04.2456201+00:00 ContainerStatus: Establishing network if not established already.
+2026-10-07T07:09:04.2458520+00:00 ContainerStatus: Mounting volumes.
+2026-10-07T07:09:04.2461106+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:09:04.2835693+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-10-07T07:09:04.2948260+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:09:04.3996439+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:09:04.4594952+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:09:04.5082227+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:09:05.1865245+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for echowk-dev-api. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-10-07T07:09:05.1872317+00:00 ContainerStatus: Creating container.
+2026-10-07T07:09:05.1876491+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-10-07T07:09:05.1883251+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/b56feb260d97_echowk-dev-api/stdout_48eaa52c4126455aa17cbd80e0058bb0.
+2026-10-07T07:09:05.1884845+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/b56feb260d97_echowk-dev-api/stdout_48eaa52c4126455aa17cbd80e0058bb0.
+2026-10-07T07:09:05.1885331+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/b56feb260d97_echowk-dev-api/stdout_48eaa52c4126455aa17cbd80e0058bb0 for reading in non-blocking mode.
+2026-10-07T07:09:05.1885837+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/b56feb260d97_echowk-dev-api/stdout_48eaa52c4126455aa17cbd80e0058bb0.
+2026-10-07T07:09:05.1886190+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/b56feb260d97_echowk-dev-api/stdout_48eaa52c4126455aa17cbd80e0058bb0.
+2026-10-07T07:09:05.2270538+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/b56feb260d97_echowk-dev-api/stderr_949244efec714188a026c20e829e7d8f.
+2026-10-07T07:09:05.2449143+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/b56feb260d97_echowk-dev-api/stderr_949244efec714188a026c20e829e7d8f.
+2026-10-07T07:09:05.2456684+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/b56feb260d97_echowk-dev-api/stderr_949244efec714188a026c20e829e7d8f for reading in non-blocking mode.
+2026-10-07T07:09:05.2462957+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/b56feb260d97_echowk-dev-api/stderr_949244efec714188a026c20e829e7d8f.
+2026-10-07T07:09:05.2463498+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/b56feb260d97_echowk-dev-api/stderr_949244efec714188a026c20e829e7d8f.
+2026-10-07T07:09:05.2648977+00:00 ContainerStatus: Creating container with image: appsvc/node:22-lts_20260710.3.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod
+2026-10-07T07:09:06.4480431+00:00 ContainerStatus: Starting container: b56feb260d97_echowk-dev-api.
+2026-10-07T07:09:06.6332784+00:00 ContainerStatus: Starting watchers and probes.
+2026-10-07T07:09:06.6344111+00:00 ContainerStatus: Starting metrics collection.
+2026-10-07T07:09:06.6673720+00:00 ContainerStatus: Container is running.
+2026-10-07T07:09:06.6685089+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:09:07.0405800+00:00 ContainerStream:    _____                               
+2026-10-07T07:09:07.0406073+00:00 ContainerStream:   /  _  \ __________ _________   ____  
+2026-10-07T07:09:07.0406094+00:00 ContainerStream:  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-10-07T07:09:07.0406108+00:00 ContainerStream: /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-10-07T07:09:07.0406122+00:00 ContainerStream: \____|__  /_____ \____/ |__|    \___  >
+2026-10-07T07:09:07.0406136+00:00 ContainerStream:         \/      \/                  \/ 
+2026-10-07T07:09:07.0406151+00:00 ContainerStream: A P P   S E R V I C E   O N   L I N U X
+2026-10-07T07:09:07.0406164+00:00 ContainerStream: 
+2026-10-07T07:09:07.0406179+00:00 ContainerStream: Documentation    : http://aka.ms/webapp-linux
+2026-10-07T07:09:07.0406261+00:00 ContainerStream: NodeJS quickstart: https://aka.ms/node-qs
+2026-10-07T07:09:07.0406280+00:00 ContainerStream: NodeJS Version   : v22.23.1
+2026-10-07T07:09:07.0406294+00:00 ContainerStream: Instance Name    : lw0sdlwk0000CT
+2026-10-07T07:09:07.0406313+00:00 ContainerStream: Instance Id      : 677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d
+2026-10-07T07:09:07.0406325+00:00 ContainerStream: 
+2026-10-07T07:09:07.0406339+00:00 ContainerStream: Note: Any data outside '/home' is not persisted
+2026-10-07T07:09:07.2947539+00:00 ContainerStatus: Container start method finished after 3532 ms.
+2026-10-07T07:09:07.3222160+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:09:07.3228459+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-10-07T07:09:11.2200713+00:00 ContainerStream: Starting OpenBSD Secure Shell server: sshd.
+2026-10-07T07:09:11.2411816+00:00 ContainerStream: WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-10-07T07:09:11.3118394+00:00 ContainerStream: Updating certificates in /etc/ssl/certs...
+2026-10-07T07:09:34.4690842+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-10-07T07:09:34.4691271+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-10-07T07:09:35.0952047+00:00 ContainerStream: rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-10-07T07:09:35.1995445+00:00 ContainerStream: 4 added, 0 removed; done.
+2026-10-07T07:09:35.2071341+00:00 ContainerStream: Running hooks in /etc/ca-certificates/update.d...
+2026-10-07T07:09:35.3961518+00:00 ContainerStream: done.
+2026-10-07T07:09:35.4444044+00:00 ContainerStream: CA certificates copied and updated successfully.
+2026-10-07T07:09:36.0999700+00:00 ContainerStream: Starting periodic command scheduler: cron.
+2026-10-07T07:09:37.0282139+00:00 ContainerStream: Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2026-10-07T07:09:37.0876319+00:00 ContainerStream: Could not find operation ID in manifest. Generating an operation id...
+2026-10-07T07:09:37.0876611+00:00 ContainerStream: Build Operation ID: acb0d9da-e293-4199-bbec-9433e3b8f825
+2026-10-07T07:09:38.2218191+00:00 ContainerStream: Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2026-10-07T07:09:38.3836670+00:00 ContainerStream: Writing output script to '/opt/startup/startup.sh'
+2026-10-07T07:09:38.5674803+00:00 ContainerStream: Running #!/bin/sh
+2026-10-07T07:09:38.5675262+00:00 ContainerStream: 
+2026-10-07T07:09:38.5675286+00:00 ContainerStream: # Enter the source directory to make sure the script runs where the user expects
+2026-10-07T07:09:38.5675300+00:00 ContainerStream: cd "/home/site/wwwroot"
+2026-10-07T07:09:38.5675312+00:00 ContainerStream: 
+2026-10-07T07:09:38.5675327+00:00 ContainerStream: export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2026-10-07T07:09:38.5675344+00:00 ContainerStream: if [ -z "$PORT" ]; then
+2026-10-07T07:09:38.5675358+00:00 ContainerStream: 		export PORT=8080
+2026-10-07T07:09:38.5675371+00:00 ContainerStream: fi
+2026-10-07T07:09:38.5675383+00:00 ContainerStream: 
+2026-10-07T07:09:38.5675398+00:00 ContainerStream: echo Found tar.gz based node_modules.
+2026-10-07T07:09:38.5675414+00:00 ContainerStream: extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2026-10-07T07:09:38.5675527+00:00 ContainerStream: echo "Removing existing modules directory from root..."
+2026-10-07T07:09:38.5675542+00:00 ContainerStream: rm -fr /node_modules
+2026-10-07T07:09:38.5675556+00:00 ContainerStream: mkdir -p /node_modules
+2026-10-07T07:09:38.5675569+00:00 ContainerStream: echo Extracting modules...
+2026-10-07T07:09:38.5675583+00:00 ContainerStream: $extractionCommand
+2026-10-07T07:09:38.5675597+00:00 ContainerStream: export NODE_PATH="/node_modules":$NODE_PATH
+2026-10-07T07:09:38.5675610+00:00 ContainerStream: export PATH=/node_modules/.bin:$PATH
+2026-10-07T07:09:38.5675623+00:00 ContainerStream: if [ -d node_modules ]; then
+2026-10-07T07:09:38.5675637+00:00 ContainerStream:     mv -f node_modules _del_node_modules || true
+2026-10-07T07:09:38.5675650+00:00 ContainerStream: fi
+2026-10-07T07:09:38.5675662+00:00 ContainerStream: 
+2026-10-07T07:09:38.5675675+00:00 ContainerStream: if [ -d /node_modules ]; then
+2026-10-07T07:09:38.5675691+00:00 ContainerStream:     ln -sfn /node_modules ./node_modules 
+2026-10-07T07:09:38.5675702+00:00 ContainerStream: fi
+2026-10-07T07:09:38.5675714+00:00 ContainerStream: 
+2026-10-07T07:09:38.5675750+00:00 ContainerStream: echo "Done."
+2026-10-07T07:09:38.5781722+00:00 ContainerStream: PATH="$PATH:/home/site/wwwroot" npm run start:prod
+2026-10-07T07:09:38.5796247+00:00 ContainerStream: Found tar.gz based node_modules.
+2026-10-07T07:09:38.5972424+00:00 ContainerStream: Removing existing modules directory from root...
+2026-10-07T07:09:38.6255297+00:00 ContainerStream: Extracting modules...
+2026-10-07T07:10:03.2351417+00:00 ContainerStream: Done.
+2026-10-07T07:10:07.8479574+00:00 ContainerStream: npm info using npm@10.9.2
+2026-10-07T07:10:07.8496049+00:00 ContainerStream: npm info using node@v22.23.1
+2026-10-07T07:10:10.5591371+00:00 ContainerStream: 
+2026-10-07T07:10:10.5591864+00:00 ContainerStream: > backend@0.0.1 start:prod
+2026-10-07T07:10:10.5591883+00:00 ContainerStream: > node dist/main
+2026-10-07T07:10:10.5591895+00:00 ContainerStream: 
+2026-10-07T07:10:17.6614751+00:00 ContainerStream: [dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+2026-10-07T07:10:19.6103367+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+2026-10-07T07:10:19.7155083+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +106ms[39m
+2026-10-07T07:10:19.7168577+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+2026-10-07T07:10:19.7173491+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +1ms[39m
+2026-10-07T07:10:19.7270837+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +9ms[39m
+2026-10-07T07:10:19.7276937+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+2026-10-07T07:10:19.7351182+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:10:19 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +7ms[39m
+2026-10-07T07:10:20.3298214+00:00 ContainerStream: [31m[Nest] 1888  - [39m10/07/2026, 7:10:20 AM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the WhatsappController (?). Please make sure that the argument AgentService at index [0] is available in the WhatsappModule module.
+2026-10-07T07:10:20.3298782+00:00 ContainerStream: 
+2026-10-07T07:10:20.3298806+00:00 ContainerStream: Potential solutions:
+2026-10-07T07:10:20.3298828+00:00 ContainerStream: - Is WhatsappModule a valid NestJS module?
+2026-10-07T07:10:20.3298844+00:00 ContainerStream: - If AgentService is a provider, is it part of the current WhatsappModule?
+2026-10-07T07:10:20.3298861+00:00 ContainerStream: - If AgentService is exported from a separate @Module, is that module imported within WhatsappModule?
+2026-10-07T07:10:20.3298874+00:00 ContainerStream:   @Module({
+2026-10-07T07:10:20.3298889+00:00 ContainerStream:     imports: [ /* the Module containing AgentService */ ]
+2026-10-07T07:10:20.3298903+00:00 ContainerStream:   })
+2026-10-07T07:10:20.3299025+00:00 ContainerStream: 
+2026-10-07T07:10:20.3299043+00:00 ContainerStream: For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+2026-10-07T07:10:20.3299061+00:00 ContainerStream:     at Injector.lookupComponentInParentModules (/node_modules/[4m@nestjs/core[24m/injector/injector.js:290:19)
+2026-10-07T07:10:20.3299078+00:00 ContainerStream: [90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+2026-10-07T07:10:20.3299094+00:00 ContainerStream:     at async resolveParam (/node_modules/[4m@nestjs/core[24m/injector/injector.js:140:38)
+2026-10-07T07:10:20.3299108+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:10:20.3299125+00:00 ContainerStream:     at async Injector.resolveConstructorParams (/node_modules/[4m@nestjs/core[24m/injector/injector.js:169:27)
+2026-10-07T07:10:20.3299142+00:00 ContainerStream:     at async Injector.loadInstance (/node_modules/[4m@nestjs/core[24m/injector/injector.js:75:13)
+2026-10-07T07:10:20.3299159+00:00 ContainerStream:     at async Injector.loadController (/node_modules/[4m@nestjs/core[24m/injector/injector.js:94:9)
+2026-10-07T07:10:20.3299176+00:00 ContainerStream:     at async /node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:68:13
+2026-10-07T07:10:20.3299190+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:10:20.3299208+00:00 ContainerStream:     at async InstanceLoader.createInstancesOfControllers (/node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:67:9) {
+2026-10-07T07:10:20.3299247+00:00 ContainerStream:   type: [32m'WhatsappController'[39m,
+2026-10-07T07:10:20.3299260+00:00 ContainerStream:   context: {
+2026-10-07T07:10:20.3299273+00:00 ContainerStream:     index: [33m0[39m,
+2026-10-07T07:10:20.3299287+00:00 ContainerStream:     dependencies: [
+2026-10-07T07:10:20.3299301+00:00 ContainerStream:       [36m[class AgentService][39m
+2026-10-07T07:10:20.3299314+00:00 ContainerStream:     ],
+2026-10-07T07:10:20.3299329+00:00 ContainerStream:     name: [36m[class AgentService][39m
+2026-10-07T07:10:20.3299341+00:00 ContainerStream:   },
+2026-10-07T07:10:20.3299354+00:00 ContainerStream:   metadata: {
+2026-10-07T07:10:20.3299369+00:00 ContainerStream:     id: [32m'05d42f27ba084e1a9332d'[39m
+2026-10-07T07:10:20.3299381+00:00 ContainerStream:   },
+2026-10-07T07:10:20.3299393+00:00 ContainerStream:   moduleRef: {
+2026-10-07T07:10:20.3299408+00:00 ContainerStream:     id: [32m'db53d86abd87de5f4be52'[39m
+2026-10-07T07:10:20.3299420+00:00 ContainerStream:   }
+2026-10-07T07:10:20.3299456+00:00 ContainerStream: }
+2026-10-07T07:10:20.4553793+00:00 ContainerStream: npm http fetch GET 200 https://registry.npmjs.org/npm 551ms
+2026-10-07T07:10:20.4746640+00:00 ContainerStream: npm notice
+2026-10-07T07:10:20.4747161+00:00 ContainerStream: npm notice New major version of npm available! 10.9.2 -> 12.2.0
+2026-10-07T07:10:20.4747186+00:00 ContainerStream: npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+2026-10-07T07:10:20.4747201+00:00 ContainerStream: npm notice To update run: npm install -g npm@12.2.0
+2026-10-07T07:10:20.4747216+00:00 ContainerStream: npm notice
+2026-10-07T07:10:20.6339692+00:00 ContainerStatus: Container has finished running with exit code: 1.
+2026-10-07T07:10:20.6340793+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-10-07T07:10:20.6619324+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-10-07T07:10:20.6620346+00:00 ContainerStatus: Stopping container: b56feb260d97_echowk-dev-api.
+2026-10-07T07:10:20.7905580+00:00 ContainerStatus: Deleting container: b56feb260d97_echowk-dev-api. Retry count = 0
+2026-10-07T07:10:24.5883638+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-10-07T07:10:24.5970972+00:00 ContainerStatus: Container is terminated. Total time elapsed: 3955 ms.
+2026-10-07T07:10:24.5973262+00:00 ContainerStatus: Site container: echowk-dev-api terminated during site startup.
+2026-10-07T07:10:24.6254614+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:08:57, LastErrorDetails: Container exited with exit code 1 during startup after 78.7s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:10:24.6463100+00:00 ContainerStatus: Site startup probe failed after 77.2952149 seconds.
+2026-10-07T07:10:24.8493856+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:10:24.8773203+00:00 ContainerStatus: Failed to start site. Revert by stopping site.
+2026-10-07T07:10:24.8779745+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:10:24.8782855+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:10:24.8783113+00:00 ContainerStatus: Site: echowk-dev-api stopped.
+========== New Cold Start Attempt (2026-10-07T07:10:24.8988570+00:00) ==========
+2026-10-07T07:10:24.8988570+00:00 ContainerStatus: State: Stopping, Action: UnmountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:10:25.6506914+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:10:25.9505876+00:00 ContainerStatus: Site: echowk-dev-api will be blocked for 1 minutes till 10/07/2026 07:11:25
+2026-10-07T07:10:25.9517435+00:00 ContainerStatus: State: Blocked, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site: echowk-dev-api will be blocked for 1 minutes till 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:26.1199557+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:10:26 (UTC), DetailsLevel: WARN
+2026-10-07T07:10:27.9248020+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:10:26 (UTC), DetailsLevel: WARN
+2026-10-07T07:10:28.6107212+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:28.6108193+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:33.1847491+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:33.1849454+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:38.3267735+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:38.3269214+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:43.4346993+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:43.4347614+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:48.5626112+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:48.5626865+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:53.8071877+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:53.8072154+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:55.4107031+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:55.4107645+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:10:58.9724652+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:10:59.0091966+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:11:04.1427625+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:04.1427942+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:11:09.3394528+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:09.3400013+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:11:14.5208077+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:14.5208447+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:11:19.6359985+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:19.6361072+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:11:24.7774298+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:24.7776195+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:11:25.9554823+00:00 ContainerStatus: Site: echowk-dev-api is unblocked.
+2026-10-07T07:11:29.9237710+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:32.5326317+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:11:25, DetailsLevel: WARN
+2026-10-07T07:11:32.5328541+00:00 ContainerStatus: Container start method called.
+2026-10-07T07:11:32.5413242+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:11:32.5414878+00:00 ContainerStatus: Establishing network.
+2026-10-07T07:11:32.5415665+00:00 ContainerStatus: Pulling image: appsvc/node:22-lts_20260710.3.tuxprod.
+2026-10-07T07:11:32.9087865+00:00 ContainerStatus: Container is starting.
+2026-10-07T07:11:32.9092168+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Mounting volumes for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:11:32.9093196+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-10-07T07:11:32.9096844+00:00 ContainerStatus: Establishing network if not established already.
+2026-10-07T07:11:32.9100336+00:00 ContainerStatus: Mounting volumes.
+2026-10-07T07:11:32.9366828+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:11:32.9770300+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-10-07T07:11:32.9973606+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:11:33.0076881+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:11:33.0581727+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:11:33.1180995+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:11:33.6036140+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for echowk-dev-api. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-10-07T07:11:33.6037151+00:00 ContainerStatus: Creating container.
+2026-10-07T07:11:33.6037853+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-10-07T07:11:33.6038475+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/1a419f251074_echowk-dev-api/stdout_75697603b67f46208627143ef70f14cf.
+2026-10-07T07:11:33.6043893+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/1a419f251074_echowk-dev-api/stdout_75697603b67f46208627143ef70f14cf.
+2026-10-07T07:11:33.6044669+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/1a419f251074_echowk-dev-api/stdout_75697603b67f46208627143ef70f14cf for reading in non-blocking mode.
+2026-10-07T07:11:33.6045444+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/1a419f251074_echowk-dev-api/stdout_75697603b67f46208627143ef70f14cf.
+2026-10-07T07:11:33.6046077+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/1a419f251074_echowk-dev-api/stdout_75697603b67f46208627143ef70f14cf.
+2026-10-07T07:11:33.6048326+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/1a419f251074_echowk-dev-api/stderr_720eafcbbea046b9b200789141498715.
+2026-10-07T07:11:33.6051924+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/1a419f251074_echowk-dev-api/stderr_720eafcbbea046b9b200789141498715.
+2026-10-07T07:11:33.6215539+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/1a419f251074_echowk-dev-api/stderr_720eafcbbea046b9b200789141498715 for reading in non-blocking mode.
+2026-10-07T07:11:33.6219697+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/1a419f251074_echowk-dev-api/stderr_720eafcbbea046b9b200789141498715.
+2026-10-07T07:11:33.6221003+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/1a419f251074_echowk-dev-api/stderr_720eafcbbea046b9b200789141498715.
+2026-10-07T07:11:33.6238128+00:00 ContainerStatus: Creating container with image: appsvc/node:22-lts_20260710.3.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod
+2026-10-07T07:11:34.4324283+00:00 ContainerStatus: Starting container: 1a419f251074_echowk-dev-api.
+2026-10-07T07:11:34.5579222+00:00 ContainerStatus: Starting watchers and probes.
+2026-10-07T07:11:34.5671443+00:00 ContainerStatus: Starting metrics collection.
+2026-10-07T07:11:34.5679534+00:00 ContainerStatus: Container is running.
+2026-10-07T07:11:34.5680522+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:11:34.7669517+00:00 ContainerStream:    _____                               
+2026-10-07T07:11:34.7669836+00:00 ContainerStream:   /  _  \ __________ _________   ____  
+2026-10-07T07:11:34.7669855+00:00 ContainerStream:  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-10-07T07:11:34.7669869+00:00 ContainerStream: /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-10-07T07:11:34.7669884+00:00 ContainerStream: \____|__  /_____ \____/ |__|    \___  >
+2026-10-07T07:11:34.7669898+00:00 ContainerStream:         \/      \/                  \/ 
+2026-10-07T07:11:34.7669912+00:00 ContainerStream: A P P   S E R V I C E   O N   L I N U X
+2026-10-07T07:11:34.7669926+00:00 ContainerStream: 
+2026-10-07T07:11:34.7669941+00:00 ContainerStream: Documentation    : http://aka.ms/webapp-linux
+2026-10-07T07:11:34.7669957+00:00 ContainerStream: NodeJS quickstart: https://aka.ms/node-qs
+2026-10-07T07:11:34.7669971+00:00 ContainerStream: NodeJS Version   : v22.23.1
+2026-10-07T07:11:34.7669985+00:00 ContainerStream: Instance Name    : lw0sdlwk0000CT
+2026-10-07T07:11:34.7670003+00:00 ContainerStream: Instance Id      : 677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d
+2026-10-07T07:11:34.7670015+00:00 ContainerStream: 
+2026-10-07T07:11:34.7670051+00:00 ContainerStream: Note: Any data outside '/home' is not persisted
+2026-10-07T07:11:35.1210440+00:00 ContainerStatus: Container start method finished after 2586 ms.
+2026-10-07T07:11:35.1578020+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:11:35.1579209+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-10-07T07:11:41.2060855+00:00 ContainerStream: Starting OpenBSD Secure Shell server: sshd.
+2026-10-07T07:11:41.2324787+00:00 ContainerStream: WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-10-07T07:11:41.3231667+00:00 ContainerStream: Updating certificates in /etc/ssl/certs...
+2026-10-07T07:12:09.6622768+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-10-07T07:12:09.6709816+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-10-07T07:12:10.2175620+00:00 ContainerStream: rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-10-07T07:12:10.2647070+00:00 ContainerStream: 4 added, 0 removed; done.
+2026-10-07T07:12:10.2748166+00:00 ContainerStream: Running hooks in /etc/ca-certificates/update.d...
+2026-10-07T07:12:10.2845483+00:00 ContainerStream: done.
+2026-10-07T07:12:10.3250468+00:00 ContainerStream: CA certificates copied and updated successfully.
+2026-10-07T07:12:10.5492755+00:00 ContainerStream: Starting periodic command scheduler: cron.
+2026-10-07T07:12:10.7689116+00:00 ContainerStream: Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2026-10-07T07:12:10.9829935+00:00 ContainerStream: Could not find operation ID in manifest. Generating an operation id...
+2026-10-07T07:12:10.9921098+00:00 ContainerStream: Build Operation ID: f2447272-d604-4913-ac7e-37b9219ab8a5
+2026-10-07T07:12:11.9748585+00:00 ContainerStream: Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2026-10-07T07:12:12.1098135+00:00 ContainerStream: Writing output script to '/opt/startup/startup.sh'
+2026-10-07T07:12:12.3335913+00:00 ContainerStream: Running #!/bin/sh
+2026-10-07T07:12:12.3336441+00:00 ContainerStream: 
+2026-10-07T07:12:12.3336466+00:00 ContainerStream: # Enter the source directory to make sure the script runs where the user expects
+2026-10-07T07:12:12.3336482+00:00 ContainerStream: cd "/home/site/wwwroot"
+2026-10-07T07:12:12.3336495+00:00 ContainerStream: 
+2026-10-07T07:12:12.3336606+00:00 ContainerStream: export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2026-10-07T07:12:12.3336620+00:00 ContainerStream: if [ -z "$PORT" ]; then
+2026-10-07T07:12:12.3336634+00:00 ContainerStream: 		export PORT=8080
+2026-10-07T07:12:12.3336646+00:00 ContainerStream: fi
+2026-10-07T07:12:12.3336659+00:00 ContainerStream: 
+2026-10-07T07:12:12.3336674+00:00 ContainerStream: echo Found tar.gz based node_modules.
+2026-10-07T07:12:12.3336690+00:00 ContainerStream: extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2026-10-07T07:12:12.3336706+00:00 ContainerStream: echo "Removing existing modules directory from root..."
+2026-10-07T07:12:12.3336719+00:00 ContainerStream: rm -fr /node_modules
+2026-10-07T07:12:12.3336733+00:00 ContainerStream: mkdir -p /node_modules
+2026-10-07T07:12:12.3336747+00:00 ContainerStream: echo Extracting modules...
+2026-10-07T07:12:12.3336761+00:00 ContainerStream: $extractionCommand
+2026-10-07T07:12:12.3336776+00:00 ContainerStream: export NODE_PATH="/node_modules":$NODE_PATH
+2026-10-07T07:12:12.3336790+00:00 ContainerStream: export PATH=/node_modules/.bin:$PATH
+2026-10-07T07:12:12.3336820+00:00 ContainerStream: if [ -d node_modules ]; then
+2026-10-07T07:12:12.3336837+00:00 ContainerStream:     mv -f node_modules _del_node_modules || true
+2026-10-07T07:12:12.3336849+00:00 ContainerStream: fi
+2026-10-07T07:12:12.3336863+00:00 ContainerStream: 
+2026-10-07T07:12:12.3336877+00:00 ContainerStream: if [ -d /node_modules ]; then
+2026-10-07T07:12:12.3336891+00:00 ContainerStream:     ln -sfn /node_modules ./node_modules 
+2026-10-07T07:12:12.3336904+00:00 ContainerStream: fi
+2026-10-07T07:12:12.3336916+00:00 ContainerStream: 
+2026-10-07T07:12:12.3336929+00:00 ContainerStream: echo "Done."
+2026-10-07T07:12:12.3443084+00:00 ContainerStream: PATH="$PATH:/home/site/wwwroot" npm run start:prod
+2026-10-07T07:12:12.3801207+00:00 ContainerStream: Found tar.gz based node_modules.
+2026-10-07T07:12:12.3904283+00:00 ContainerStream: Removing existing modules directory from root...
+2026-10-07T07:12:12.4281534+00:00 ContainerStream: Extracting modules...
+2026-10-07T07:12:48.7696586+00:00 ContainerStream: Done.
+2026-10-07T07:12:50.2663708+00:00 ContainerStream: npm info using npm@10.9.2
+2026-10-07T07:12:50.2678756+00:00 ContainerStream: npm info using node@v22.23.1
+2026-10-07T07:12:52.4556665+00:00 ContainerStream: 
+2026-10-07T07:12:52.4557249+00:00 ContainerStream: > backend@0.0.1 start:prod
+2026-10-07T07:12:52.4557268+00:00 ContainerStream: > node dist/main
+2026-10-07T07:12:52.4557281+00:00 ContainerStream: 
+2026-10-07T07:12:59.1627364+00:00 ContainerStream: [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+2026-10-07T07:13:00.9742440+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:00 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+2026-10-07T07:13:01.0767299+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +112ms[39m
+2026-10-07T07:13:01.0784957+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+2026-10-07T07:13:01.0878881+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +7ms[39m
+2026-10-07T07:13:01.0879441+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+2026-10-07T07:13:01.0885612+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+2026-10-07T07:13:01.1051740+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +7ms[39m
+2026-10-07T07:13:01.3581970+00:00 ContainerStream: [31m[Nest] 1881  - [39m10/07/2026, 7:13:01 AM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the WhatsappController (?). Please make sure that the argument AgentService at index [0] is available in the WhatsappModule module.
+2026-10-07T07:13:01.3653237+00:00 ContainerStream: 
+2026-10-07T07:13:01.3653275+00:00 ContainerStream: Potential solutions:
+2026-10-07T07:13:01.3653291+00:00 ContainerStream: - Is WhatsappModule a valid NestJS module?
+2026-10-07T07:13:01.3653305+00:00 ContainerStream: - If AgentService is a provider, is it part of the current WhatsappModule?
+2026-10-07T07:13:01.3653321+00:00 ContainerStream: - If AgentService is exported from a separate @Module, is that module imported within WhatsappModule?
+2026-10-07T07:13:01.3653332+00:00 ContainerStream:   @Module({
+2026-10-07T07:13:01.3653346+00:00 ContainerStream:     imports: [ /* the Module containing AgentService */ ]
+2026-10-07T07:13:01.3653360+00:00 ContainerStream:   })
+2026-10-07T07:13:01.3653375+00:00 ContainerStream: 
+2026-10-07T07:13:01.3653395+00:00 ContainerStream: For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+2026-10-07T07:13:01.3653433+00:00 ContainerStream:     at Injector.lookupComponentInParentModules (/node_modules/[4m@nestjs/core[24m/injector/injector.js:290:19)
+2026-10-07T07:13:01.3653447+00:00 ContainerStream: [90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+2026-10-07T07:13:01.3653462+00:00 ContainerStream:     at async resolveParam (/node_modules/[4m@nestjs/core[24m/injector/injector.js:140:38)
+2026-10-07T07:13:01.3653474+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:13:01.3653491+00:00 ContainerStream:     at async Injector.resolveConstructorParams (/node_modules/[4m@nestjs/core[24m/injector/injector.js:169:27)
+2026-10-07T07:13:01.3653506+00:00 ContainerStream:     at async Injector.loadInstance (/node_modules/[4m@nestjs/core[24m/injector/injector.js:75:13)
+2026-10-07T07:13:01.3653521+00:00 ContainerStream:     at async Injector.loadController (/node_modules/[4m@nestjs/core[24m/injector/injector.js:94:9)
+2026-10-07T07:13:01.3653536+00:00 ContainerStream:     at async /node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:68:13
+2026-10-07T07:13:01.3653548+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:13:01.3653564+00:00 ContainerStream:     at async InstanceLoader.createInstancesOfControllers (/node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:67:9) {
+2026-10-07T07:13:01.3653578+00:00 ContainerStream:   type: [32m'WhatsappController'[39m,
+2026-10-07T07:13:01.3653589+00:00 ContainerStream:   context: {
+2026-10-07T07:13:01.3653735+00:00 ContainerStream:     index: [33m0[39m,
+2026-10-07T07:13:01.3653750+00:00 ContainerStream:     dependencies: [
+2026-10-07T07:13:01.3653765+00:00 ContainerStream:       [36m[class AgentService][39m
+2026-10-07T07:13:01.3653778+00:00 ContainerStream:     ],
+2026-10-07T07:13:01.3653792+00:00 ContainerStream:     name: [36m[class AgentService][39m
+2026-10-07T07:13:01.3653804+00:00 ContainerStream:   },
+2026-10-07T07:13:01.3653817+00:00 ContainerStream:   metadata: {
+2026-10-07T07:13:01.3653832+00:00 ContainerStream:     id: [32m'2702fc4abe0b19765cec7'[39m
+2026-10-07T07:13:01.3653844+00:00 ContainerStream:   },
+2026-10-07T07:13:01.3653857+00:00 ContainerStream:   moduleRef: {
+2026-10-07T07:13:01.3653872+00:00 ContainerStream:     id: [32m'8d2d37bcfbe1f3abf9d40'[39m
+2026-10-07T07:13:01.3653884+00:00 ContainerStream:   }
+2026-10-07T07:13:01.3653896+00:00 ContainerStream: }
+2026-10-07T07:13:01.7491620+00:00 ContainerStream: npm http fetch GET 200 https://registry.npmjs.org/npm 643ms
+2026-10-07T07:13:01.8361823+00:00 ContainerStream: npm notice
+2026-10-07T07:13:01.8362646+00:00 ContainerStream: npm notice New major version of npm available! 10.9.2 -> 12.2.0
+2026-10-07T07:13:01.8362675+00:00 ContainerStream: npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+2026-10-07T07:13:01.8362693+00:00 ContainerStream: npm notice To update run: npm install -g npm@12.2.0
+2026-10-07T07:13:01.8362709+00:00 ContainerStream: npm notice
+2026-10-07T07:13:02.0619855+00:00 ContainerStatus: Container has finished running with exit code: 1.
+2026-10-07T07:13:02.0624351+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-10-07T07:13:02.1121945+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-10-07T07:13:02.1199708+00:00 ContainerStatus: Stopping container: 1a419f251074_echowk-dev-api.
+2026-10-07T07:13:02.3164221+00:00 ContainerStatus: Deleting container: 1a419f251074_echowk-dev-api. Retry count = 0
+2026-10-07T07:13:06.0579926+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-10-07T07:13:06.0667871+00:00 ContainerStatus: Container is terminated. Total time elapsed: 3957 ms.
+2026-10-07T07:13:06.0673325+00:00 ContainerStatus: Site container: echowk-dev-api terminated during site startup.
+2026-10-07T07:13:06.0982009+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:10:24, LastErrorDetails: Container exited with exit code 1 during startup after 78.0s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:13:06.1656103+00:00 ContainerStatus: Site startup probe failed after 90.9694023 seconds.
+2026-10-07T07:13:06.4730163+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:13:06.5416171+00:00 ContainerStatus: Failed to start site. Revert by stopping site.
+2026-10-07T07:13:06.5487387+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:13:06.5491034+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:13:06.5491303+00:00 ContainerStatus: Site: echowk-dev-api stopped.
+========== New Cold Start Attempt (2026-10-07T07:13:06.5605513+00:00) ==========
+2026-10-07T07:13:06.5605513+00:00 ContainerStatus: State: Stopping, Action: UnmountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:13:07.4674035+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:13:07.8849408+00:00 ContainerStatus: Site: echowk-dev-api will be blocked for 1 minutes till 10/07/2026 07:14:07
+2026-10-07T07:13:07.8852342+00:00 ContainerStatus: State: Blocked, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site: echowk-dev-api will be blocked for 1 minutes till 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:07.9135630+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:13:07 (UTC), DetailsLevel: WARN
+2026-10-07T07:13:09.6886253+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:13:07 (UTC), DetailsLevel: WARN
+2026-10-07T07:13:10.1615955+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:10.1616344+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:10.4156351+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:10.4156971+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:10.5990999+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:10.5991555+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:10.8602415+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:10.8602719+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:14.7787259+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:14.7787841+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:19.9952157+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:19.9952792+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:25.1556545+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:25.1557437+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:30.2666000+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:30.2666582+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:36.0750306+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:36.0750835+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:41.2188643+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:41.2188955+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:51.3026495+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:51.3027016+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:13:56.4544507+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:13:56.4545044+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:14:01.6718743+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:14:01.6719246+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:14:06.9750184+00:00 ContainerStatus: State: Blocked, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:14:06.9750518+00:00 ContainerStatus: Start site prohibitted because the site is being blocked.
+2026-10-07T07:14:07.8946770+00:00 ContainerStatus: Site: echowk-dev-api is unblocked.
+2026-10-07T07:14:12.1705111+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:14:13.7629764+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:14:07, DetailsLevel: WARN
+2026-10-07T07:14:13.7632424+00:00 ContainerStatus: Container start method called.
+2026-10-07T07:14:13.7722169+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:14:13.7725693+00:00 ContainerStatus: Establishing network.
+2026-10-07T07:14:13.7726999+00:00 ContainerStatus: Pulling image: appsvc/node:22-lts_20260710.3.tuxprod.
+2026-10-07T07:14:14.2725809+00:00 ContainerStatus: Container is starting.
+2026-10-07T07:14:14.2817912+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Mounting volumes for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:14:14.2820648+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-10-07T07:14:14.2823036+00:00 ContainerStatus: Establishing network if not established already.
+2026-10-07T07:14:14.2825944+00:00 ContainerStatus: Mounting volumes.
+2026-10-07T07:14:14.2921530+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:14:14.3028681+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-10-07T07:14:14.3783059+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:14:14.3897826+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:14:14.4183246+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:14:14.7197937+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:14:15.5256071+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for echowk-dev-api. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-10-07T07:14:15.5256818+00:00 ContainerStatus: Creating container.
+2026-10-07T07:14:15.5257194+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-10-07T07:14:15.5257557+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stdout_d97a0c57d7be44ecafc7f6cdc1ac32e4.
+2026-10-07T07:14:15.5558357+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stdout_d97a0c57d7be44ecafc7f6cdc1ac32e4.
+2026-10-07T07:14:15.5558998+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stdout_d97a0c57d7be44ecafc7f6cdc1ac32e4 for reading in non-blocking mode.
+2026-10-07T07:14:15.5559653+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stdout_d97a0c57d7be44ecafc7f6cdc1ac32e4.
+2026-10-07T07:14:15.5560030+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stdout_d97a0c57d7be44ecafc7f6cdc1ac32e4.
+2026-10-07T07:14:15.5641917+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stderr_5fde0c5e09f94495a8330528bfc027d3.
+2026-10-07T07:14:15.5643598+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stderr_5fde0c5e09f94495a8330528bfc027d3.
+2026-10-07T07:14:15.5644032+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stderr_5fde0c5e09f94495a8330528bfc027d3 for reading in non-blocking mode.
+2026-10-07T07:14:15.5644555+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stderr_5fde0c5e09f94495a8330528bfc027d3.
+2026-10-07T07:14:15.5644926+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/f8be3d609fa5_echowk-dev-api/stderr_5fde0c5e09f94495a8330528bfc027d3.
+2026-10-07T07:14:15.5735509+00:00 ContainerStatus: Creating container with image: appsvc/node:22-lts_20260710.3.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/node:22-lts_20260710.3.tuxprod
+2026-10-07T07:14:16.6601731+00:00 ContainerStatus: Starting container: f8be3d609fa5_echowk-dev-api.
+2026-10-07T07:14:16.7762725+00:00 ContainerStatus: Starting watchers and probes.
+2026-10-07T07:14:16.7873539+00:00 ContainerStatus: Starting metrics collection.
+2026-10-07T07:14:16.7982187+00:00 ContainerStatus: Container is running.
+2026-10-07T07:14:16.7983199+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:14:17.0254861+00:00 ContainerStatus: Container start method finished after 3204 ms.
+2026-10-07T07:14:17.0472561+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:14:17.0473328+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-10-07T07:14:17.0949955+00:00 ContainerStream:    _____                               
+2026-10-07T07:14:17.1163578+00:00 ContainerStream:   /  _  \ __________ _________   ____  
+2026-10-07T07:14:17.1163736+00:00 ContainerStream:  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-10-07T07:14:17.1163754+00:00 ContainerStream: /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-10-07T07:14:17.1163769+00:00 ContainerStream: \____|__  /_____ \____/ |__|    \___  >
+2026-10-07T07:14:17.1163784+00:00 ContainerStream:         \/      \/                  \/ 
+2026-10-07T07:14:17.1163798+00:00 ContainerStream: A P P   S E R V I C E   O N   L I N U X
+2026-10-07T07:14:17.1163811+00:00 ContainerStream: 
+2026-10-07T07:14:17.1163826+00:00 ContainerStream: Documentation    : http://aka.ms/webapp-linux
+2026-10-07T07:14:17.1163840+00:00 ContainerStream: NodeJS quickstart: https://aka.ms/node-qs
+2026-10-07T07:14:17.1163854+00:00 ContainerStream: NodeJS Version   : v22.23.1
+2026-10-07T07:14:17.1163869+00:00 ContainerStream: Instance Name    : lw0sdlwk0000CT
+2026-10-07T07:14:17.1163898+00:00 ContainerStream: Instance Id      : 677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d
+2026-10-07T07:14:17.1163911+00:00 ContainerStream: 
+2026-10-07T07:14:17.1164008+00:00 ContainerStream: Note: Any data outside '/home' is not persisted
+2026-10-07T07:14:21.4240870+00:00 ContainerStream: Starting OpenBSD Secure Shell server: sshd.
+2026-10-07T07:14:21.4523853+00:00 ContainerStream: WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-10-07T07:14:21.5408985+00:00 ContainerStream: Updating certificates in /etc/ssl/certs...
+2026-10-07T07:14:46.0281428+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-10-07T07:14:46.0357159+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-10-07T07:14:46.4213012+00:00 ContainerStream: rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-10-07T07:14:46.5662029+00:00 ContainerStream: 4 added, 0 removed; done.
+2026-10-07T07:14:46.5744726+00:00 ContainerStream: Running hooks in /etc/ca-certificates/update.d...
+2026-10-07T07:14:46.5848363+00:00 ContainerStream: done.
+2026-10-07T07:14:46.6513885+00:00 ContainerStream: CA certificates copied and updated successfully.
+2026-10-07T07:14:47.1237949+00:00 ContainerStream: Starting periodic command scheduler: cron.
+2026-10-07T07:14:47.7232087+00:00 ContainerStream: Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2026-10-07T07:14:47.7599469+00:00 ContainerStream: Could not find operation ID in manifest. Generating an operation id...
+2026-10-07T07:14:47.7600031+00:00 ContainerStream: Build Operation ID: a34ff4ba-61c2-4a75-9bc9-6d7f37f9acb3
+2026-10-07T07:14:50.7548365+00:00 ContainerStream: Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2026-10-07T07:14:50.9535694+00:00 ContainerStream: Writing output script to '/opt/startup/startup.sh'
+2026-10-07T07:14:51.2991353+00:00 ContainerStream: Running #!/bin/sh
+2026-10-07T07:14:51.2991818+00:00 ContainerStream: 
+2026-10-07T07:14:51.2991840+00:00 ContainerStream: # Enter the source directory to make sure the script runs where the user expects
+2026-10-07T07:14:51.2991854+00:00 ContainerStream: cd "/home/site/wwwroot"
+2026-10-07T07:14:51.2991866+00:00 ContainerStream: 
+2026-10-07T07:14:51.2991882+00:00 ContainerStream: export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2026-10-07T07:14:51.2991896+00:00 ContainerStream: if [ -z "$PORT" ]; then
+2026-10-07T07:14:51.2991909+00:00 ContainerStream: 		export PORT=8080
+2026-10-07T07:14:51.2991922+00:00 ContainerStream: fi
+2026-10-07T07:14:51.2991934+00:00 ContainerStream: 
+2026-10-07T07:14:51.2991949+00:00 ContainerStream: echo Found tar.gz based node_modules.
+2026-10-07T07:14:51.2991966+00:00 ContainerStream: extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2026-10-07T07:14:51.2991980+00:00 ContainerStream: echo "Removing existing modules directory from root..."
+2026-10-07T07:14:51.2991993+00:00 ContainerStream: rm -fr /node_modules
+2026-10-07T07:14:51.2992030+00:00 ContainerStream: mkdir -p /node_modules
+2026-10-07T07:14:51.2992045+00:00 ContainerStream: echo Extracting modules...
+2026-10-07T07:14:51.2992057+00:00 ContainerStream: $extractionCommand
+2026-10-07T07:14:51.2992073+00:00 ContainerStream: export NODE_PATH="/node_modules":$NODE_PATH
+2026-10-07T07:14:51.2992087+00:00 ContainerStream: export PATH=/node_modules/.bin:$PATH
+2026-10-07T07:14:51.2992100+00:00 ContainerStream: if [ -d node_modules ]; then
+2026-10-07T07:14:51.2992115+00:00 ContainerStream:     mv -f node_modules _del_node_modules || true
+2026-10-07T07:14:51.2992127+00:00 ContainerStream: fi
+2026-10-07T07:14:51.2992139+00:00 ContainerStream: 
+2026-10-07T07:14:51.2992153+00:00 ContainerStream: if [ -d /node_modules ]; then
+2026-10-07T07:14:51.2992167+00:00 ContainerStream:     ln -sfn /node_modules ./node_modules 
+2026-10-07T07:14:51.2992179+00:00 ContainerStream: fi
+2026-10-07T07:14:51.2992191+00:00 ContainerStream: 
+2026-10-07T07:14:51.2992203+00:00 ContainerStream: echo "Done."
+2026-10-07T07:14:51.3181102+00:00 ContainerStream: PATH="$PATH:/home/site/wwwroot" npm run start:prod
+2026-10-07T07:14:51.3292094+00:00 ContainerStream: Found tar.gz based node_modules.
+2026-10-07T07:14:51.3300874+00:00 ContainerStream: Removing existing modules directory from root...
+2026-10-07T07:14:51.3600397+00:00 ContainerStream: Extracting modules...
+2026-10-07T07:15:15.6104829+00:00 ContainerStream: Done.
+2026-10-07T07:15:16.7388543+00:00 ContainerStream: npm info using npm@10.9.2
+2026-10-07T07:15:16.7465390+00:00 ContainerStream: npm info using node@v22.23.1
+2026-10-07T07:15:18.9195496+00:00 ContainerStream: 
+2026-10-07T07:15:18.9196049+00:00 ContainerStream: > backend@0.0.1 start:prod
+2026-10-07T07:15:18.9196095+00:00 ContainerStream: > node dist/main
+2026-10-07T07:15:18.9196108+00:00 ContainerStream: 
+2026-10-07T07:15:25.0606621+00:00 ContainerStream: [dotenv@17.2.3] injecting env (0) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+2026-10-07T07:15:26.5294759+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+2026-10-07T07:15:26.6261633+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +97ms[39m
+2026-10-07T07:15:26.6425954+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +9ms[39m
+2026-10-07T07:15:26.6426269+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+2026-10-07T07:15:26.6443328+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+2026-10-07T07:15:26.6450866+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+2026-10-07T07:15:26.6524735+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +7ms[39m
+2026-10-07T07:15:26.9574207+00:00 ContainerStream: [31m[Nest] 1888  - [39m10/07/2026, 7:15:26 AM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the WhatsappController (?). Please make sure that the argument AgentService at index [0] is available in the WhatsappModule module.
+2026-10-07T07:15:26.9574761+00:00 ContainerStream: 
+2026-10-07T07:15:26.9574788+00:00 ContainerStream: Potential solutions:
+2026-10-07T07:15:26.9574803+00:00 ContainerStream: - Is WhatsappModule a valid NestJS module?
+2026-10-07T07:15:26.9574819+00:00 ContainerStream: - If AgentService is a provider, is it part of the current WhatsappModule?
+2026-10-07T07:15:26.9574838+00:00 ContainerStream: - If AgentService is exported from a separate @Module, is that module imported within WhatsappModule?
+2026-10-07T07:15:26.9574851+00:00 ContainerStream:   @Module({
+2026-10-07T07:15:26.9574867+00:00 ContainerStream:     imports: [ /* the Module containing AgentService */ ]
+2026-10-07T07:15:26.9574885+00:00 ContainerStream:   })
+2026-10-07T07:15:26.9574982+00:00 ContainerStream: 
+2026-10-07T07:15:26.9575002+00:00 ContainerStream: For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+2026-10-07T07:15:26.9575020+00:00 ContainerStream:     at Injector.lookupComponentInParentModules (/node_modules/[4m@nestjs/core[24m/injector/injector.js:290:19)
+2026-10-07T07:15:26.9575037+00:00 ContainerStream: [90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+2026-10-07T07:15:26.9575054+00:00 ContainerStream:     at async resolveParam (/node_modules/[4m@nestjs/core[24m/injector/injector.js:140:38)
+2026-10-07T07:15:26.9575069+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:15:26.9575088+00:00 ContainerStream:     at async Injector.resolveConstructorParams (/node_modules/[4m@nestjs/core[24m/injector/injector.js:169:27)
+2026-10-07T07:15:26.9575105+00:00 ContainerStream:     at async Injector.loadInstance (/node_modules/[4m@nestjs/core[24m/injector/injector.js:75:13)
+2026-10-07T07:15:26.9575122+00:00 ContainerStream:     at async Injector.loadController (/node_modules/[4m@nestjs/core[24m/injector/injector.js:94:9)
+2026-10-07T07:15:26.9575140+00:00 ContainerStream:     at async /node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:68:13
+2026-10-07T07:15:26.9575154+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:15:26.9575173+00:00 ContainerStream:     at async InstanceLoader.createInstancesOfControllers (/node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:67:9) {
+2026-10-07T07:15:26.9575218+00:00 ContainerStream:   type: [32m'WhatsappController'[39m,
+2026-10-07T07:15:26.9575232+00:00 ContainerStream:   context: {
+2026-10-07T07:15:26.9575246+00:00 ContainerStream:     index: [33m0[39m,
+2026-10-07T07:15:26.9575259+00:00 ContainerStream:     dependencies: [
+2026-10-07T07:15:26.9575274+00:00 ContainerStream:       [36m[class AgentService][39m
+2026-10-07T07:15:26.9575287+00:00 ContainerStream:     ],
+2026-10-07T07:15:26.9575301+00:00 ContainerStream:     name: [36m[class AgentService][39m
+2026-10-07T07:15:26.9575313+00:00 ContainerStream:   },
+2026-10-07T07:15:26.9575326+00:00 ContainerStream:   metadata: {
+2026-10-07T07:15:26.9575340+00:00 ContainerStream:     id: [32m'3b6a75a2a0c8e51385d95'[39m
+2026-10-07T07:15:26.9575353+00:00 ContainerStream:   },
+2026-10-07T07:15:26.9575365+00:00 ContainerStream:   moduleRef: {
+2026-10-07T07:15:26.9575379+00:00 ContainerStream:     id: [32m'5cf007a70ee178eeab4ff'[39m
+2026-10-07T07:15:26.9575393+00:00 ContainerStream:   }
+2026-10-07T07:15:26.9575430+00:00 ContainerStream: }
+2026-10-07T07:15:27.0792630+00:00 ContainerStream: npm http fetch GET 200 https://registry.npmjs.org/npm 692ms
+2026-10-07T07:15:27.1183979+00:00 ContainerStream: npm notice
+2026-10-07T07:15:27.1184471+00:00 ContainerStream: npm notice New major version of npm available! 10.9.2 -> 12.2.0
+2026-10-07T07:15:27.1184497+00:00 ContainerStream: npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+2026-10-07T07:15:27.1184525+00:00 ContainerStream: npm notice To update run: npm install -g npm@12.2.0
+2026-10-07T07:15:27.1184538+00:00 ContainerStream: npm notice
+2026-10-07T07:15:27.2549428+00:00 ContainerStatus: Container has finished running with exit code: 1.
+2026-10-07T07:15:27.2560073+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-10-07T07:15:27.2647163+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-10-07T07:15:27.2648197+00:00 ContainerStatus: Stopping container: f8be3d609fa5_echowk-dev-api.
+2026-10-07T07:15:27.3891003+00:00 ContainerStatus: Deleting container: f8be3d609fa5_echowk-dev-api. Retry count = 0
+2026-10-07T07:15:30.8884494+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-10-07T07:15:30.8973409+00:00 ContainerStatus: Container is terminated. Total time elapsed: 3627 ms.
+2026-10-07T07:15:30.8975762+00:00 ContainerStatus: Site container: echowk-dev-api terminated during site startup.
+2026-10-07T07:15:30.9118872+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:13:06, LastErrorDetails: Container exited with exit code 1 during startup after 91.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:15:30.9553823+00:00 ContainerStatus: Site startup probe failed after 73.8703445 seconds.
+2026-10-07T07:15:31.2954416+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:15:31.3412134+00:00 ContainerStatus: Failed to start site. Revert by stopping site.
+2026-10-07T07:15:31.3420261+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:15:31.3423277+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:15:31.3423767+00:00 ContainerStatus: Site: echowk-dev-api stopped.
+========== New Cold Start Attempt (2026-10-07T07:21:03.8065870+00:00) ==========
+2026-10-07T07:21:03.8065870+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:17:33, DetailsLevel: WARN
+2026-10-07T07:21:07.9693497+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 10/07/2026 07:17:33, DetailsLevel: WARN
+2026-10-07T07:21:07.9696052+00:00 ContainerStatus: Container start method called.
+2026-10-07T07:21:07.9772611+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/node:22-lts_20260710.3.tuxprod for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:21:07.9773908+00:00 ContainerStatus: Establishing network.
+2026-10-07T07:21:07.9781662+00:00 ContainerStatus: Pulling image: appsvc/node:22-lts_20260710.3.tuxprod.
+2026-10-07T07:21:08.4047428+00:00 ContainerStatus: Container is starting.
+2026-10-07T07:21:08.4114047+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Mounting volumes for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:21:08.4115463+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-10-07T07:21:08.4121333+00:00 ContainerStatus: Establishing network if not established already.
+2026-10-07T07:21:08.4122497+00:00 ContainerStatus: Mounting volumes.
+2026-10-07T07:21:08.4129981+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:21:08.4413224+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-10-07T07:21:08.5489170+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:21:08.5590649+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:21:08.6189110+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:21:08.6589430+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:21:10.0457816+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for echowk-dev-api. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-10-07T07:21:10.0458674+00:00 ContainerStatus: Creating container.
+2026-10-07T07:21:10.0459096+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-10-07T07:21:10.0459510+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/5f7102d40215_echowk-dev-api/stdout_f783b7ca257b42d5a5884a34c77d3e44.
+2026-10-07T07:21:10.0555566+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/5f7102d40215_echowk-dev-api/stdout_f783b7ca257b42d5a5884a34c77d3e44.
+2026-10-07T07:21:10.0556503+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/5f7102d40215_echowk-dev-api/stdout_f783b7ca257b42d5a5884a34c77d3e44 for reading in non-blocking mode.
+2026-10-07T07:21:10.0557146+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/5f7102d40215_echowk-dev-api/stdout_f783b7ca257b42d5a5884a34c77d3e44.
+2026-10-07T07:21:10.0557496+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/5f7102d40215_echowk-dev-api/stdout_f783b7ca257b42d5a5884a34c77d3e44.
+2026-10-07T07:21:10.0560718+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/5f7102d40215_echowk-dev-api/stderr_ef5f4b27e6ef4904a2e63b912ea04442.
+2026-10-07T07:21:10.0561616+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/5f7102d40215_echowk-dev-api/stderr_ef5f4b27e6ef4904a2e63b912ea04442.
+2026-10-07T07:21:10.0561963+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/5f7102d40215_echowk-dev-api/stderr_ef5f4b27e6ef4904a2e63b912ea04442 for reading in non-blocking mode.
+2026-10-07T07:21:10.0562464+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/5f7102d40215_echowk-dev-api/stderr_ef5f4b27e6ef4904a2e63b912ea04442.
+2026-10-07T07:21:10.0562796+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/5f7102d40215_echowk-dev-api/stderr_ef5f4b27e6ef4904a2e63b912ea04442.
+2026-10-07T07:21:10.1378095+00:00 ContainerStatus: Creating container with image: appsvc/node:22-lts_20260710.3.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/node:22-lts_20260710.3.tuxprod
+2026-10-07T07:21:11.5837635+00:00 ContainerStatus: Starting container: 5f7102d40215_echowk-dev-api.
+2026-10-07T07:21:11.6914751+00:00 ContainerStatus: Starting watchers and probes.
+2026-10-07T07:21:11.6935498+00:00 ContainerStatus: Starting metrics collection.
+2026-10-07T07:21:11.7410223+00:00 ContainerStatus: Container is running.
+2026-10-07T07:21:11.7412233+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:21:12.0143466+00:00 ContainerStatus: Container start method finished after 4037 ms.
+2026-10-07T07:21:12.0145554+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:21:12.0145760+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-10-07T07:21:13.0378850+00:00 ContainerStream:    _____                               
+2026-10-07T07:21:13.0380729+00:00 ContainerStream:   /  _  \ __________ _________   ____  
+2026-10-07T07:21:13.0380773+00:00 ContainerStream:  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-10-07T07:21:13.0380792+00:00 ContainerStream: /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-10-07T07:21:13.0380811+00:00 ContainerStream: \____|__  /_____ \____/ |__|    \___  >
+2026-10-07T07:21:13.0380832+00:00 ContainerStream:         \/      \/                  \/ 
+2026-10-07T07:21:13.0380849+00:00 ContainerStream: A P P   S E R V I C E   O N   L I N U X
+2026-10-07T07:21:13.0380865+00:00 ContainerStream: 
+2026-10-07T07:21:13.0380897+00:00 ContainerStream: Documentation    : http://aka.ms/webapp-linux
+2026-10-07T07:21:13.0380933+00:00 ContainerStream: NodeJS quickstart: https://aka.ms/node-qs
+2026-10-07T07:21:13.0380953+00:00 ContainerStream: NodeJS Version   : v22.23.1
+2026-10-07T07:21:13.0380972+00:00 ContainerStream: Instance Name    : lw0sdlwk0000CT
+2026-10-07T07:21:13.0380993+00:00 ContainerStream: Instance Id      : 677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d
+2026-10-07T07:21:13.0381010+00:00 ContainerStream: 
+2026-10-07T07:21:13.0381028+00:00 ContainerStream: Note: Any data outside '/home' is not persisted
+2026-10-07T07:21:19.4862389+00:00 ContainerStream: Starting OpenBSD Secure Shell server: sshd.
+2026-10-07T07:21:19.5673106+00:00 ContainerStream: WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-10-07T07:21:19.7464142+00:00 ContainerStream: Updating certificates in /etc/ssl/certs...
+2026-10-07T07:21:57.9183309+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-10-07T07:21:57.9265511+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-10-07T07:21:58.4665583+00:00 ContainerStream: rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-10-07T07:21:58.5760113+00:00 ContainerStream: 4 added, 0 removed; done.
+2026-10-07T07:21:58.5837231+00:00 ContainerStream: Running hooks in /etc/ca-certificates/update.d...
+2026-10-07T07:21:58.5949285+00:00 ContainerStream: done.
+2026-10-07T07:21:58.6341824+00:00 ContainerStream: CA certificates copied and updated successfully.
+2026-10-07T07:21:59.0949436+00:00 ContainerStream: Starting periodic command scheduler: cron.
+2026-10-07T07:21:59.4608534+00:00 ContainerStream: Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2026-10-07T07:21:59.4908409+00:00 ContainerStream: Could not find operation ID in manifest. Generating an operation id...
+2026-10-07T07:21:59.4978589+00:00 ContainerStream: Build Operation ID: d9e4a2c6-d02f-4576-9b30-95f7d4cdf222
+2026-10-07T07:22:00.5252456+00:00 ContainerStream: Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2026-10-07T07:22:00.6741677+00:00 ContainerStream: Writing output script to '/opt/startup/startup.sh'
+2026-10-07T07:22:00.8741873+00:00 ContainerStream: Running #!/bin/sh
+2026-10-07T07:22:00.8742433+00:00 ContainerStream: 
+2026-10-07T07:22:00.8742471+00:00 ContainerStream: # Enter the source directory to make sure the script runs where the user expects
+2026-10-07T07:22:00.8742599+00:00 ContainerStream: cd "/home/site/wwwroot"
+2026-10-07T07:22:00.8742616+00:00 ContainerStream: 
+2026-10-07T07:22:00.8742635+00:00 ContainerStream: export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2026-10-07T07:22:00.8742652+00:00 ContainerStream: if [ -z "$PORT" ]; then
+2026-10-07T07:22:00.8742669+00:00 ContainerStream: 		export PORT=8080
+2026-10-07T07:22:00.8742685+00:00 ContainerStream: fi
+2026-10-07T07:22:00.8742703+00:00 ContainerStream: 
+2026-10-07T07:22:00.8742721+00:00 ContainerStream: echo Found tar.gz based node_modules.
+2026-10-07T07:22:00.8742759+00:00 ContainerStream: extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2026-10-07T07:22:00.8742779+00:00 ContainerStream: echo "Removing existing modules directory from root..."
+2026-10-07T07:22:00.8742797+00:00 ContainerStream: rm -fr /node_modules
+2026-10-07T07:22:00.8742814+00:00 ContainerStream: mkdir -p /node_modules
+2026-10-07T07:22:00.8742831+00:00 ContainerStream: echo Extracting modules...
+2026-10-07T07:22:00.8742848+00:00 ContainerStream: $extractionCommand
+2026-10-07T07:22:00.8742875+00:00 ContainerStream: export NODE_PATH="/node_modules":$NODE_PATH
+2026-10-07T07:22:00.8742912+00:00 ContainerStream: export PATH=/node_modules/.bin:$PATH
+2026-10-07T07:22:00.8742930+00:00 ContainerStream: if [ -d node_modules ]; then
+2026-10-07T07:22:00.8742948+00:00 ContainerStream:     mv -f node_modules _del_node_modules || true
+2026-10-07T07:22:00.8742965+00:00 ContainerStream: fi
+2026-10-07T07:22:00.8742980+00:00 ContainerStream: 
+2026-10-07T07:22:00.8742998+00:00 ContainerStream: if [ -d /node_modules ]; then
+2026-10-07T07:22:00.8743016+00:00 ContainerStream:     ln -sfn /node_modules ./node_modules 
+2026-10-07T07:22:00.8743033+00:00 ContainerStream: fi
+2026-10-07T07:22:00.8743070+00:00 ContainerStream: 
+2026-10-07T07:22:00.8743087+00:00 ContainerStream: echo "Done."
+2026-10-07T07:22:00.9133854+00:00 ContainerStream: PATH="$PATH:/home/site/wwwroot" npm run start:prod
+2026-10-07T07:22:00.9134124+00:00 ContainerStream: Found tar.gz based node_modules.
+2026-10-07T07:22:00.9134286+00:00 ContainerStream: Removing existing modules directory from root...
+2026-10-07T07:22:00.9527615+00:00 ContainerStream: Extracting modules...
+2026-10-07T07:23:02.9726793+00:00 ContainerStream: Done.
+2026-10-07T07:23:06.3746707+00:00 ContainerStream: npm info using npm@10.9.2
+2026-10-07T07:23:06.3758813+00:00 ContainerStream: npm info using node@v22.23.1
+2026-10-07T07:23:11.6809951+00:00 ContainerStream: 
+2026-10-07T07:23:11.6810538+00:00 ContainerStream: > backend@0.0.1 start:prod
+2026-10-07T07:23:11.6810562+00:00 ContainerStream: > node dist/main
+2026-10-07T07:23:11.6810579+00:00 ContainerStream: 
+2026-10-07T07:23:30.4131688+00:00 ContainerStream: [dotenv@17.2.3] injecting env (0) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+2026-10-07T07:23:36.1778237+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+2026-10-07T07:23:36.4526794+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +278ms[39m
+2026-10-07T07:23:36.4550193+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +9ms[39m
+2026-10-07T07:23:36.4555761+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +1ms[39m
+2026-10-07T07:23:36.4928090+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +28ms[39m
+2026-10-07T07:23:36.4934330+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+2026-10-07T07:23:36.4935673+00:00 ContainerStream: [32m[Nest] 1881  - [39m10/07/2026, 7:23:36 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+2026-10-07T07:23:37.2890899+00:00 ContainerStream: [31m[Nest] 1881  - [39m10/07/2026, 7:23:37 AM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the WhatsappController (?). Please make sure that the argument AgentService at index [0] is available in the WhatsappModule module.
+2026-10-07T07:23:37.2891602+00:00 ContainerStream: 
+2026-10-07T07:23:37.2891650+00:00 ContainerStream: Potential solutions:
+2026-10-07T07:23:37.2891671+00:00 ContainerStream: - Is WhatsappModule a valid NestJS module?
+2026-10-07T07:23:37.2891692+00:00 ContainerStream: - If AgentService is a provider, is it part of the current WhatsappModule?
+2026-10-07T07:23:37.2891713+00:00 ContainerStream: - If AgentService is exported from a separate @Module, is that module imported within WhatsappModule?
+2026-10-07T07:23:37.2891758+00:00 ContainerStream:   @Module({
+2026-10-07T07:23:37.2891778+00:00 ContainerStream:     imports: [ /* the Module containing AgentService */ ]
+2026-10-07T07:23:37.2891795+00:00 ContainerStream:   })
+2026-10-07T07:23:37.2891812+00:00 ContainerStream: 
+2026-10-07T07:23:37.2891833+00:00 ContainerStream: For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+2026-10-07T07:23:37.2891856+00:00 ContainerStream:     at Injector.lookupComponentInParentModules (/node_modules/[4m@nestjs/core[24m/injector/injector.js:290:19)
+2026-10-07T07:23:37.2891877+00:00 ContainerStream: [90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+2026-10-07T07:23:37.2891912+00:00 ContainerStream:     at async resolveParam (/node_modules/[4m@nestjs/core[24m/injector/injector.js:140:38)
+2026-10-07T07:23:37.2891931+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:23:37.2891952+00:00 ContainerStream:     at async Injector.resolveConstructorParams (/node_modules/[4m@nestjs/core[24m/injector/injector.js:169:27)
+2026-10-07T07:23:37.2891973+00:00 ContainerStream:     at async Injector.loadInstance (/node_modules/[4m@nestjs/core[24m/injector/injector.js:75:13)
+2026-10-07T07:23:37.2891995+00:00 ContainerStream:     at async Injector.loadController (/node_modules/[4m@nestjs/core[24m/injector/injector.js:94:9)
+2026-10-07T07:23:37.2892015+00:00 ContainerStream:     at async /node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:68:13
+2026-10-07T07:23:37.2892048+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:23:37.2892071+00:00 ContainerStream:     at async InstanceLoader.createInstancesOfControllers (/node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:67:9) {
+2026-10-07T07:23:37.2892090+00:00 ContainerStream:   type: [32m'WhatsappController'[39m,
+2026-10-07T07:23:37.2892106+00:00 ContainerStream:   context: {
+2026-10-07T07:23:37.2892124+00:00 ContainerStream:     index: [33m0[39m,
+2026-10-07T07:23:37.2892141+00:00 ContainerStream:     dependencies: [
+2026-10-07T07:23:37.2892160+00:00 ContainerStream:       [36m[class AgentService][39m
+2026-10-07T07:23:37.2892176+00:00 ContainerStream:     ],
+2026-10-07T07:23:37.2892211+00:00 ContainerStream:     name: [36m[class AgentService][39m
+2026-10-07T07:23:37.2892227+00:00 ContainerStream:   },
+2026-10-07T07:23:37.2892243+00:00 ContainerStream:   metadata: {
+2026-10-07T07:23:37.2892261+00:00 ContainerStream:     id: [32m'e8e359ea68afd7497d828'[39m
+2026-10-07T07:23:37.2892277+00:00 ContainerStream:   },
+2026-10-07T07:23:37.3053907+00:00 ContainerStream:   moduleRef: {
+2026-10-07T07:23:37.3054214+00:00 ContainerStream:     id: [32m'72f7bfdd7e1c5365e99ec'[39m
+2026-10-07T07:23:37.3054243+00:00 ContainerStream:   }
+2026-10-07T07:23:37.3054260+00:00 ContainerStream: }
+2026-10-07T07:23:37.9036372+00:00 ContainerStream: npm http fetch GET 200 https://registry.npmjs.org/npm 1389ms
+2026-10-07T07:23:37.9414506+00:00 ContainerStream: npm notice
+2026-10-07T07:23:37.9415197+00:00 ContainerStream: npm notice New major version of npm available! 10.9.2 -> 12.2.0
+2026-10-07T07:23:37.9415232+00:00 ContainerStream: npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+2026-10-07T07:23:37.9415369+00:00 ContainerStream: npm notice To update run: npm install -g npm@12.2.0
+2026-10-07T07:23:37.9415387+00:00 ContainerStream: npm notice
+2026-10-07T07:23:38.4339900+00:00 ContainerStatus: Container has finished running with exit code: 1.
+2026-10-07T07:23:38.4344664+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-10-07T07:23:38.5593226+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-10-07T07:23:38.5687501+00:00 ContainerStatus: Stopping container: 5f7102d40215_echowk-dev-api.
+2026-10-07T07:23:38.8696693+00:00 ContainerStatus: Deleting container: 5f7102d40215_echowk-dev-api. Retry count = 0
+2026-10-07T07:23:46.1886026+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-10-07T07:23:46.2076057+00:00 ContainerStatus: Container is terminated. Total time elapsed: 7642 ms.
+2026-10-07T07:23:46.2174182+00:00 ContainerStatus: Site container: echowk-dev-api terminated during site startup.
+2026-10-07T07:23:46.2551552+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:15:31, LastErrorDetails: Container exited with exit code 1 during startup after 74.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:23:46.5706326+00:00 ContainerStatus: Site startup probe failed after 154.516804 seconds.
+2026-10-07T07:23:46.9957101+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:23:47.0964553+00:00 ContainerStatus: Failed to start site. Revert by stopping site.
+2026-10-07T07:23:47.1362764+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:23:47.2042534+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:23:47.2051379+00:00 ContainerStatus: Site: echowk-dev-api stopped.
+========== New Cold Start Attempt (2026-10-07T07:23:47.2449083+00:00) ==========
+2026-10-07T07:23:47.2449083+00:00 ContainerStatus: State: Stopping, Action: UnmountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:23:48.8108618+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:23:49.2840205+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:23:49 (UTC), DetailsLevel: ERR
+2026-10-07T07:23:51.5767447+00:00 ContainerStatus: State: Stopped, Action: None, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:23:49 (UTC), DetailsLevel: ERR
+2026-10-07T07:23:52.5149085+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:23:49 (UTC), DetailsLevel: ERR
+2026-10-07T07:23:54.9597866+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site stopped at 10/07/2026 07:23:49 (UTC), DetailsLevel: ERR
+2026-10-07T07:23:54.9609128+00:00 ContainerStatus: Container start method called.
+2026-10-07T07:23:54.9609994+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Pulling image 10.1.0.4:13209/appsvc/node:22-lts_20260710.3.tuxprod for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:23:54.9610948+00:00 ContainerStatus: Establishing network.
+2026-10-07T07:23:54.9799888+00:00 ContainerStatus: Pulling image: appsvc/node:22-lts_20260710.3.tuxprod.
+2026-10-07T07:23:55.6701587+00:00 ContainerStatus: Container is starting.
+2026-10-07T07:23:55.6777287+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Mounting volumes for echowk-dev-api., DetailsLevel: INFO
+2026-10-07T07:23:55.6780199+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-10-07T07:23:55.6787004+00:00 ContainerStatus: Establishing network if not established already.
+2026-10-07T07:23:55.6887204+00:00 ContainerStatus: Mounting volumes.
+2026-10-07T07:23:55.6894256+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:23:55.7500854+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-10-07T07:23:55.7808421+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:23:55.7816767+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:23:55.8222781+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:23:56.0454881+00:00 ContainerStatus: Nested mountpoint 
+2026-10-07T07:23:56.7833061+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Finished pulling container image and mounting volumes for echowk-dev-api. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-10-07T07:23:56.7833846+00:00 ContainerStatus: Creating container.
+2026-10-07T07:23:56.7834273+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-10-07T07:23:56.7834631+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stdout_e2d75cf524354c8791011f09c3f32649.
+2026-10-07T07:23:56.7920116+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stdout_e2d75cf524354c8791011f09c3f32649.
+2026-10-07T07:23:56.7920784+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stdout_e2d75cf524354c8791011f09c3f32649 for reading in non-blocking mode.
+2026-10-07T07:23:56.7921352+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stdout_e2d75cf524354c8791011f09c3f32649.
+2026-10-07T07:23:56.7921748+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stdout_e2d75cf524354c8791011f09c3f32649.
+2026-10-07T07:23:56.7922538+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stderr_7b37c7d65bf040cb8ee58ea54c3ce3d4.
+2026-10-07T07:23:56.7923324+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stderr_7b37c7d65bf040cb8ee58ea54c3ce3d4.
+2026-10-07T07:23:56.7923708+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stderr_7b37c7d65bf040cb8ee58ea54c3ce3d4 for reading in non-blocking mode.
+2026-10-07T07:23:56.7924120+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stderr_7b37c7d65bf040cb8ee58ea54c3ce3d4.
+2026-10-07T07:23:56.7924483+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/13d8d2a0e0d9_echowk-dev-api/stderr_7b37c7d65bf040cb8ee58ea54c3ce3d4.
+2026-10-07T07:23:56.8182344+00:00 ContainerStatus: Creating container with image: appsvc/node:22-lts_20260710.3.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/node:22-lts_20260710.3.tuxprod
+2026-10-07T07:23:57.8548723+00:00 ContainerStatus: Starting container: 13d8d2a0e0d9_echowk-dev-api.
+2026-10-07T07:23:57.9671279+00:00 ContainerStatus: Starting watchers and probes.
+2026-10-07T07:23:57.9673667+00:00 ContainerStatus: Starting metrics collection.
+2026-10-07T07:23:57.9674421+00:00 ContainerStatus: Container is running.
+2026-10-07T07:23:57.9675546+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:23:58.4232605+00:00 ContainerStatus: Container start method finished after 3462 ms.
+2026-10-07T07:23:58.4234105+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Container echowk-dev-api successfully created and is running., DetailsLevel: INFO
+2026-10-07T07:23:58.4234297+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-10-07T07:23:58.5738630+00:00 ContainerStream:    _____                               
+2026-10-07T07:23:58.5739026+00:00 ContainerStream:   /  _  \ __________ _________   ____  
+2026-10-07T07:23:58.5739046+00:00 ContainerStream:  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-10-07T07:23:58.5739060+00:00 ContainerStream: /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-10-07T07:23:58.5739079+00:00 ContainerStream: \____|__  /_____ \____/ |__|    \___  >
+2026-10-07T07:23:58.5739096+00:00 ContainerStream:         \/      \/                  \/ 
+2026-10-07T07:23:58.5739111+00:00 ContainerStream: A P P   S E R V I C E   O N   L I N U X
+2026-10-07T07:23:58.5739123+00:00 ContainerStream: 
+2026-10-07T07:23:58.5739138+00:00 ContainerStream: Documentation    : http://aka.ms/webapp-linux
+2026-10-07T07:23:58.5739153+00:00 ContainerStream: NodeJS quickstart: https://aka.ms/node-qs
+2026-10-07T07:23:58.5739167+00:00 ContainerStream: NodeJS Version   : v22.23.1
+2026-10-07T07:23:58.5739272+00:00 ContainerStream: Instance Name    : lw0sdlwk0000CT
+2026-10-07T07:23:58.5739293+00:00 ContainerStream: Instance Id      : 677f8f82dd7619daa89f49d4d7fc3902751d3b3daff8fda5108103f83baba00d
+2026-10-07T07:23:58.5739306+00:00 ContainerStream: 
+2026-10-07T07:23:58.5739322+00:00 ContainerStream: Note: Any data outside '/home' is not persisted
+2026-10-07T07:24:07.0568584+00:00 ContainerStream: Starting OpenBSD Secure Shell server: sshd.
+2026-10-07T07:24:07.1161500+00:00 ContainerStream: WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-10-07T07:24:07.2831506+00:00 ContainerStream: Updating certificates in /etc/ssl/certs...
+2026-10-07T07:24:42.6188015+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-10-07T07:24:42.6304089+00:00 ContainerStream: rehash: warning: skipping duplicate certificate in azl_SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-10-07T07:24:43.6083510+00:00 ContainerStream: rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-10-07T07:24:43.7608419+00:00 ContainerStream: 4 added, 0 removed; done.
+2026-10-07T07:24:43.7616546+00:00 ContainerStream: Running hooks in /etc/ca-certificates/update.d...
+2026-10-07T07:24:43.8099150+00:00 ContainerStream: done.
+2026-10-07T07:24:43.9259432+00:00 ContainerStream: CA certificates copied and updated successfully.
+2026-10-07T07:24:44.3658441+00:00 ContainerStream: Starting periodic command scheduler: cron.
+2026-10-07T07:24:44.7378224+00:00 ContainerStream: Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2026-10-07T07:24:44.7982151+00:00 ContainerStream: Could not find operation ID in manifest. Generating an operation id...
+2026-10-07T07:24:44.7986426+00:00 ContainerStream: Build Operation ID: 1b7a462a-2722-4eee-813f-17e40ed447e1
+2026-10-07T07:24:45.8643091+00:00 ContainerStream: Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2026-10-07T07:24:46.0215416+00:00 ContainerStream: Writing output script to '/opt/startup/startup.sh'
+2026-10-07T07:24:46.1968151+00:00 ContainerStream: Running #!/bin/sh
+2026-10-07T07:24:46.1970653+00:00 ContainerStream: 
+2026-10-07T07:24:46.1970698+00:00 ContainerStream: # Enter the source directory to make sure the script runs where the user expects
+2026-10-07T07:24:46.1970716+00:00 ContainerStream: cd "/home/site/wwwroot"
+2026-10-07T07:24:46.1970728+00:00 ContainerStream: 
+2026-10-07T07:24:46.1970743+00:00 ContainerStream: export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2026-10-07T07:24:46.1970757+00:00 ContainerStream: if [ -z "$PORT" ]; then
+2026-10-07T07:24:46.1970770+00:00 ContainerStream: 		export PORT=8080
+2026-10-07T07:24:46.1970782+00:00 ContainerStream: fi
+2026-10-07T07:24:46.1970798+00:00 ContainerStream: 
+2026-10-07T07:24:46.1970814+00:00 ContainerStream: echo Found tar.gz based node_modules.
+2026-10-07T07:24:46.1970830+00:00 ContainerStream: extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2026-10-07T07:24:46.1970877+00:00 ContainerStream: echo "Removing existing modules directory from root..."
+2026-10-07T07:24:46.1970890+00:00 ContainerStream: rm -fr /node_modules
+2026-10-07T07:24:46.1970903+00:00 ContainerStream: mkdir -p /node_modules
+2026-10-07T07:24:46.1970917+00:00 ContainerStream: echo Extracting modules...
+2026-10-07T07:24:46.1970929+00:00 ContainerStream: $extractionCommand
+2026-10-07T07:24:46.1970943+00:00 ContainerStream: export NODE_PATH="/node_modules":$NODE_PATH
+2026-10-07T07:24:46.1970958+00:00 ContainerStream: export PATH=/node_modules/.bin:$PATH
+2026-10-07T07:24:46.1970972+00:00 ContainerStream: if [ -d node_modules ]; then
+2026-10-07T07:24:46.1970987+00:00 ContainerStream:     mv -f node_modules _del_node_modules || true
+2026-10-07T07:24:46.1970998+00:00 ContainerStream: fi
+2026-10-07T07:24:46.1971010+00:00 ContainerStream: 
+2026-10-07T07:24:46.1971024+00:00 ContainerStream: if [ -d /node_modules ]; then
+2026-10-07T07:24:46.1971038+00:00 ContainerStream:     ln -sfn /node_modules ./node_modules 
+2026-10-07T07:24:46.1971049+00:00 ContainerStream: fi
+2026-10-07T07:24:46.1971086+00:00 ContainerStream: 
+2026-10-07T07:24:46.1971101+00:00 ContainerStream: echo "Done."
+2026-10-07T07:24:46.2068725+00:00 ContainerStream: PATH="$PATH:/home/site/wwwroot" npm run start:prod
+2026-10-07T07:24:46.2327156+00:00 ContainerStream: Found tar.gz based node_modules.
+2026-10-07T07:24:46.2339460+00:00 ContainerStream: Removing existing modules directory from root...
+2026-10-07T07:24:46.3112782+00:00 ContainerStream: Extracting modules...
+2026-10-07T07:25:36.1732975+00:00 ContainerStream: Done.
+2026-10-07T07:25:41.3000386+00:00 ContainerStream: npm info using npm@10.9.2
+2026-10-07T07:25:41.3089141+00:00 ContainerStream: npm info using node@v22.23.1
+2026-10-07T07:25:45.5401314+00:00 ContainerStream: 
+2026-10-07T07:25:45.5401809+00:00 ContainerStream: > backend@0.0.1 start:prod
+2026-10-07T07:25:45.5401834+00:00 ContainerStream: > node dist/main
+2026-10-07T07:25:45.5401849+00:00 ContainerStream: 
+2026-10-07T07:25:58.0263508+00:00 ContainerStream: [dotenv@17.2.3] injecting env (0) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+2026-10-07T07:26:00.7367349+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:00 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+2026-10-07T07:26:00.8942986+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:00 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +158ms[39m
+2026-10-07T07:26:00.9034541+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:00 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +9ms[39m
+2026-10-07T07:26:00.9118238+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:00 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +8ms[39m
+2026-10-07T07:26:00.9878316+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:00 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +60ms[39m
+2026-10-07T07:26:01.0467074+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +58ms[39m
+2026-10-07T07:26:01.0479892+00:00 ContainerStream: [32m[Nest] 1888  - [39m10/07/2026, 7:26:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +18ms[39m
+2026-10-07T07:26:02.0604136+00:00 ContainerStream: [31m[Nest] 1888  - [39m10/07/2026, 7:26:02 AM [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the WhatsappController (?). Please make sure that the argument AgentService at index [0] is available in the WhatsappModule module.
+2026-10-07T07:26:02.0604624+00:00 ContainerStream: 
+2026-10-07T07:26:02.0604644+00:00 ContainerStream: Potential solutions:
+2026-10-07T07:26:02.0604660+00:00 ContainerStream: - Is WhatsappModule a valid NestJS module?
+2026-10-07T07:26:02.0604676+00:00 ContainerStream: - If AgentService is a provider, is it part of the current WhatsappModule?
+2026-10-07T07:26:02.0604693+00:00 ContainerStream: - If AgentService is exported from a separate @Module, is that module imported within WhatsappModule?
+2026-10-07T07:26:02.0604707+00:00 ContainerStream:   @Module({
+2026-10-07T07:26:02.0604722+00:00 ContainerStream:     imports: [ /* the Module containing AgentService */ ]
+2026-10-07T07:26:02.0604736+00:00 ContainerStream:   })
+2026-10-07T07:26:02.0604750+00:00 ContainerStream: 
+2026-10-07T07:26:02.0604767+00:00 ContainerStream: For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+2026-10-07T07:26:02.0604823+00:00 ContainerStream:     at Injector.lookupComponentInParentModules (/node_modules/[4m@nestjs/core[24m/injector/injector.js:290:19)
+2026-10-07T07:26:02.0604840+00:00 ContainerStream: [90m    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+2026-10-07T07:26:02.0604857+00:00 ContainerStream:     at async resolveParam (/node_modules/[4m@nestjs/core[24m/injector/injector.js:140:38)
+2026-10-07T07:26:02.0604871+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:26:02.0604889+00:00 ContainerStream:     at async Injector.resolveConstructorParams (/node_modules/[4m@nestjs/core[24m/injector/injector.js:169:27)
+2026-10-07T07:26:02.0605000+00:00 ContainerStream:     at async Injector.loadInstance (/node_modules/[4m@nestjs/core[24m/injector/injector.js:75:13)
+2026-10-07T07:26:02.0605018+00:00 ContainerStream:     at async Injector.loadController (/node_modules/[4m@nestjs/core[24m/injector/injector.js:94:9)
+2026-10-07T07:26:02.0605041+00:00 ContainerStream:     at async /node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:68:13
+2026-10-07T07:26:02.0605054+00:00 ContainerStream:     at async Promise.all (index 0)
+2026-10-07T07:26:02.0605073+00:00 ContainerStream:     at async InstanceLoader.createInstancesOfControllers (/node_modules/[4m@nestjs/core[24m/injector/instance-loader.js:67:9) {
+2026-10-07T07:26:02.0605088+00:00 ContainerStream:   type: [32m'WhatsappController'[39m,
+2026-10-07T07:26:02.0605101+00:00 ContainerStream:   context: {
+2026-10-07T07:26:02.0605115+00:00 ContainerStream:     index: [33m0[39m,
+2026-10-07T07:26:02.0605146+00:00 ContainerStream:     dependencies: [
+2026-10-07T07:26:02.0605161+00:00 ContainerStream:       [36m[class AgentService][39m
+2026-10-07T07:26:02.0605173+00:00 ContainerStream:     ],
+2026-10-07T07:26:02.0605188+00:00 ContainerStream:     name: [36m[class AgentService][39m
+2026-10-07T07:26:02.0605201+00:00 ContainerStream:   },
+2026-10-07T07:26:02.0605214+00:00 ContainerStream:   metadata: {
+2026-10-07T07:26:02.0605228+00:00 ContainerStream:     id: [32m'1dcd0029a2af841bf83ff'[39m
+2026-10-07T07:26:02.0605240+00:00 ContainerStream:   },
+2026-10-07T07:26:02.0605254+00:00 ContainerStream:   moduleRef: {
+2026-10-07T07:26:02.0605269+00:00 ContainerStream:     id: [32m'6a1bb0ff63890ed9d45a4'[39m
+2026-10-07T07:26:02.0605281+00:00 ContainerStream:   }
+2026-10-07T07:26:02.0605294+00:00 ContainerStream: }
+2026-10-07T07:26:02.5500223+00:00 ContainerStream: npm http fetch GET 200 https://registry.npmjs.org/npm 1082ms
+2026-10-07T07:26:02.6075060+00:00 ContainerStream: npm notice
+2026-10-07T07:26:02.6075630+00:00 ContainerStream: npm notice New major version of npm available! 10.9.2 -> 12.2.0
+2026-10-07T07:26:02.6075653+00:00 ContainerStream: npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+2026-10-07T07:26:02.6075670+00:00 ContainerStream: npm notice To update run: npm install -g npm@12.2.0
+2026-10-07T07:26:02.6075686+00:00 ContainerStream: npm notice
+2026-10-07T07:26:04.1188871+00:00 ContainerStatus: Container has finished running with exit code: 1.
+2026-10-07T07:26:04.1266565+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-10-07T07:26:04.2094700+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-10-07T07:26:04.2168821+00:00 ContainerStatus: Stopping container: 13d8d2a0e0d9_echowk-dev-api.
+2026-10-07T07:26:04.3757196+00:00 ContainerStatus: Deleting container: 13d8d2a0e0d9_echowk-dev-api. Retry count = 0
+2026-10-07T07:26:12.3795279+00:00 ContainerStatus: Container get mounts received unexpected exception.
+2026-10-07T07:26:13.2741947+00:00 ContainerStatus: Container get processes received unexpected exception.
+2026-10-07T07:26:15.9962890+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-10-07T07:26:16.0430993+00:00 ContainerStatus: Container is terminated. Total time elapsed: 11896 ms.
+2026-10-07T07:26:16.0442859+00:00 ContainerStatus: Site container: echowk-dev-api terminated during site startup.
+2026-10-07T07:26:16.0947784+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:23:46, LastErrorDetails: Container exited with exit code 1 during startup after 154.5s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:26:16.2629793+00:00 ContainerStatus: Site startup probe failed after 137.830374 seconds.
+2026-10-07T07:26:16.6245242+00:00 ContainerStatus: State: Stopping, Action: CancellingStartup, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:26:16, LastErrorDetails: Container exited with exit code 1 during startup after 138.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:26:16.7320180+00:00 ContainerStatus: Failed to start site. Revert by stopping site.
+2026-10-07T07:26:16.7330748+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:26:16, LastErrorDetails: Container exited with exit code 1 during startup after 138.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:26:16.7337708+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: ContainerStartupFailure, LastErrorTimestamp: 10/07/2026 07:26:16, LastErrorDetails: Container exited with exit code 1 during startup after 138.1s. Please inspect your container logs for more details., Details: Site container: echowk-dev-api terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-10-07T07:26:16.7338082+00:00 ContainerStatus: Site: echowk-dev-api stopped.
