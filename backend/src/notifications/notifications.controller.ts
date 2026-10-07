@@ -8,5 +8,8 @@ import { NotificationsService } from './notifications.service';
 export class NotificationsController {
   constructor(private readonly notifications: NotificationsService) {}
   @Get() list(@CurrentUser() user: { sub: string }) { return this.notifications.list(user.sub); }
+  @Patch('read-all')
+  readAll(@CurrentUser() user: { sub: string }) { return this.notifications.markAllRead(user.sub); }
+
   @Patch(':id/read') read(@CurrentUser() user: { sub: string }, @Param('id') id: string) { return this.notifications.markRead(user.sub, id); }
 }
