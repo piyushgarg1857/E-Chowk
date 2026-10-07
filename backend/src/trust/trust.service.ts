@@ -40,7 +40,10 @@ export class TrustService {
     if (!job || job.status !== 'completed') throw new BadRequestException('Only completed jobs can be rated');
     const app = await this.applications.findOne({ where: { job_id: jobId, status: 'completed' } });
     if (!app) throw new NotFoundException('Completed assignment not found');
-    const toUser = userId === job.employer_id ? app.worker_id : job.employer_id;
+    const isEmployer = userId === job.employer_id;
+    const isWorker = userId === app.worker_id;
+    if (!isEmployer && !isWorker) throw new BadRequestException('Only job participants can rate this job');
+    const toUser = isEmployer ? app.worker_id : job.employer_id;
     const existing = await this.ratings.findOne({ where: { job_id: jobId, from_user_id: userId } });
     if (existing) throw new BadRequestException('You already rated this job');
     return this.ratings.save(this.ratings.create({
