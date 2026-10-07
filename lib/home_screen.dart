@@ -37,8 +37,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     EChowkBadge(text: 'भारत के कामगारों के लिए', icon: Icons.verified_outlined, color: Colors.white),
                     SizedBox(height: 18),
-                    Text('काम ढूंढना और
-काम देना आसान.', style: TextStyle(color: Colors.white, fontSize: 32, height: 1.05, fontWeight: FontWeight.w800)),
+                    Text('काम ढूंढना और\nकाम देना आसान.', style: TextStyle(color: Colors.white, fontSize: 32, height: 1.05, fontWeight: FontWeight.w800)),
                     SizedBox(height: 12),
                     Text('एक ही चौक — worker, employer और AI सहायता के साथ.', style: TextStyle(color: Colors.white70, fontSize: 15, height: 1.4)),
                   ],
@@ -67,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(child: _RoleCard(icon: Icons.construction_rounded, title: 'काम चाहिए', subtitle: 'Worker', onTap: onLogin)),
                   const SizedBox(width: 12),
-                  Expanded(child: _RoleCard(icon: Icons.business_center_rounded, title: 'काम देना है', subtitle: 'Employer', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen())))),
+                  Expanded(child: _RoleCard(icon: Icons.business_center_rounded, title: 'काम देना है', subtitle: 'Employer', onTap: onLogin)),
                 ],
               ),
               const SizedBox(height: 24),
@@ -118,7 +117,7 @@ class _RoleCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   const _RoleCard({required this.icon, required this.title, required this.subtitle, required this.onTap});
 
   @override
