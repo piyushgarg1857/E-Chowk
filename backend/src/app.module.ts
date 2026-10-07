@@ -17,6 +17,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { AuditModule } from './audit/audit.module';
 import { ExotelModule } from './exotel/exotel.module';
 import { AdminModule } from './admin/admin.module';
+import { RequestContextMiddleware } from './common/http/request-context.middleware';
 
 @Module({
   imports: [
@@ -58,4 +59,8 @@ import { AdminModule } from './admin/admin.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: any) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
+  }
+}
