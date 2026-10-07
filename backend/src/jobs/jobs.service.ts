@@ -38,6 +38,14 @@ export class JobsService {
     return saved;
   }
 
+  async mine(employerId: string) {
+    return this.jobs.find({ where: { employer_id: employerId }, order: { created_at: 'DESC' } });
+  }
+
+  async myApplications(workerId: string) {
+    return this.applications.find({ where: { worker_id: workerId }, order: { applied_at: 'DESC' } });
+  }
+
   async search(dto: SearchJobsDto) {
     const qb = this.jobs.createQueryBuilder('job').where('job.status = :status', { status: 'open' });
     if (dto.skill) qb.andWhere('LOWER(job.required_skill) LIKE LOWER(:skill)', { skill: '%' + dto.skill + '%' });
