@@ -238,6 +238,28 @@ function useDemoState() {
     }
     setNotifications((prev) => prev.map((n) => (!id || n.id === id ? { ...n, read: true } : n)));
   }
+  async function sendAgentMessage(text: string) {
+    if (live) {
+      try {
+        const last = messages[messages.length - 1];
+        const result = last?.id?.startsWith("agent-session-")
+          ? await api.agentSessionMessage(last.id.replace("agent-session-", ""), text)
+          : await api.agentMessage(text);
+        setMessages((prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), role: "assistant", parts: [{ type: "text", text: result.reply }] },
+        ]);
+        if (result.session_id) {
+          setMessages((prev) => prev.map((m) => m.id === result.session_id ? { ...m, id: "agent-session-" + result.session_id } : m));
+        }
+        return result;
+      } catch (e) {
+        toast.error(errText(e));
+        return null;
+      }
+    }
+    return null;
+  }
   async function updateJobStatus(id: string, status: Job["status"]) {
     if (live) {
       try {
@@ -287,6 +309,7 @@ function useDemoState() {
     reviewApplication,
     markRead,
     updateJobStatus,
+    sendAgentMessage,
   };
 }
 type DemoState = ReturnType<typeof useDemoState>;
