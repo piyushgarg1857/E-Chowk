@@ -3,9 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 @Injectable()
 export class ExotelService {
   private readonly logger = new Logger(ExotelService.name);
-  private readonly accountSid = process.env.EXOTEL_ACCOUNT_SID || 'echowk1';
-  private readonly apiKey = process.env.EXOTEL_API_KEY || '47e333a4354dd025f74c4ac6ce53501dc797d9efc6e09193';
-  private readonly apiToken = process.env.EXOTEL_API_TOKEN || 'aeceb9fbc7675c63c4e124dd8ac14d43c9efb2a02c4a76ca';
+  private readonly accountSid = process.env.EXOTEL_ACCOUNT_SID || 'echowk2';
+  private readonly apiKey = process.env.EXOTEL_API_KEY || '66675e02e0f285d38e8c4b97cab09a3ebf8c0ab2a679b565';
+  private readonly apiToken = process.env.EXOTEL_API_TOKEN || '0eea5066c5c80829a9f3e1001692e9248ca4b5cf520e5552';
   private readonly subdomain = process.env.EXOTEL_SUBDOMAIN || 'api.exotel.com';
 
   private get authHeader(): string {
