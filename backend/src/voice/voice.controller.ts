@@ -62,10 +62,13 @@ export class VoiceController {
     if (!worker) return res.status(404).json({ success: false, message: 'Worker not found' });
     try {
       const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-      const numbers = await twilioClient.incomingPhoneNumbers.list({ limit: 1 });
-      const fromNumber = numbers[0]?.phoneNumber;
+      let fromNumber = process.env.TWILIO_PHONE_NUMBER;
+      if (!fromNumber) {
+        const numbers = await twilioClient.incomingPhoneNumbers.list({ limit: 1 });
+        fromNumber = numbers[0]?.phoneNumber;
+      }
       const webhookUrl = process.env.PUBLIC_BASE_URL?.replace(/\/$/, '');
-      if (!fromNumber || !webhookUrl) throw new Error('Voice service is not configured');
+      if (!fromNumber || !webhookUrl) throw new Error(`Voice service configured improperly (From: ${fromNumber || 'missing'}, Webhook: ${webhookUrl || 'missing'})`);
       const call = await twilioClient.calls.create({
         to: worker.phone_number,
         from: fromNumber,
@@ -73,7 +76,8 @@ export class VoiceController {
       });
       return res.json({ success: true, callSid: call.sid, message: 'AI registration call started' });
     } catch (error: any) {
-      return res.status(500).json({ success: false, message: 'Unable to start AI registration call' });
+      console.error('[Register Call Error]', error);
+      return res.status(500).json({ success: false, message: error.message || 'Unable to start AI registration call' });
     }
   }
 
@@ -94,13 +98,13 @@ export class VoiceController {
         process.env.TWILIO_AUTH_TOKEN,
       );
 
-      // Get our Twilio number
-      const numbers = await twilioClient.incomingPhoneNumbers.list({ limit: 1 });
-      const fromNumber = numbers[0]?.phoneNumber;
+      let fromNumber = process.env.TWILIO_PHONE_NUMBER;
+      if (!fromNumber) {
+        const numbers = await twilioClient.incomingPhoneNumbers.list({ limit: 1 });
+        fromNumber = numbers[0]?.phoneNumber;
+      }
       if (!fromNumber) throw new Error('No Twilio number available');
 
-      // Twilio must use an explicitly configured public HTTPS URL.
-      // Never fall back to a hard-coded tunnel URL.
       const webhookUrl = process.env.PUBLIC_BASE_URL?.replace(/\/$/, '');
       if (!webhookUrl) {
         throw new Error('PUBLIC_BASE_URL is not configured for Twilio webhooks');
