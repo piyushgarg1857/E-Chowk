@@ -195,125 +195,64 @@ export class VoiceController {
   // Step 1: Twilio calls this when a call comes in
   @Post('incoming')
   @UseGuards(TwilioSignatureGuard)
-  incomingCall(@Req() req: any, @Res() res: any) {
-    console.log('\n🔥 [CALL INCOMING] CallSid:', req.body?.CallSid);
-    const callSid = req.body?.CallSid;
-    
-    conversations[callSid] = [];
-
+  agentAliasIncoming(@Req() req: any, @Res() res: any) {
+    const callSid = req.body?.CallSid || '';
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
-
-    response.say({
-      voice: 'Polly.Aditi',
-      language: 'hi-IN',
-    }, 'Namaste! E-Chowk mein aapka swagat hai. Aapka naam kya hai?');
-
+    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
+      'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga. Aap kya karna chahte hain?');
     response.gather({
       input: ['speech'],
-      action: `/voice/agent-respond?callSid=${callSid}`,
+      action: `/voice/respond?callSid=${encodeURIComponent(callSid)}`,
       method: 'POST',
       language: 'hi-IN',
       speechTimeout: 'auto',
-      enhanced: true,
       timeout: 10,
     });
-
-    res.type('text/xml');
-    res.send(response.toString());
+    return res.type('text/xml').send(response.toString());
   }
 
-  // Step 2: Called every time the user finishes saying something
   @Post('respond')
   @UseGuards(TwilioSignatureGuard)
-  async handleResponse(@Req() req: any, @Res() res: any) {
-    const callSid = req.query?.callSid || req.body?.CallSid;
-    const userSpeech = req.body?.SpeechResult || '';
-    const confidence = req.body?.Confidence || 0;
-    
-    // Twilio natively sends caller phone number!
-    const callerPhone = req.body?.From || '+910000000000'; 
-
-    console.log(`\n👤 [Worker Said] (${Math.round(confidence * 100)}% confidence): "${userSpeech}"`);
-
+  async agentAliasRespond(@Req() req: any, @Res() res: any) {
+    const callSid = req.query?.callSid || req.body?.CallSid || '';
+    const from = req.body?.From;
+    const speech = req.body?.SpeechResult?.trim();
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
 
-    if (!userSpeech) {
-      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maafi kijiye, mujhe sunai nahi diya. Kripya dobara bataiye.');
+    if (!from || !speech) {
+      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
+        'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');
       response.gather({
         input: ['speech'],
-        action: `/voice/respond?callSid=${callSid}`,
+        action: `/voice/respond?callSid=${encodeURIComponent(callSid)}`,
         method: 'POST',
         language: 'hi-IN',
         speechTimeout: 'auto',
         timeout: 10,
       });
-      res.type('text/xml');
-      return res.send(response.toString());
+      return res.type('text/xml').send(response.toString());
     }
-
-    if (!conversations[callSid]) conversations[callSid] = [];
-    conversations[callSid].push({ role: 'user', content: userSpeech });
 
     try {
-      const completion = await groq.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...conversations[callSid],
-        ],
-        max_tokens: 150,
+      const result = await this.agent.chatForPhone(from, speech);
+      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
+        result.reply || 'Ji, batayein.');
+      response.gather({
+        input: ['speech'],
+        action: `/voice/respond?callSid=${encodeURIComponent(callSid)}`,
+        method: 'POST',
+        language: 'hi-IN',
+        speechTimeout: 'auto',
+        timeout: 10,
       });
-
-      let aiResponse = completion.choices[0]?.message?.content || 'Maafi kijiye, kuch gadbad ho gayi.';
-      let isDone = false;
-
-      // Extract JSON if AI decided it has all info
-      const jsonMatch = aiResponse.match(/\[JSON_DATA:\s*({.*?})\s*\]/is);
-      if (jsonMatch) {
-        try {
-          const extractedData = JSON.parse(jsonMatch[1]);
-          console.log(`\n📥 [AI EXTRACTED DATA]:`, extractedData);
-          
-          // Save to Azure PostgreSQL!
-          await this.saveWorkerToDatabase(callerPhone, extractedData);
-          
-          isDone = true;
-          // Remove the JSON block so Twilio doesn't speak "bracket bracket Name"
-          aiResponse = aiResponse.replace(/\[JSON_DATA:\s*({.*?})\s*\]/is, '').trim();
-          
-        } catch (e: any) {
-          console.error('[JSON Parse Error]', e);
-        }
-      }
-
-      conversations[callSid].push({ role: 'assistant', content: aiResponse });
-      console.log(`🤖 [AI Response]: ${aiResponse}`);
-
-      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, aiResponse);
-
-      if (!isDone) {
-        response.gather({
-          input: ['speech'],
-          action: `/voice/respond?callSid=${callSid}`,
-          method: 'POST',
-          language: 'hi-IN',
-          speechTimeout: 'auto',
-          timeout: 10,
-        });
-      } else {
-        console.log(`✅ [Registration Complete] Call dropped automatically.`);
-        delete conversations[callSid];
-      }
-
-    } catch (err: any) {
-      console.error('[Server Error]', err);
-      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maafi kijiye, kuch takneeki gadbad ho gayi. Thodi der baad call karein.');
+    } catch (error: any) {
+      console.error('[Agent Voice Error]', error);
+      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
+        'Maaf kijiye, technical dikkat aa gayi hai. Kripya thodi der baad dobara call karein.');
     }
-
-    res.type('text/xml');
-    res.send(response.toString());
+    return res.type('text/xml').send(response.toString());
   }
 
   // Database Save Logic
