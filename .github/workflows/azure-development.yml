@@ -5,70 +5,75 @@ on:
     branches: [development]
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
-
-env:
-  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
-  AZURE_CONTAINER_APP_NAME: ${{ vars.AZURE_CONTAINER_APP_NAME }}
-  AZURE_CONTAINER_REGISTRY: ${{ vars.AZURE_CONTAINER_REGISTRY }}
-
 jobs:
   deploy-api:
+    name: Build & Deploy Backend API to Azure App Service
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           cache: npm
           cache-dependency-path: backend/package-lock.json
-      - name: Install
+
+      - name: Install Backend Dependencies
         run: npm ci
-      - name: Typecheck
+
+      - name: Typecheck Backend Code
         run: npm run typecheck
-      - name: Tests
-        run: node node_modules/jest/bin/jest.js --runInBand
-      - name: Build
-        run: node node_modules/@nestjs/cli/bin/nest.js build
-      - name: Azure login
+
+      - name: Run Backend Tests
+        run: npm test -- --runInBand
+
+      - name: Build Backend App
+        run: npm run build
+
+      - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      - name: Build and push container
-        run: |
-          az acr build --registry "$AZURE_CONTAINER_REGISTRY" --image e-chowk-api:${{ github.sha }} .
-      - name: Deploy Container App revision
-        run: |
-          az containerapp update --name "$AZURE_CONTAINER_APP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --image "${AZURE_CONTAINER_REGISTRY}.azurecr.io/e-chowk-api:${{ github.sha }}"
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'echowk-dev-api'
+          package: 'backend'
 
   deploy-web:
+    name: Build & Deploy Flutter Web to Azure Storage
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Setup Flutter
+
+      - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.47.6'
           channel: stable
-      - name: Flutter dependencies
+
+      - name: Get Flutter Dependencies
         run: flutter pub get
-      - name: Build web
-        run: flutter build web --release --dart-define=API_BASE_URL=${{ vars.AZURE_API_BASE_URL }}
-      - name: Deploy Static Web App
-        uses: Azure/static-web-apps-deploy@v1
+
+      - name: Build Flutter Web Release
+        run: flutter build web --release --dart-define=API_BASE_URL=https://echowk-dev-api.azurewebsites.net
+
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: upload
-          app_location: build/web
-          skip_app_build: true
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Upload Web Build to Azure Storage
+        run: |
+          az storage blob upload-batch \
+            --account-name echowkwebdev \
+            --source build/web \
+            --destination '$web' \
+            --overwrite \
+            --auth-mode login

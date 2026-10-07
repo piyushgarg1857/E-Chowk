@@ -28,6 +28,6 @@ backend/checkDb.js
 # Custom Flutter SDK ignored completely
 flutter_sdk/
 
-# Mac / Windows artifacts
-.DS_Store
-Thumbs.db
+# Archive / deployment files
+*.zip
+
