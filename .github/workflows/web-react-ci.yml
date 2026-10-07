@@ -1,0 +1,37 @@
+name: E-Chowk React Web CI
+
+on:
+  pull_request:
+    paths:
+      - "web_react/**"
+      - ".github/workflows/web-react-ci.yml"
+  push:
+    branches: [main, development]
+    paths:
+      - "web_react/**"
+      - ".github/workflows/web-react-ci.yml"
+
+jobs:
+  web-react:
+    name: React Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web_react
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web_react/package.json
+      - name: Install Dependencies
+        run: npm install
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
