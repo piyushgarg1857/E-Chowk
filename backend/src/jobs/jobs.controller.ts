@@ -15,6 +15,9 @@ export class JobsController {
   @Get('mine')
   mine(@CurrentUser() user: { sub: string }) { return this.jobs.mine(user.sub); }
 
+  @Get('my-work')
+  myWork(@CurrentUser() user: { sub: string }) { return this.jobs.myWork(user.sub); }
+
   @Get('my-applications')
   myApplications(@CurrentUser() user: { sub: string }) { return this.jobs.myApplications(user.sub); }
 
