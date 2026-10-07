@@ -2,15 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import Groq from 'groq-sdk';
 import { JobsService } from '../jobs/jobs.service';
 import { UsersService } from '../users/users.service';
+import { ConversationSession } from './conversation-session.entity';
 
 type ChatMessage = { role: 'system' | 'user' | 'assistant' | 'tool'; content: string; tool_call_id?: string; name?: string };
 
 @Injectable()
 export class AgentService {
   private readonly groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
-  private readonly sessions = new Map<string, ChatMessage[]>();
-
-  constructor(private readonly jobs: JobsService, private readonly users: UsersService) {}
+  constructor(
+    private readonly jobs: JobsService,
+    private readonly users: UsersService,
+    @InjectRepository(ConversationSession)
+    private readonly sessions: Repository<ConversationSession>,
+  ) {}
 
   async chatForPhone(phone: string, message: string) {
     const user = await this.users.findOrCreateByPhone(phone);
@@ -20,8 +24,22 @@ export class AgentService {
   async chat(userId: string, message: string) {
     if (!process.env.GROQ_API_KEY) throw new BadRequestException('AI service is not configured');
 
-    const history = this.sessions.get(userId) ?? [];
+    let session = await this.sessions.findOne({
+      where: { user_id: userId, channel: 'app' },
+      order: { updated_at: 'DESC' },
+    });
+    const history: ChatMessage[] = Array.isArray(session?.messages)
+      ? (session!.messages as ChatMessage[])
+      : [];
     if (!history.length) history.push({ role: 'system', content: this.systemPrompt() });
+    if (!session) {
+      session = this.sessions.create({
+        user_id: userId,
+        channel: 'app',
+        state: {},
+        messages: [],
+      });
+    }
     history.push({ role: 'user', content: message });
 
     for (let step = 0; step < 4; step++) {
@@ -39,8 +57,10 @@ export class AgentService {
       history.push(assistant);
 
       if (!assistant.tool_calls?.length) {
-        this.sessions.set(userId, history.slice(-20));
-        return { reply: assistant.content ?? '' };
+        session.messages = history.slice(-20);
+        session.last_message_at = new Date();
+        await this.sessions.save(session);
+        return { reply: assistant.content ?? '', session_id: session.id };
       }
 
       for (const call of assistant.tool_calls) {
@@ -54,8 +74,13 @@ export class AgentService {
       }
     }
 
-    this.sessions.set(userId, history.slice(-20));
-    return { reply: 'Maaf kijiye, main is request ko abhi complete nahi kar paaya. Kripya dobara batayein.' };
+    session.messages = history.slice(-20);
+    session.last_message_at = new Date();
+    await this.sessions.save(session);
+    return {
+      reply: 'Maaf kijiye, main is request ko abhi complete nahi kar paaya. Kripya dobara batayein.',
+      session_id: session.id,
+    };
   }
 
   private tools() {
