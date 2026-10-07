@@ -80,6 +80,30 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
     }
   }
 
+  Future<void> _changeJobState(String id, String action) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/jobs/$id/$action'),
+        headers: AppSession.authHeaders,
+      );
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(action == 'start' ? 'काम शुरू हो गया ✅' : 'काम पूरा हो गया ✅')),
+        );
+        await _loadJobs();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Job update नहीं हो पाया')),
+        );
+      }
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Server से connection नहीं हो पाया')),
+      );
+    }
+  }
+
   Future<void> _applyForJob(String id) async {
     try {
       final response = await http.post(
@@ -140,9 +164,24 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
               ],
               const SizedBox(height: 10),
               SizedBox(width: double.infinity, child: ElevatedButton(
-                onPressed: job['id'] == null ? null : () => _applyForJob(job['id'].toString()),
+                onPressed: job['id'] == null ? null : () {
+                  final status = job['status']?.toString();
+                  if (status == 'assigned') {
+                    _changeJobState(job['id'].toString(), 'start');
+                  } else if (status == 'in_progress') {
+                    _changeJobState(job['id'].toString(), 'complete');
+                  } else if (status == 'open') {
+                    _applyForJob(job['id'].toString());
+                  }
+                },
                 style: EChowkTheme.emeraldButton(),
-                child: const Text('काम के लिए Apply करें'),
+                child: Text(
+                  job['status']?.toString() == 'assigned'
+                      ? 'काम शुरू करें'
+                      : job['status']?.toString() == 'in_progress'
+                          ? 'काम पूरा करें'
+                          : 'काम के लिए Apply करें',
+                ),
               )),
             ]),
           ),
