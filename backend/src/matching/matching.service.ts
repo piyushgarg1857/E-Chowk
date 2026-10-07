@@ -14,24 +14,30 @@ export class MatchingService {
   async workersForJob(jobId: string) {
     const job = await this.jobs.findOne({ where: { id: jobId } });
     if (!job) return [];
-
     const workers = await this.users.find({
       where: { role: 'worker', is_available: true, is_active: true },
       select: ['id', 'full_name', 'skill_category', 'current_location', 'is_available', 'rating'],
       take: 100,
     });
-
     const skill = job.required_skill.toLowerCase();
     const location = job.location.toLowerCase();
-    return workers
-      .map(worker => {
-        const workerSkill = (worker.skill_category || '').toLowerCase();
-        const workerLocation = (worker.current_location || '').toLowerCase();
-        const skillScore = workerSkill.includes(skill) || skill.includes(workerSkill) ? 60 : 0;
-        const locationScore = workerLocation.includes(location) || location.includes(workerLocation) ? 25 : 0;
-        const ratingScore = Math.min(Number(worker.rating || 0) * 3, 15);
-        return { ...worker, match_score: skillScore + locationScore + ratingScore };
-      })
-      .sort((a, b) => b.match_score - a.match_score);
+    return workers.map(worker => {
+      const workerSkill = (worker.skill_category || '').toLowerCase();
+      const workerLocation = (worker.current_location || '').toLowerCase();
+      const skillScore = workerSkill.includes(skill) || skill.includes(workerSkill) ? 60 : 0;
+      const locationScore = workerLocation.includes(location) || location.includes(workerLocation) ? 25 : 0;
+      const ratingScore = Math.min(Number(worker.rating || 0) * 3, 15);
+      return { ...worker, match_score: skillScore + locationScore + ratingScore };
+    }).sort((a, b) => b.match_score - a.match_score);
+  }
+
+  async jobsForWorker(workerId: string, limit = 20) {
+    const worker = await this.users.findOne({ where: { id: workerId, role: 'worker' } });
+    if (!worker) return [];
+    const qb = this.jobs.createQueryBuilder('job')
+      .where('job.status = :status', { status: 'open' });
+    if (worker.skill_category) qb.andWhere('(LOWER(job.required_skill) LIKE LOWER(:skill) OR LOWER(:skill) LIKE LOWER(job.required_skill))', { skill: worker.skill_category });
+    if (worker.current_location) qb.andWhere('(LOWER(job.location) LIKE LOWER(:location) OR LOWER(:location) LIKE LOWER(job.location))', { location: worker.current_location });
+    return qb.orderBy('job.created_at', 'DESC').take(Math.min(Math.max(limit, 1), 50)).getMany();
   }
 }
