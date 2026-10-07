@@ -13,17 +13,19 @@ void main() {
   runApp(const LabourChowkApp());
 }
 
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 class LabourChowkApp extends StatelessWidget {
   const LabourChowkApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: rootNavigatorKey,
       title: 'E-Chowk',
       theme: EChowkTheme.light(),
       home: HomeScreen(
-        onLogin: () => Navigator.push(
-          context,
+        onLogin: () => rootNavigatorKey.currentState?.push(
           MaterialPageRoute(builder: (_) => const LoginScreen()),
         ),
       ),
