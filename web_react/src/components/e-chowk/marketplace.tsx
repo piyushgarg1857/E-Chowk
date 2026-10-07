@@ -83,7 +83,7 @@ export function WorkerDashboard() {
             <Switch
               aria-label="Available for work"
               checked={currentUser?.is_available ?? false}
-              onCheckedChange={(checked) => updateProfile({ is_available: checked })}
+              onCheckedChange={(checked: boolean) => updateProfile({ is_available: checked })}
             />
           </div>
         }
