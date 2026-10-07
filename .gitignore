@@ -34,3 +34,6 @@ flutter_sdk/
 # Temporary Azure log/deployment dumps
 LogFiles/
 deployments/
+
+*.log
+backend/*.log
