@@ -16,6 +16,7 @@ import { TrustModule } from './trust/trust.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuditModule } from './audit/audit.module';
 import { ExotelModule } from './exotel/exotel.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ExotelModule } from './exotel/exotel.module';
     PaymentsModule,
     AuditModule,
     ExotelModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
