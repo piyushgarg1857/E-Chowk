@@ -7,5 +7,7 @@ import { PaymentsService } from './payments.service';
 @UseGuards(AuthGuard)
 export class PaymentsController {
   constructor(private readonly payments: PaymentsService) {}
+  @Get('khata') khata(@CurrentUser() user: { sub: string }) { return this.payments.listForUser(user.sub); }
+
   @Get() list(@CurrentUser() user: { sub: string }) { return this.payments.listForUser(user.sub); }
 }
