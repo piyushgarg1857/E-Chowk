@@ -35,6 +35,9 @@ jobs:
       - name: Build Backend App
         run: npm run build
 
+      - name: Prune Dev Dependencies
+        run: npm prune --omit=dev
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
