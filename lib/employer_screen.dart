@@ -379,6 +379,14 @@ class _EmployerScreenState extends State<EmployerScreen> {
             ),
             actions: [
               IconButton(
+                onPressed: _showNotifications,
+                icon: Badge(
+                  isLabelVisible: _unreadNotifications > 0,
+                  label: Text('$_unreadNotifications'),
+                  child: const Icon(Icons.notifications_outlined, color: Colors.white),
+                ),
+              ),
+              IconButton(
                 icon: const Icon(Icons.refresh, color: Colors.white),
                 onPressed: _loadWorkers,
                 tooltip: 'Refresh',
