@@ -15,6 +15,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { TrustModule } from './trust/trust.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuditModule } from './audit/audit.module';
+import { ExotelModule } from './exotel/exotel.module';
 
 @Module({
   imports: [
@@ -23,7 +24,6 @@ import { AuditModule } from './audit/audit.module';
       isGlobal: true,
     }),
     
-    // 2. Connect to Azure PostgreSQL
     // 2. Connect to Azure PostgreSQL
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -40,7 +40,6 @@ import { AuditModule } from './audit/audit.module';
     }),
     
     AuthModule,
-    
     VoiceModule,
     HealthModule,
     UsersModule,
@@ -52,6 +51,7 @@ import { AuditModule } from './audit/audit.module';
     TrustModule,
     PaymentsModule,
     AuditModule,
+    ExotelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
