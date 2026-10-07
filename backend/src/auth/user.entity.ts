@@ -5,17 +5,17 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, length: 15 })
+  @Column({ type: 'varchar', unique: true, length: 15 })
   phone_number: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   full_name: string;
 
-  @Column({ length: 20, default: 'worker' })
+  @Column({ type: 'varchar', length: 20, default: 'worker' })
   role: string; // 'worker', 'employer', 'admin'
 
   // Specific to workers
-  @Column({ length: 50, nullable: true })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   skill_category: string;
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
@@ -28,10 +28,10 @@ export class User {
   rating: number;
 
   // Common properties
-  @Column({ length: 200, nullable: true })
+  @Column({ type: 'varchar', length: 200, nullable: true })
   current_location: string;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   registration_source: string;
 
   @Column({ type: 'timestamptz', nullable: true })
@@ -43,9 +43,9 @@ export class User {
   @Column({ default: true })
   is_active: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 }

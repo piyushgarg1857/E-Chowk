@@ -8,5 +8,5 @@ export class Rating {
   @Column({ type: 'uuid' }) to_user_id!: string;
   @Column({ type: 'int' }) score!: number;
   @Column({ type: 'text', nullable: true }) comment!: string | null;
-  @CreateDateColumn() created_at!: Date;
+  @CreateDateColumn({ type: 'timestamptz' }) created_at!: Date;
 }

@@ -5,18 +5,18 @@ export class OtpSession {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 15 })
+  @Column({ type: 'varchar', length: 15 })
   phone_number: string;
 
-  @Column({ length: 6 })
+  @Column({ type: 'varchar', length: 6 })
   otp_code: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   expires_at: Date;
 
   @Column({ default: false })
   is_used: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 }
