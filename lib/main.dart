@@ -6,6 +6,8 @@ import 'worker_screen.dart';
 import 'employer_screen.dart';
 import 'config.dart';
 import 'services/session.dart';
+import 'home_screen.dart';
+import 'e_chowk_theme.dart';
 
 void main() {
   runApp(const LabourChowkApp());
@@ -18,22 +20,13 @@ class LabourChowkApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'E-Chowk',
-      theme: ThemeData(
-        fontFamily: 'Inter',
-        primaryColor: const Color(0xFF3F51B5),
-        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: const Color(0xFF3F51B5),
-          secondary: const Color(0xFF4CAF50),
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF3F51B5),
-          elevation: 0,
-          centerTitle: true,
-          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+      theme: EChowkTheme.light(),
+      home: HomeScreen(
+        onLogin: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         ),
       ),
-      home: const LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

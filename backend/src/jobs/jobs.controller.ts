@@ -12,6 +12,15 @@ export class JobsController {
   @Get()
   search(@Query() dto: SearchJobsDto) { return this.jobs.search(dto); }
 
+  @Get('mine')
+  mine(@CurrentUser() user: { sub: string }) { return this.jobs.mine(user.sub); }
+
+  @Get('my-work')
+  myWork(@CurrentUser() user: { sub: string }) { return this.jobs.myWork(user.sub); }
+
+  @Get('my-applications')
+  myApplications(@CurrentUser() user: { sub: string }) { return this.jobs.myApplications(user.sub); }
+
   @Get(':id')
   get(@Param('id') id: string) { return this.jobs.get(id); }
 

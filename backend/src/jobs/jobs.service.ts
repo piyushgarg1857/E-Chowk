@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from './job.entity';
 import { JobApplication } from './application.entity';
+import { JobAssignment } from './assignment.entity';
 import { CreateJobDto, SearchJobsDto } from './job.dto';
 import { User } from '../auth/user.entity';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -13,6 +14,7 @@ export class JobsService {
   constructor(
     @InjectRepository(Job) private readonly jobs: Repository<Job>,
     @InjectRepository(JobApplication) private readonly applications: Repository<JobApplication>,
+    @InjectRepository(JobAssignment) private readonly assignments: Repository<JobAssignment>,
     @InjectRepository(User) private readonly users: Repository<User>,
     private readonly notifications: NotificationsService,
     private readonly audit: AuditService,
@@ -33,7 +35,40 @@ export class JobsService {
     });
     const saved = await this.jobs.save(job);
     await this.audit.record(employerId, 'job.created', 'job', saved.id, { required_skill: saved.required_skill, location: saved.location });
+    const candidates = await this.users.createQueryBuilder('user')
+      .where('user.role = :role', { role: 'worker' })
+      .andWhere('user.is_active = true AND user.is_available = true')
+      .andWhere('LOWER(user.skill_category) LIKE LOWER(:skill)', { skill: '%' + saved.required_skill + '%' })
+      .andWhere('(user.current_location IS NULL OR LOWER(user.current_location) LIKE LOWER(:location))', { location: '%' + saved.location + '%' })
+      .take(25)
+      .getMany();
+    await Promise.all(candidates.map((worker) =>
+      this.notifications.create(
+        worker.id,
+        'job_match',
+        'New work near you',
+        saved.required_skill + ' ka naya kaam ' + saved.location + ' mein available hai.',
+      ),
+    ));
     return saved;
+  }
+
+  async mine(employerId: string) {
+    return this.jobs.find({ where: { employer_id: employerId }, order: { created_at: 'DESC' } });
+  }
+
+  async myWork(workerId: string) {
+    const assignments = await this.assignments.find({
+      where: { worker_id: workerId },
+      order: { assigned_at: 'DESC' },
+    });
+    if (!assignments.length) return [];
+    const jobs = await Promise.all(assignments.map((a) => this.get(a.job_id)));
+    return jobs;
+  }
+
+  async myApplications(workerId: string) {
+    return this.applications.find({ where: { worker_id: workerId }, order: { applied_at: 'DESC' } });
   }
 
   async search(dto: SearchJobsDto) {
@@ -81,12 +116,30 @@ export class JobsService {
     const job = await this.get(app.job_id);
     if (job.employer_id !== employerId) throw new ForbiddenException('Not your job');
     if (status === 'accepted') {
+      if (job.status !== 'open') throw new BadRequestException('Only open jobs can be assigned');
+      const existingAssignment = await this.assignments.findOne({ where: { job_id: job.id } });
+      if (existingAssignment) throw new BadRequestException('Job already assigned');
       const accepted = await this.applications.find({ where: { job_id: job.id, status: 'accepted' } });
       if (accepted.length) throw new BadRequestException('Job already assigned');
-      job.status = 'assigned';
       app.status = 'accepted';
+      job.status = 'assigned';
       await this.jobs.save(job);
+      await this.assignments.save(this.assignments.create({
+        job_id: job.id,
+        worker_id: app.worker_id,
+        application_id: app.id,
+        status: 'assigned',
+        started_at: null,
+        completed_at: null,
+      }));
+      await this.applications
+        .createQueryBuilder()
+        .update(JobApplication)
+        .set({ status: 'rejected' })
+        .where('job_id = :jobId AND id != :id AND status = :status', { jobId: job.id, id: app.id, status: 'pending' })
+        .execute();
     } else {
+      if (app.status !== 'pending') throw new BadRequestException('Only pending applications can be rejected');
       app.status = 'rejected';
     }
     const saved = await this.applications.save(app);
@@ -99,8 +152,15 @@ export class JobsService {
     const app = await this.applications.findOne({ where: { job_id: jobId, worker_id: workerId, status: 'accepted' } });
     if (!app) throw new ForbiddenException('Accepted assignment not found');
     const job = await this.get(jobId);
+    if (job.status !== 'assigned') throw new BadRequestException('Job must be assigned before starting');
+    const assignment = await this.assignments.findOne({ where: { job_id: jobId, worker_id: workerId } });
+    if (!assignment || assignment.status !== 'assigned') throw new ForbiddenException('Assignment is not startable');
+    assignment.status = 'in_progress';
+    assignment.started_at = new Date();
     job.status = 'in_progress';
+    await this.assignments.save(assignment);
     await this.jobs.save(job);
+    await this.notifications.create(job.employer_id, 'job_started', 'Job started', 'The assigned worker has started the job.');
     await this.audit.record(workerId, 'job.started', 'job', job.id);
     return job;
   }
@@ -109,9 +169,15 @@ export class JobsService {
     const app = await this.applications.findOne({ where: { job_id: jobId, worker_id: workerId, status: 'accepted' } });
     if (!app) throw new ForbiddenException('Accepted assignment not found');
     const job = await this.get(jobId);
+    if (job.status !== 'in_progress') throw new BadRequestException('Job must be in progress before completion');
+    const assignment = await this.assignments.findOne({ where: { job_id: jobId, worker_id: workerId } });
+    if (!assignment || assignment.status !== 'in_progress') throw new ForbiddenException('Assignment is not completable');
+    assignment.status = 'completed';
+    assignment.completed_at = new Date();
     job.status = 'completed';
     app.status = 'completed';
     app.completed_at = new Date();
+    await this.assignments.save(assignment);
     await this.jobs.save(job);
     const saved = await this.applications.save(app);
     await this.notifications.create(job.employer_id, 'job_completed', 'Job completed', 'The assigned worker marked the job completed.');

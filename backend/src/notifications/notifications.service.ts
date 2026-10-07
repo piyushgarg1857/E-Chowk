@@ -10,6 +10,16 @@ export class NotificationsService {
     return this.notifications.save(this.notifications.create({ user_id: userId, type, title, body }));
   }
   list(userId: string) { return this.notifications.find({ where: { user_id: userId }, order: { created_at: 'DESC' }, take: 50 }); }
+  async markAllRead(userId: string) {
+    await this.notifications
+      .createQueryBuilder()
+      .update(Notification)
+      .set({ read_at: new Date() })
+      .where('user_id = :userId AND read_at IS NULL', { userId })
+      .execute();
+    return { success: true };
+  }
+
   async markRead(userId: string, id: string) {
     const notification = await this.notifications.findOne({ where: { id, user_id: userId } });
     if (!notification) return null;

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart';
 import 'services/session.dart';
+import 'e_chowk_theme.dart';
 
 class WorkerScreen extends StatefulWidget {
   const WorkerScreen({Key? key}) : super(key: key);
@@ -15,6 +16,9 @@ class WorkerScreen extends StatefulWidget {
 class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderStateMixin {
   bool isAvailable = true;
   bool _isCallingAI = false;
+  bool _jobsLoading = true;
+  List<Map<String, dynamic>> _jobs = [];
+  int _unreadNotifications = 0;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -23,6 +27,8 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
+    _loadJobs();
+    _loadNotificationCount();
     _pulseController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
       ..repeat(reverse: true);
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.12).animate(
@@ -34,6 +40,56 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   void dispose() {
     _pulseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadNotificationCount() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/notifications'), headers: AppSession.authHeaders);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body);
+        if (data is List && mounted) {
+          setState(() => _unreadNotifications = data.where((n) => n['read_at'] == null).length);
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _showNotifications() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/notifications'), headers: AppSession.authHeaders);
+      if (!mounted) return;
+      final data = response.statusCode >= 200 && response.statusCode < 300 ? jsonDecode(response.body) : [];
+      final notifications = data is List ? List<Map<String, dynamic>>.from(data) : <Map<String, dynamic>>[];
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Notifications'),
+          content: SizedBox(
+            width: 420,
+            child: notifications.isEmpty
+                ? const Text('अभी कोई notification नहीं है.')
+                : ListView(
+                    shrinkWrap: true,
+                    children: notifications.take(20).map((n) => ListTile(
+                      leading: Icon(n['read_at'] == null ? Icons.notifications_active : Icons.notifications_none),
+                      title: Text(n['title']?.toString() ?? 'E-Chowk'),
+                      subtitle: Text(n['body']?.toString() ?? ''),
+                    )).toList(),
+                  ),
+          ),
+          actions: [
+            TextButton(onPressed: () async {
+              await http.patch(Uri.parse('$apiUrl/notifications/read-all'), headers: AppSession.authHeaders);
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (mounted) setState(() => _unreadNotifications = 0);
+            }, child: const Text('Mark all read')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          ],
+        ),
+      );
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notifications load नहीं हुईं')));
+    }
   }
 
   Future<void> toggleAvailability() async {
@@ -57,6 +113,140 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   }
 
   // 🔥 REAL API CALL - registers worker via AI Voice Call
+  Future<void> _loadJobs() async {
+    try {
+      final responses = await Future.wait([
+        http.get(Uri.parse('$apiUrl/jobs?limit=10'), headers: AppSession.authHeaders),
+        http.get(Uri.parse('$apiUrl/jobs/my-work'), headers: AppSession.authHeaders),
+      ]);
+      final openData = jsonDecode(responses[0].body);
+      final workData = jsonDecode(responses[1].body);
+      final combined = <Map<String, dynamic>>[];
+      if (openData is List) combined.addAll(List<Map<String, dynamic>>.from(openData));
+      if (workData is List) {
+        final ids = combined.map((j) => j['id']?.toString()).toSet();
+        for (final job in List<Map<String, dynamic>>.from(workData)) {
+          if (!ids.contains(job['id']?.toString())) combined.add(job);
+        }
+      }
+      if (mounted) setState(() => _jobs = combined);
+    } catch (_) {
+      // Keep the dashboard usable if marketplace loading fails.
+    } finally {
+      if (mounted) setState(() => _jobsLoading = false);
+    }
+  }
+
+  Future<void> _changeJobState(String id, String action) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/jobs/$id/$action'),
+        headers: AppSession.authHeaders,
+      );
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(action == 'start' ? 'काम शुरू हो गया ✅' : 'काम पूरा हो गया ✅')),
+        );
+        await _loadJobs();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Job update नहीं हो पाया')),
+        );
+      }
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Server से connection नहीं हो पाया')),
+      );
+    }
+  }
+
+  Future<void> _applyForJob(String id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/jobs/$id/applications'),
+        headers: AppSession.authHeaders,
+        body: jsonEncode({}),
+      );
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Application भेज दी गई ✅')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Application नहीं भेजी जा सकी')),
+        );
+      }
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Server से connection नहीं हो पाया')),
+      );
+    }
+  }
+
+  Widget _buildJobsSection() {
+    if (_jobsLoading) {
+      return _buildCard(child: const Padding(
+        padding: EdgeInsets.all(8),
+        child: Center(child: CircularProgressIndicator(color: EChowkTheme.emerald)),
+      ));
+    }
+    if (_jobs.isEmpty) {
+      return _buildCard(child: const Row(children: [
+        Icon(Icons.work_outline, color: EChowkTheme.muted),
+        SizedBox(width: 10),
+        Expanded(child: Text('अभी nearby jobs नहीं मिले. बाद में फिर देखें.', style: TextStyle(color: EChowkTheme.muted))),
+      ]));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('मेरे लिए काम', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: EChowkTheme.text)),
+        const SizedBox(height: 10),
+        ..._jobs.map((job) => Card(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(child: Text(job['required_skill']?.toString() ?? 'General work', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: EChowkTheme.text))),
+                EChowkBadge(text: job['status']?.toString() ?? 'open', icon: Icons.circle, color: EChowkTheme.emerald),
+              ]),
+              const SizedBox(height: 7),
+              Text(job['location']?.toString() ?? 'Location not specified', style: const TextStyle(color: EChowkTheme.muted)),
+              if (job['offered_wage'] != null) ...[
+                const SizedBox(height: 5),
+                Text('₹${job['offered_wage']}', style: const TextStyle(fontWeight: FontWeight.w800, color: EChowkTheme.text)),
+              ],
+              const SizedBox(height: 10),
+              SizedBox(width: double.infinity, child: ElevatedButton(
+                onPressed: job['id'] == null ? null : () {
+                  final status = job['status']?.toString();
+                  if (status == 'assigned') {
+                    _changeJobState(job['id'].toString(), 'start');
+                  } else if (status == 'in_progress') {
+                    _changeJobState(job['id'].toString(), 'complete');
+                  } else if (status == 'open') {
+                    _applyForJob(job['id'].toString());
+                  }
+                },
+                style: EChowkTheme.emeraldButton(),
+                child: Text(
+                  job['status']?.toString() == 'assigned'
+                      ? 'काम शुरू करें'
+                      : job['status']?.toString() == 'in_progress'
+                          ? 'काम पूरा करें'
+                          : 'काम के लिए Apply करें',
+                ),
+              )),
+            ]),
+          ),
+        )),
+      ],
+    );
+  }
+
   Future<void> startAIRegistration() async {
     setState(() { _isCallingAI = true; });
 
@@ -98,7 +288,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: EChowkTheme.surface,
       body: Focus(
         autofocus: true,
         onKeyEvent: (node, event) {
@@ -119,7 +309,17 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
             SliverAppBar(
               expandedHeight: 200,
               pinned: true,
-              backgroundColor: const Color(0xFF3F51B5),
+              backgroundColor: EChowkTheme.navy,
+              actions: [
+                IconButton(
+                  onPressed: _showNotifications,
+                  icon: Badge(
+                    isLabelVisible: _unreadNotifications > 0,
+                    label: Text('$_unreadNotifications'),
+                    child: const Icon(Icons.notifications_outlined, color: Colors.white),
+                  ),
+                ),
+              ],
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
@@ -306,7 +506,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
                                       gradient: LinearGradient(
                                         colors: _isCallingAI
                                             ? [Colors.red.shade400, Colors.red.shade700]
-                                            : [const Color(0xFF3F51B5), const Color(0xFF7986CB)],
+                                            : [EChowkTheme.navy, const Color(0xFF7986CB)],
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -363,6 +563,10 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
                         ],
                       ),
                     ),
+
+                    const SizedBox(height: 20),
+
+                    _buildJobsSection(),
 
                     const SizedBox(height: 20),
 
