@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart';
 import 'services/session.dart';
+import 'e_chowk_theme.dart';
 
 class WorkerScreen extends StatefulWidget {
   const WorkerScreen({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class WorkerScreen extends StatefulWidget {
 class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderStateMixin {
   bool isAvailable = true;
   bool _isCallingAI = false;
+  bool _jobsLoading = true;
+  List<Map<String, dynamic>> _jobs = [];
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -23,6 +26,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
+    _loadJobs();
     _pulseController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
       ..repeat(reverse: true);
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.12).animate(
@@ -57,6 +61,96 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   }
 
   // 🔥 REAL API CALL - registers worker via AI Voice Call
+  Future<void> _loadJobs() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$apiUrl/jobs?limit=10'),
+        headers: AppSession.authHeaders,
+      );
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body);
+        if (data is List && mounted) {
+          setState(() => _jobs = List<Map<String, dynamic>>.from(data));
+        }
+      }
+    } catch (_) {
+      // Keep the dashboard usable if marketplace loading fails.
+    } finally {
+      if (mounted) setState(() => _jobsLoading = false);
+    }
+  }
+
+  Future<void> _applyForJob(String id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/jobs/$id/applications'),
+        headers: AppSession.authHeaders,
+        body: jsonEncode({}),
+      );
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Application भेज दी गई ✅')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Application नहीं भेजी जा सकी')),
+        );
+      }
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Server से connection नहीं हो पाया')),
+      );
+    }
+  }
+
+  Widget _buildJobsSection() {
+    if (_jobsLoading) {
+      return _buildCard(child: const Padding(
+        padding: EdgeInsets.all(8),
+        child: Center(child: CircularProgressIndicator(color: EChowkTheme.emerald)),
+      ));
+    }
+    if (_jobs.isEmpty) {
+      return _buildCard(child: const Row(children: [
+        Icon(Icons.work_outline, color: EChowkTheme.muted),
+        SizedBox(width: 10),
+        Expanded(child: Text('अभी nearby jobs नहीं मिले. बाद में फिर देखें.', style: TextStyle(color: EChowkTheme.muted))),
+      ]));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('मेरे लिए काम', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: EChowkTheme.text)),
+        const SizedBox(height: 10),
+        ..._jobs.map((job) => Card(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(child: Text(job['required_skill']?.toString() ?? 'General work', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: EChowkTheme.text))),
+                EChowkBadge(text: job['status']?.toString() ?? 'open', icon: Icons.circle, color: EChowkTheme.emerald),
+              ]),
+              const SizedBox(height: 7),
+              Text(job['location']?.toString() ?? 'Location not specified', style: const TextStyle(color: EChowkTheme.muted)),
+              if (job['offered_wage'] != null) ...[
+                const SizedBox(height: 5),
+                Text('₹${job['offered_wage']}', style: const TextStyle(fontWeight: FontWeight.w800, color: EChowkTheme.text)),
+              ],
+              const SizedBox(height: 10),
+              SizedBox(width: double.infinity, child: ElevatedButton(
+                onPressed: job['id'] == null ? null : () => _applyForJob(job['id'].toString()),
+                style: EChowkTheme.emeraldButton(),
+                child: const Text('काम के लिए Apply करें'),
+              )),
+            ]),
+          ),
+        )),
+      ],
+    );
+  }
+
   Future<void> startAIRegistration() async {
     setState(() { _isCallingAI = true; });
 
@@ -98,7 +192,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: EChowkTheme.surface,
       body: Focus(
         autofocus: true,
         onKeyEvent: (node, event) {
@@ -119,7 +213,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
             SliverAppBar(
               expandedHeight: 200,
               pinned: true,
-              backgroundColor: const Color(0xFF3F51B5),
+              backgroundColor: EChowkTheme.navy,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
@@ -306,7 +400,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
                                       gradient: LinearGradient(
                                         colors: _isCallingAI
                                             ? [Colors.red.shade400, Colors.red.shade700]
-                                            : [const Color(0xFF3F51B5), const Color(0xFF7986CB)],
+                                            : [EChowkTheme.navy, const Color(0xFF7986CB)],
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -363,6 +457,10 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
                         ],
                       ),
                     ),
+
+                    const SizedBox(height: 20),
+
+                    _buildJobsSection(),
 
                     const SizedBox(height: 20),
 
