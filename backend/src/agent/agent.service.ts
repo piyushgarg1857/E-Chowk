@@ -30,15 +30,15 @@ export class AgentService {
   }
 
   async chatInSession(userId: string, sessionId: string, message: string) {
-    const session = await this.getSession(userId, sessionId);
-    return this.chat(userId, message, session.channel);
+    await this.getSession(userId, sessionId);
+    return this.chat(userId, message, 'app', sessionId);
   }
 
-  async chat(userId: string, message: string, channel = 'app') {
+  async chat(userId: string, message: string, channel = 'app', sessionId?: string) {
     if (!process.env.GROQ_API_KEY) throw new BadRequestException('AI service is not configured');
 
     let session = await this.sessions.findOne({
-      where: { user_id: userId, channel },
+      where: sessionId ? { id: sessionId, user_id: userId } : { user_id: userId, channel },
       order: { updated_at: 'DESC' },
     });
     const history: ChatMessage[] = Array.isArray(session?.messages)
