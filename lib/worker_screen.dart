@@ -18,6 +18,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   bool _isCallingAI = false;
   bool _jobsLoading = true;
   List<Map<String, dynamic>> _jobs = [];
+  int _unreadNotifications = 0;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -27,6 +28,7 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _loadJobs();
+    _loadNotificationCount();
     _pulseController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
       ..repeat(reverse: true);
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.12).animate(
@@ -38,6 +40,56 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
   void dispose() {
     _pulseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadNotificationCount() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/notifications'), headers: AppSession.authHeaders);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body);
+        if (data is List && mounted) {
+          setState(() => _unreadNotifications = data.where((n) => n['read_at'] == null).length);
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _showNotifications() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/notifications'), headers: AppSession.authHeaders);
+      if (!mounted) return;
+      final data = response.statusCode >= 200 && response.statusCode < 300 ? jsonDecode(response.body) : [];
+      final notifications = data is List ? List<Map<String, dynamic>>.from(data) : <Map<String, dynamic>>[];
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Notifications'),
+          content: SizedBox(
+            width: 420,
+            child: notifications.isEmpty
+                ? const Text('अभी कोई notification नहीं है.')
+                : ListView(
+                    shrinkWrap: true,
+                    children: notifications.take(20).map((n) => ListTile(
+                      leading: Icon(n['read_at'] == null ? Icons.notifications_active : Icons.notifications_none),
+                      title: Text(n['title']?.toString() ?? 'E-Chowk'),
+                      subtitle: Text(n['body']?.toString() ?? ''),
+                    )).toList(),
+                  ),
+          ),
+          actions: [
+            TextButton(onPressed: () async {
+              await http.patch(Uri.parse('$apiUrl/notifications/read-all'), headers: AppSession.authHeaders);
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (mounted) setState(() => _unreadNotifications = 0);
+            }, child: const Text('Mark all read')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          ],
+        ),
+      );
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notifications load नहीं हुईं')));
+    }
   }
 
   Future<void> toggleAvailability() async {
@@ -258,6 +310,16 @@ class _WorkerScreenState extends State<WorkerScreen> with SingleTickerProviderSt
               expandedHeight: 200,
               pinned: true,
               backgroundColor: EChowkTheme.navy,
+              actions: [
+                IconButton(
+                  onPressed: _showNotifications,
+                  icon: Badge(
+                    isLabelVisible: _unreadNotifications > 0,
+                    label: Text('$_unreadNotifications'),
+                    child: const Icon(Icons.notifications_outlined, color: Colors.white),
+                  ),
+                ),
+              ],
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
