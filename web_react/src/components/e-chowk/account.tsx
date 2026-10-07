@@ -395,7 +395,7 @@ export function Profile() {
                 </div>
                 <Switch
                   checked={currentUser?.is_available ?? false}
-                  onCheckedChange={(value) => updateProfile({ is_available: value })}
+                  onCheckedChange={(value: boolean) => updateProfile({ is_available: value })}
                   aria-label="Profile availability"
                 />
               </div>
@@ -435,7 +435,7 @@ export function Profile() {
                 <Switch
                   aria-label={p.label}
                   checked={prefs[p.key]}
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={(checked: boolean) => {
                     setPrefs((prev) => ({ ...prev, [p.key]: checked }));
                     toast.success("Preference saved for this demo session");
                   }}
