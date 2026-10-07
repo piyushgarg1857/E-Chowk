@@ -7,6 +7,7 @@ import { ExotelService } from '../exotel/exotel.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { TwilioSignatureGuard } from './twilio-signature.guard';
+import { VoiceSession } from './voice-session.entity';
 
 describe('VoiceController', () => {
   let controller: VoiceController;
@@ -16,6 +17,7 @@ describe('VoiceController', () => {
       controllers: [VoiceController],
       providers: [
         { provide: getRepositoryToken(User), useValue: {} },
+        { provide: getRepositoryToken(VoiceSession), useValue: {} },
         { provide: AgentService, useValue: { chatForPhone: jest.fn() } },
         { provide: ExotelService, useValue: { connectCall: jest.fn(), sendSms: jest.fn() } },
       ],
