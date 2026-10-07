@@ -24,9 +24,7 @@ export class AuthService {
       throw new BadRequestException('OTP service is not configured');
     }
     const formattedPhone = this.normalizePhone(phone);
-    const verification = await this.twilioClient.verify.v2
-      .services(verifyServiceSid)
-      .verifications.create({ to: formattedPhone, channel: 'sms' });
+    let verification; try { verification = await this.twilioClient.verify.v2.services(verifyServiceSid).verifications.create({ to: formattedPhone, channel: 'sms' }); } catch (err: any) { console.error('Twilio Send OTP error:', err); throw new BadRequestException('Twilio OTP error: ' + (err.message || err.status || 'Failed to send SMS')); }
     return { success: true, message: 'OTP sent', status: verification.status };
   }
 
@@ -82,3 +80,4 @@ export class AuthService {
     return safe;
   }
 }
+
