@@ -240,7 +240,7 @@ export function VoiceExperience() {
   );
 }
 export function Assistant() {
-  const { messages, setMessages, jobs, role, apply } = useDemo();
+  const { messages, setMessages, jobs, role, apply, live, sendAgentMessage } = useDemo();
   const [status, setStatus] = useState<"ready" | "submitted">("ready");
   const [input, setInput] = useState("");
   const textarea = useRef<HTMLTextAreaElement>(null);
@@ -265,12 +265,16 @@ export function Assistant() {
     setInput("");
     textarea.current?.focus();
     try {
-      const result = await mockMarketplaceService.understand(text, role, jobs);
-      if (!mounted.current) return;
-      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", ...result }]);
+      if (live) {
+        await sendAgentMessage(text);
+      } else {
+        const result = await mockMarketplaceService.understand(text, role, jobs);
+        if (!mounted.current) return;
+        setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", ...result }]);
+      }
     } catch {
       if (mounted.current)
-        toast.error("The demo could not complete this request. Please try again.");
+        toast.error("The assistant could not complete this request. Please try again.");
     } finally {
       if (mounted.current) {
         setStatus("ready");
@@ -319,7 +323,7 @@ export function Assistant() {
               <Brand compact />
               <span className="dot" />
             </div>
-            <Pill tone="neutral">Simulated assistant</Pill>
+            <Pill tone="neutral">{live ? "Live AI assistant" : "Simulated assistant"}</Pill>
           </div>
           <Conversation
             className="chat-transcript"
