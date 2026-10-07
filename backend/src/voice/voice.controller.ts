@@ -7,6 +7,7 @@ const twilio = (TwilioSDK as any).default || TwilioSDK;
 import Groq from 'groq-sdk';
 import { AgentService } from '../agent/agent.service';
 import { ExotelService } from '../exotel/exotel.service';
+import { VoiceSession } from './voice-session.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { Roles, CurrentUser } from '../auth/auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
@@ -36,6 +37,8 @@ export class VoiceController {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(VoiceSession)
+    private readonly voiceSessions: Repository<VoiceSession>,
     private readonly agent: AgentService,
     private readonly exotelService: ExotelService,
   ) {}
@@ -197,6 +200,17 @@ export class VoiceController {
   @UseGuards(TwilioSignatureGuard)
   agentAliasIncoming(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid || '';
+    const from = req.body?.From || null;
+    const user = from ? await this.userRepository.findOne({ where: { phone_number: from } }) : null;
+    await this.voiceSessions.save(this.voiceSessions.create({
+      user_id: user?.id ?? null,
+      provider: 'twilio',
+      provider_call_id: callSid || null,
+      direction: 'inbound',
+      status: 'active',
+      language: 'hi-IN',
+      started_at: new Date(),
+    }));
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
     response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
@@ -237,6 +251,14 @@ export class VoiceController {
 
     try {
       const result = await this.agent.chatForPhone(from, speech);
+      const session = await this.voiceSessions.findOne({ where: { provider: 'twilio', provider_call_id: callSid } });
+      if (session) {
+        const transcript = Array.isArray(session.transcript) ? session.transcript : [];
+        transcript.push({ role: 'user', content: speech, at: new Date().toISOString() });
+        transcript.push({ role: 'assistant', content: result.reply || '', at: new Date().toISOString() });
+        session.transcript = transcript.slice(-40);
+        await this.voiceSessions.save(session);
+      }
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
         result.reply || 'Ji, batayein.');
       response.gather({
