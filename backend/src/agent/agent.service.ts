@@ -20,14 +20,14 @@ export class AgentService {
 
   async chatForPhone(phone: string, message: string) {
     const user = await this.users.findOrCreateByPhone(phone);
-    return this.chat(user.id, message);
+    return this.chat(user.id, message, 'voice');
   }
 
-  async chat(userId: string, message: string) {
+  async chat(userId: string, message: string, channel = 'app') {
     if (!process.env.GROQ_API_KEY) throw new BadRequestException('AI service is not configured');
 
     let session = await this.sessions.findOne({
-      where: { user_id: userId, channel: 'app' },
+      where: { user_id: userId, channel },
       order: { updated_at: 'DESC' },
     });
     const history: ChatMessage[] = Array.isArray(session?.messages)
@@ -37,7 +37,7 @@ export class AgentService {
     if (!session) {
       session = this.sessions.create({
         user_id: userId,
-        channel: 'app',
+        channel,
         state: {},
         messages: [],
       });
