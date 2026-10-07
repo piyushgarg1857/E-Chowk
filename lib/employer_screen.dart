@@ -16,6 +16,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
   final String apiUrl = apiBaseUrl;
   List<Map<String, dynamic>> _allWorkers = [];
   List<Map<String, dynamic>> _filteredWorkers = [];
+  List<Map<String, dynamic>> _myJobs = [];
   bool _isLoading = true;
   String _selectedSkill = 'All';
   String _searchQuery = '';
@@ -37,6 +38,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
   void initState() {
     super.initState();
     _loadWorkers();
+    _loadMyJobs();
   }
 
   Future<void> _loadWorkers() async {
@@ -69,6 +71,126 @@ class _EmployerScreenState extends State<EmployerScreen> {
         return matchSkill && matchSearch;
       }).toList();
     });
+  }
+
+  Future<void> _loadMyJobs() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/jobs/mine'), headers: AppSession.authHeaders);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body);
+        if (data is List && mounted) setState(() => _myJobs = List<Map<String, dynamic>>.from(data));
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _viewApplications(Map<String, dynamic> job) async {
+    final id = job['id']?.toString();
+    if (id == null) return;
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/jobs/$id/applications'), headers: AppSession.authHeaders);
+      if (!mounted) return;
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Applications load नहीं हुईं')));
+        return;
+      }
+      final data = jsonDecode(response.body);
+      final apps = data is List ? List<Map<String, dynamic>>.from(data) : <Map<String, dynamic>>[];
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Applications · ${job['required_skill'] ?? 'Job'}'),
+          content: SizedBox(
+            width: 420,
+            child: apps.isEmpty
+                ? const Text('अभी कोई application नहीं आई.')
+                : ListView(
+                    shrinkWrap: true,
+                    children: apps.map((app) {
+                      final status = app['status']?.toString() ?? 'pending';
+                      return ListTile(
+                        leading: const CircleAvatar(child: Icon(Icons.person)),
+                        title: Text('Worker ${app['worker_id'] ?? ''}'),
+                        subtitle: Text(status),
+                        trailing: status == 'pending'
+                            ? Wrap(
+                                spacing: 4,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Reject',
+                                    onPressed: () async {
+                                      Navigator.pop(ctx);
+                                      await _decideApplication(app['id'].toString(), 'rejected');
+                                    },
+                                    icon: const Icon(Icons.close),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Accept',
+                                    onPressed: () async {
+                                      Navigator.pop(ctx);
+                                      await _decideApplication(app['id'].toString(), 'accepted');
+                                    },
+                                    icon: const Icon(Icons.check),
+                                  ),
+                                ],
+                              )
+                            : null,
+                      );
+                    }).toList(),
+                  ),
+          ),
+          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+        ),
+      );
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Server से connection नहीं हो पाया')));
+    }
+  }
+
+  Future<void> _decideApplication(String applicationId, String status) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('$apiUrl/jobs/applications/$applicationId'),
+        headers: AppSession.authHeaders,
+        body: jsonEncode({'status': status}),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.statusCode >= 200 && response.statusCode < 300
+            ? (status == 'accepted' ? 'Worker select हो गया ✅' : 'Application reject हो गई')
+            : 'Decision नहीं हो पाया')),
+      );
+      if (response.statusCode >= 200 && response.statusCode < 300) await _loadMyJobs();
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Server से connection नहीं हो पाया')));
+    }
+  }
+
+  Widget _buildMyJobsSection() {
+    if (_myJobs.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('मेरे Jobs', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 10),
+              ..._myJobs.take(5).map((job) => ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(job['required_skill']?.toString() ?? 'Job'),
+                subtitle: Text('${job['location'] ?? 'Location'} · ${job['status'] ?? 'open'}'),
+                trailing: OutlinedButton(
+                  onPressed: () => _viewApplications(job),
+                  child: const Text('Applications'),
+                ),
+              )),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _createJob() async {
@@ -113,7 +235,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
       );
       if (!mounted) return;
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish हो गया ✅')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish हो गया ✅')));\n        await _loadMyJobs();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish नहीं हो पाया')));
       }
@@ -288,6 +410,8 @@ class _EmployerScreenState extends State<EmployerScreen> {
               ),
             ),
           ),
+
+          SliverToBoxAdapter(child: _buildMyJobsSection()),
 
           // ─── Skill Filter Chips ────────────────────────────────────────
           SliverToBoxAdapter(
