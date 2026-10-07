@@ -450,7 +450,7 @@ export function Assistant() {
                 aria-label="Message E-Chowk"
                 placeholder="Kaam ke baare mein bataiye… Type in Hindi or English"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
               />
               <PromptInputFooter>
                 <Button asChild variant="ghost" size="sm" title="Voice AI / बोलकर काम">
