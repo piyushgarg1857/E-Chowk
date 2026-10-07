@@ -14,6 +14,27 @@ export class TrustService {
     @InjectRepository(JobApplication) private readonly applications: Repository<JobApplication>,
   ) {}
 
+  listForUser(userId: string) {
+    return this.ratings.find({
+      where: { to_user_id: userId },
+      order: { created_at: 'DESC' },
+      take: 50,
+    });
+  }
+
+  async summary(userId: string) {
+    const rows = await this.ratings
+      .createQueryBuilder('rating')
+      .select('COUNT(rating.id)', 'count')
+      .addSelect('COALESCE(AVG(rating.score), 0)', 'average')
+      .where('rating.to_user_id = :userId', { userId })
+      .getRawOne();
+    return {
+      rating_count: Number(rows?.count ?? 0),
+      average_rating: Number(rows?.average ?? 0),
+    };
+  }
+
   async rate(userId: string, jobId: string, dto: CreateRatingDto) {
     const job = await this.jobs.findOne({ where: { id: jobId } });
     if (!job || job.status !== 'completed') throw new BadRequestException('Only completed jobs can be rated');
