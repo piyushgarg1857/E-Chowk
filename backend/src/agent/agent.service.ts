@@ -26,7 +26,7 @@ export class AgentService {
 
     for (let step = 0; step < 4; step++) {
       const completion: any = await this.groq.chat.completions.create({
-        model: process.env.GROQ_AGENT_MODEL || 'openai/gpt-oss-20b',
+        model: process.env.GROQ_AGENT_MODEL || 'llama-3.3-70b-versatile',
         messages: history as any,
         tools: this.tools(),
         tool_choice: 'auto',

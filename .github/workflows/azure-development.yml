@@ -35,8 +35,12 @@ jobs:
       - name: Build Backend App
         run: npm run build
 
-      - name: Prune Dev Dependencies
-        run: npm prune --omit=dev
+      - name: Prepare Deployment Bundle
+        run: |
+          mkdir -p deploy-pkg
+          cp -r dist deploy-pkg/dist
+          cp package.json package-lock.json deploy-pkg/
+          cp -r node_modules deploy-pkg/node_modules
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -47,7 +51,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'echowk-dev-api'
-          package: 'backend'
+          package: 'backend/deploy-pkg'
 
   deploy-web:
     name: Build & Deploy Flutter Web to Azure Storage
