@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart';
 import 'services/session.dart';
+import 'e_chowk_theme.dart';
 
 class EmployerScreen extends StatefulWidget {
   const EmployerScreen({Key? key}) : super(key: key);
@@ -70,6 +71,57 @@ class _EmployerScreenState extends State<EmployerScreen> {
     });
   }
 
+  Future<void> _createJob() async {
+    final skill = TextEditingController();
+    final location = TextEditingController();
+    final wage = TextEditingController();
+    final created = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('नया काम बनाएं'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: skill, decoration: const InputDecoration(labelText: 'Skill', hintText: 'जैसे Electrician')),
+            const SizedBox(height: 10),
+            TextField(controller: location, decoration: const InputDecoration(labelText: 'Location')),
+            const SizedBox(height: 10),
+            TextField(controller: wage, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Wage (₹)')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Publish')),
+        ],
+      ),
+    );
+    if (created != true) return;
+    if (skill.text.trim().isEmpty || location.text.trim().isEmpty) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Skill और location जरूरी हैं')));
+      return;
+    }
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/jobs'),
+        headers: AppSession.authHeaders,
+        body: jsonEncode({
+          'required_skill': skill.text.trim(),
+          'location': location.text.trim(),
+          'offered_wage': double.tryParse(wage.text.trim()),
+          'duration_days': 1,
+        }),
+      );
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish हो गया ✅')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish नहीं हो पाया')));
+      }
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Server से connection नहीं हो पाया')));
+    }
+  }
+
   Future<void> _callWorker(String phone, String name) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -90,7 +142,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F51B5)),
+            style: ElevatedButton.styleFrom(backgroundColor: EChowkTheme.navy),
             child: const Text('Call करें!', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -133,14 +185,21 @@ class _EmployerScreenState extends State<EmployerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _createJob,
+        backgroundColor: EChowkTheme.emerald,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add_business_rounded),
+        label: const Text('नया काम'),
+      ),
+      backgroundColor: EChowkTheme.surface,
       body: CustomScrollView(
         slivers: [
           // ─── Gradient AppBar ───────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 160,
             pinned: true,
-            backgroundColor: const Color(0xFF1A237E),
+            backgroundColor: EChowkTheme.navy,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pop(context),
