@@ -42,6 +42,16 @@ export class JobsService {
     return this.jobs.find({ where: { employer_id: employerId }, order: { created_at: 'DESC' } });
   }
 
+  async myWork(workerId: string) {
+    const assignments = await this.assignments.find({
+      where: { worker_id: workerId },
+      order: { assigned_at: 'DESC' },
+    });
+    if (!assignments.length) return [];
+    const jobs = await Promise.all(assignments.map((a) => this.get(a.job_id)));
+    return jobs;
+  }
+
   async myApplications(workerId: string) {
     return this.applications.find({ where: { worker_id: workerId }, order: { applied_at: 'DESC' } });
   }
