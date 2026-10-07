@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import Groq from 'groq-sdk';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -23,11 +23,22 @@ export class AgentService {
     return this.chat(user.id, message, channel);
   }
 
-  async chat(userId: string, message: string, channel = 'app') {
+  async getSession(userId: string, sessionId: string) {
+    const session = await this.sessions.findOne({ where: { id: sessionId, user_id: userId } });
+    if (!session) throw new NotFoundException('Conversation session not found');
+    return session;
+  }
+
+  async chatInSession(userId: string, sessionId: string, message: string) {
+    await this.getSession(userId, sessionId);
+    return this.chat(userId, message, 'app', sessionId);
+  }
+
+  async chat(userId: string, message: string, channel = 'app', sessionId?: string) {
     if (!process.env.GROQ_API_KEY) throw new BadRequestException('AI service is not configured');
 
     let session = await this.sessions.findOne({
-      where: { user_id: userId, channel },
+      where: sessionId ? { id: sessionId, user_id: userId } : { user_id: userId, channel },
       order: { updated_at: 'DESC' },
     });
     const history: ChatMessage[] = Array.isArray(session?.messages)
