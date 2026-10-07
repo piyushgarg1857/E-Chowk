@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import Groq from 'groq-sdk';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { JobsService } from '../jobs/jobs.service';
 import { UsersService } from '../users/users.service';
 import { ConversationSession } from './conversation-session.entity';
