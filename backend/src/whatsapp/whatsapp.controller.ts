@@ -22,7 +22,7 @@ export class WhatsappController {
     }
 
     try {
-      const result = await this.agent.chatForPhone(from, body);
+      const result = await this.agent.chatForPhone(from, body, 'whatsapp');
       response.message(result.reply || 'Ji, batayein.');
     } catch (error) {
       console.error('[WhatsApp Agent Error]', error);
