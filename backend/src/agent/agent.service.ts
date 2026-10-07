@@ -94,6 +94,9 @@ export class AgentService {
       { type: 'function', function: { name: 'get_job', description: 'Get a job by ID.', parameters: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'], additionalProperties: false } } },
       { type: 'function', function: { name: 'apply_for_job', description: 'Apply for a job ONLY after the user explicitly confirms the application.', parameters: { type: 'object', properties: { job_id: { type: 'string' }, confirmed: { type: 'boolean' } }, required: ['job_id', 'confirmed'], additionalProperties: false } } },
       { type: 'function', function: { name: 'get_application_status', description: 'Get current application status for the worker.', parameters: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'], additionalProperties: false } } },
+      { type: 'function', function: { name: 'decide_application', description: 'Accept or reject a worker application. ONLY after the employer explicitly confirms.', parameters: { type: 'object', properties: { application_id: { type: 'string' }, status: { type: 'string', enum: ['accepted', 'rejected'] }, confirmed: { type: 'boolean' } }, required: ['application_id', 'status', 'confirmed'], additionalProperties: false } } },
+      { type: 'function', function: { name: 'start_job', description: 'Start an assigned job. ONLY after the worker explicitly confirms.', parameters: { type: 'object', properties: { job_id: { type: 'string' }, confirmed: { type: 'boolean' } }, required: ['job_id', 'confirmed'], additionalProperties: false } } },
+      { type: 'function', function: { name: 'complete_job', description: 'Complete an in-progress job. ONLY after the worker explicitly confirms.', parameters: { type: 'object', properties: { job_id: { type: 'string' }, confirmed: { type: 'boolean' } }, required: ['job_id', 'confirmed'], additionalProperties: false } } },
       { type: 'function', function: { name: 'create_job', description: 'Create an employer job ONLY after the employer explicitly confirms all details.', parameters: { type: 'object', properties: { required_skill: { type: 'string' }, location: { type: 'string' }, description: { type: 'string' }, offered_wage: { type: 'number' }, duration_days: { type: 'integer' }, confirmed: { type: 'boolean' } }, required: ['required_skill', 'location', 'confirmed'], additionalProperties: false } } },
     ];
   }
@@ -109,6 +112,15 @@ export class AgentService {
       case 'apply_for_job':
         if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the worker to explicitly confirm before applying.' };
         return this.jobs.apply(userId, args.job_id);
+      case 'decide_application':
+        if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the employer to explicitly confirm the application decision.' };
+        return this.jobs.decide(userId, args.application_id, args.status);
+      case 'start_job':
+        if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the worker to explicitly confirm starting the job.' };
+        return this.jobs.start(userId, args.job_id);
+      case 'complete_job':
+        if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the worker to explicitly confirm completing the job.' };
+        return this.jobs.complete(userId, args.job_id);
       case 'create_job':
         if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the employer to explicitly confirm before publishing.' };
         return this.jobs.create(userId, args);
@@ -121,7 +133,9 @@ export class AgentService {
 Understand the user's intent and use tools instead of inventing data.
 The backend is authoritative: never claim a job/profile change happened unless a tool returned success.
 Keep responses concise and natural for Indian users.
-For consequential actions (applying to a job or publishing a job), collect missing details, summarize them, ask for explicit confirmation, and only then call the tool with confirmed=true.
+For consequential actions (applying, publishing, accepting/rejecting an application, starting a job, completing a job), collect missing details, summarize the exact action, ask for explicit confirmation, and only then call the tool with confirmed=true.
+Never treat vague replies like "okay" as confirmation unless they clearly refer to the immediately proposed action.
+Respect the user's role: workers cannot manage employer applications; employers cannot apply for worker jobs.
 Never expose internal IDs unless needed.
 If information is missing, ask one clear question at a time.
 `;
