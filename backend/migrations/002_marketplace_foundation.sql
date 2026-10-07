@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS conversation_sessions (
   channel varchar(20) NOT NULL DEFAULT 'app',
   title varchar(160),
   state jsonb NOT NULL DEFAULT '{}'::jsonb,
+  messages jsonb NOT NULL DEFAULT '[]'::jsonb,
   last_message_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
