@@ -235,7 +235,8 @@ class _EmployerScreenState extends State<EmployerScreen> {
       );
       if (!mounted) return;
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish हो गया ✅')));\n        await _loadMyJobs();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish हो गया ✅')));
+        await _loadMyJobs();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('काम publish नहीं हो पाया')));
       }
