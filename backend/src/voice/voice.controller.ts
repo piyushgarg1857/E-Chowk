@@ -120,6 +120,34 @@ export class VoiceController {
     }
   }
 
+  // Webhook endpoint (supports both GET for testing and POST for Twilio webhooks)
+  @Get('webhook')
+  @Post('webhook')
+  handleWebhook(@Req() req: any, @Res() res: any) {
+    const callSid = req.body?.CallSid || req.query?.CallSid || '';
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga.');
+    response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+    return res.type('text/xml').send(response.toString());
+  }
+
+  @Get('incoming')
+  handleIncomingGet(@Res() res: any) {
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk incoming voice webhook active hai.');
+    return res.type('text/xml').send(response.toString());
+  }
+
+  @Get('agent-incoming')
+  handleAgentIncomingGet(@Res() res: any) {
+    const VoiceResponse = twilio.twiml.VoiceResponse;
+    const response = new VoiceResponse();
+    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk agent voice webhook active hai.');
+    return res.type('text/xml').send(response.toString());
+  }
+
   // New agent-backed phone conversation. This is the target voice path.
   @Post('agent-incoming')
   @UseGuards(TwilioSignatureGuard)
