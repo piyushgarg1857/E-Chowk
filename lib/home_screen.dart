@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ई-चौक', style: TextStyle(fontWeight: FontWeight.w800)),
+        title: const Text('ई-चौक · E-Chowk', style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           TextButton(
             onPressed: onLogin,
