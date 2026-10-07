@@ -35,6 +35,21 @@ export class JobsService {
     });
     const saved = await this.jobs.save(job);
     await this.audit.record(employerId, 'job.created', 'job', saved.id, { required_skill: saved.required_skill, location: saved.location });
+    const candidates = await this.users.createQueryBuilder('user')
+      .where('user.role = :role', { role: 'worker' })
+      .andWhere('user.is_active = true AND user.is_available = true')
+      .andWhere('LOWER(user.skill_category) LIKE LOWER(:skill)', { skill: '%' + saved.required_skill + '%' })
+      .andWhere('(user.current_location IS NULL OR LOWER(user.current_location) LIKE LOWER(:location))', { location: '%' + saved.location + '%' })
+      .take(25)
+      .getMany();
+    await Promise.all(candidates.map((worker) =>
+      this.notifications.create(
+        worker.id,
+        'job_match',
+        'New work near you',
+        saved.required_skill + ' ka naya kaam ' + saved.location + ' mein available hai.',
+      ),
+    ));
     return saved;
   }
 
@@ -145,6 +160,7 @@ export class JobsService {
     job.status = 'in_progress';
     await this.assignments.save(assignment);
     await this.jobs.save(job);
+    await this.notifications.create(job.employer_id, 'job_started', 'Job started', 'The assigned worker has started the job.');
     await this.audit.record(workerId, 'job.started', 'job', job.id);
     return job;
   }
