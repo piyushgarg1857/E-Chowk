@@ -18,6 +18,7 @@ class _EmployerScreenState extends State<EmployerScreen> {
   List<Map<String, dynamic>> _filteredWorkers = [];
   List<Map<String, dynamic>> _myJobs = [];
   bool _isLoading = true;
+  int _unreadNotifications = 0;
   String _selectedSkill = 'All';
   String _searchQuery = '';
   final TextEditingController _searchCtrl = TextEditingController();
@@ -38,7 +39,56 @@ class _EmployerScreenState extends State<EmployerScreen> {
   void initState() {
     super.initState();
     _loadWorkers();
+    _loadNotificationCount();
     _loadMyJobs();
+  }
+
+  Future<void> _loadNotificationCount() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/notifications'), headers: AppSession.authHeaders);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = jsonDecode(response.body);
+        if (data is List && mounted) setState(() => _unreadNotifications = data.where((n) => n['read_at'] == null).length);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _showNotifications() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/notifications'), headers: AppSession.authHeaders);
+      if (!mounted) return;
+      final data = response.statusCode >= 200 && response.statusCode < 300 ? jsonDecode(response.body) : [];
+      final notifications = data is List ? List<Map<String, dynamic>>.from(data) : <Map<String, dynamic>>[];
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Notifications'),
+          content: SizedBox(
+            width: 420,
+            child: notifications.isEmpty
+                ? const Text('अभी कोई notification नहीं है.')
+                : ListView(
+                    shrinkWrap: true,
+                    children: notifications.take(20).map((n) => ListTile(
+                      leading: Icon(n['read_at'] == null ? Icons.notifications_active : Icons.notifications_none),
+                      title: Text(n['title']?.toString() ?? 'E-Chowk'),
+                      subtitle: Text(n['body']?.toString() ?? ''),
+                    )).toList(),
+                  ),
+          ),
+          actions: [
+            TextButton(onPressed: () async {
+              await http.patch(Uri.parse('$apiUrl/notifications/read-all'), headers: AppSession.authHeaders);
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (mounted) setState(() => _unreadNotifications = 0);
+            }, child: const Text('Mark all read')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          ],
+        ),
+      );
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notifications load नहीं हुईं')));
+    }
   }
 
   Future<void> _loadWorkers() async {
