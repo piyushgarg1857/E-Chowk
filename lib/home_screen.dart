@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'e_chowk_theme.dart';
-import 'main.dart';
 import 'voice_ai_screen.dart';
 import 'assistant_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final VoidCallback? onLogin;
+  const HomeScreen({super.key, this.onLogin});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
         title: const Text('ई-चौक', style: TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
+            onPressed: onLogin,
             child: const Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
           ),
         ],
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: _RoleCard(icon: Icons.construction_rounded, title: 'काम चाहिए', subtitle: 'Worker', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen())))),
+                  Expanded(child: _RoleCard(icon: Icons.construction_rounded, title: 'काम चाहिए', subtitle: 'Worker', onTap: onLogin)),
                   const SizedBox(width: 12),
                   Expanded(child: _RoleCard(icon: Icons.business_center_rounded, title: 'काम देना है', subtitle: 'Employer', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen())))),
                 ],
