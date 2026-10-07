@@ -40,7 +40,7 @@ export class PaymentsService {
     const payment = await this.get(userId, id);
     if (payment.payer_id !== userId) throw new ForbiddenException('Only the payer can confirm payment');
     if (payment.status === 'confirmed') return payment;
-    payment.status = 'confirmed';
+    payment.status = 'paid';
     payment.provider_reference = providerReference || payment.provider_reference;
     return this.payments.save(payment);
   }
