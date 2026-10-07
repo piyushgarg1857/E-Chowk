@@ -4,8 +4,12 @@ import { AppModule } from './app.module';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { HttpExceptionFilter } from './common/http/http-exception.filter';
 
-function getCorsOrigins(): string[] {
-  return (process.env.CORS_ORIGINS ?? 'http://localhost:3000')
+function getCorsOrigins(): boolean | string[] {
+  const configured = process.env.CORS_ORIGINS;
+  if (!configured || configured === '*') {
+    return true;
+  }
+  return configured
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
