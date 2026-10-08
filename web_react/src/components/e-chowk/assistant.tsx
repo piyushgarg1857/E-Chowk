@@ -467,7 +467,7 @@ export function Assistant() {
               </PromptInputFooter>
             </PromptInput>
             <p className="chat-footnote">
-              Mock AI responses · No live model calls. You confirm every consequential action.
+              {live ? "Live AI responses · Backend agent connected. You confirm every consequential action." : "Mock AI responses · No live model calls. You confirm every consequential action."}
             </p>
           </div>
         </section>
