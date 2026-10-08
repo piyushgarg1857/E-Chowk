@@ -38,7 +38,7 @@ jobs:
       - name: Prepare Deployment Zip
         run: |
           mkdir -p deploy-pkg
-          cp -r dist package.json package-lock.json node_modules deploy-pkg/
+          cp -r dist src package.json package-lock.json tsconfig.json nest-cli.json node_modules deploy-pkg/
           cd deploy-pkg && zip -r ../deploy.zip .
 
       - name: Login to Azure
@@ -46,13 +46,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Configure Azure App Service for prebuilt Node deployment
-        run: |
-          RESOURCE_GROUP=$(az webapp show --name echowk-dev-api --query resourceGroup -o tsv)
-          az webapp config set             --resource-group "$RESOURCE_GROUP"             --name echowk-dev-api             --linux-fx-version "NODE|20-lts"             --startup-file "node dist/main.js"
-          az webapp config appsettings set             --resource-group "$RESOURCE_GROUP"             --name echowk-dev-api             --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false ENABLE_ORYX_BUILD=false
-
-      - name: Deploy prebuilt Backend to Azure Web App
+      - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'echowk-dev-api'
