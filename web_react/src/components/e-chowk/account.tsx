@@ -726,8 +726,8 @@ export function HistoryPage() {
       <div className="notice warm mb-6">
         <Wallet />
         <span>
-          <strong>Payment integration · Coming soon.</strong> This khata shows sample cash/UPI
-          records only. E-Chowk has not collected, transferred, or verified any money.
+          <strong>{live ? "Payment records are not connected on web yet." : "Payment integration · Coming soon."}</strong>{" "}
+          {live ? "Live job history is shown above; no sample payment records are mixed into your account." : "This khata shows sample cash/UPI records only. E-Chowk has not collected, transferred, or verified any money."}
         </span>
       </div>
       <div className="stack">
