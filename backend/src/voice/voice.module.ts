@@ -5,11 +5,10 @@ import { VoiceService } from './voice.service';
 import { VoiceGateway } from './voice.gateway';
 import { User } from '../auth/user.entity';
 import { AgentModule } from '../agent/agent.module';
-import { ExotelModule } from '../exotel/exotel.module';
 import { VoiceSession } from './voice-session.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, VoiceSession]), AgentModule, ExotelModule],
+  imports: [TypeOrmModule.forFeature([User, VoiceSession]), AgentModule],
   controllers: [VoiceController],
   providers: [VoiceService, VoiceGateway],
 })
