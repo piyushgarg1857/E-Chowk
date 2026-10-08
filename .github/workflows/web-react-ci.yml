@@ -1,0 +1,40 @@
+name: E-Chowk React Web CI
+
+on:
+  pull_request:
+    paths:
+      - "web_react/**"
+      - ".github/workflows/web-react-ci.yml"
+  push:
+    branches: [main, development]
+    paths:
+      - "web_react/**"
+      - ".github/workflows/web-react-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  web-react:
+    name: React Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web_react
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.1"
+      - name: Install Dependencies
+        run: bun install
+      - name: Typecheck
+        run: bunx tsc --noEmit
+      - name: Test
+        run: bun run test
+      - name: Build
+        run: bun run build
