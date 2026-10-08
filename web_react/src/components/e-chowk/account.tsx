@@ -349,7 +349,7 @@ export function Profile() {
             <UserRound />
             Edit profile
           </Button>
-        }
+        ) : undefined}
       />
       <div className="details-grid">
         <div className="stack">
@@ -582,7 +582,7 @@ export function Notifications() {
       <PageHeading
         title="Notifications"
         hindi="आपके चौक की हर खबर। Stay up to date."
-        action={
+        action={!live ? (
           <Button
             variant="outline"
             className="button-large"
@@ -659,10 +659,10 @@ export function Notifications() {
   );
 }
 export function HistoryPage() {
-  const { jobs } = useDemo();
+  const { jobs, live } = useDemo();
   const [filter, setFilter] = useState("all");
   const completed = jobs.filter((j) => j.status === "completed");
-  const paymentRows = payments.filter((p) => filter === "all" || p.status === filter);
+  const paymentRows = live ? [] : payments.filter((p) => filter === "all" || p.status === filter);
   return (
     <AppShell>
       <PageHeading
@@ -673,12 +673,18 @@ export function HistoryPage() {
             variant="outline"
             className="button-large"
             onClick={() => {
+              const escapeCsv = (value: unknown) => {
+                const text = String(value ?? "");
+                const safe = /^[=+\\-@]/.test(text) ? "'" + text : text;
+                return `"${safe.replace(/"/g, '""')}"`;
+              };
               const csv =
-                "Job,Amount,Status,Date\n" +
+                ["Job", "Amount", "Status", "Date"].map(escapeCsv).join(",") + "\n" +
                 payments
-                  .map(
-                    (p) =>
-                      `${jobs.find((j) => j.id === p.job_id)?.title},${p.amount},${p.status},${p.date}`,
+                  .map((p) =>
+                    [jobs.find((j) => j.id === p.job_id)?.title, p.amount, p.status, p.date]
+                      .map(escapeCsv)
+                      .join(","),
                   )
                   .join("\n");
               const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
