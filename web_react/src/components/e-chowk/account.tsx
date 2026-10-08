@@ -668,7 +668,7 @@ export function HistoryPage() {
       <PageHeading
         title="Digital Khata"
         hindi="मेहनत का हिसाब, साफ़ और सरल। Your work, earnings, and trust."
-        action={
+        action={!live ? (
           <Button
             variant="outline"
             className="button-large"
@@ -699,6 +699,7 @@ export function HistoryPage() {
             <Download />
             Download record
           </Button>
+        ) : undefined
         }
       />
       <div className="stats-row">
