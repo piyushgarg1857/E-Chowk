@@ -21,7 +21,7 @@ import { AppShell, PageHeading, DemoNote, IconBox, Pill } from "./shared";
 import { useDemo } from "@/lib/e-chowk/store";
 import { skills, rupees, dateLabel } from "@/lib/e-chowk/data";
 export function CreateJob() {
-  const { createJob, role, setRole } = useDemo();
+  const { createJob, role, setRole, live } = useDemo();
   const navigate = useNavigate();
   const [review, setReview] = useState(false);
   const [assist, setAssist] = useState(false);
@@ -29,6 +29,7 @@ export function CreateJob() {
     "Kal Jaipur ke Mansarovar mein bathroom ki fitting aur pipe repair ke liye plumber chahiye. 900 rupaye roz, 2 din ka kaam.",
   );
   const [busy, setBusy] = useState(false);
+  const initialStart = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16);
   const [form, setForm] = useState({
     skill: "Plumber",
     title: "",
@@ -36,7 +37,7 @@ export function CreateJob() {
     location: "Mansarovar, Jaipur",
     wage: "900",
     duration: "2",
-    start: "2026-10-08T09:00",
+    start: initialStart,
     status: "open",
   });
   function change(key: keyof typeof form, value: string) {
@@ -50,6 +51,10 @@ export function CreateJob() {
           className="stack"
           onSubmit={(e) => {
             e.preventDefault();
+            if (new Date(form.start).getTime() <= Date.now()) {
+              toast.error("Start time must be in the future.");
+              return;
+            }
             setReview(true);
           }}
         >
@@ -276,25 +281,34 @@ export function CreateJob() {
               Edit details
             </Button>
             <Button
+              disabled={busy}
               onClick={() => {
+                if (busy) return;
                 if (role !== "employer") {
                   toast.error("Select Employer demo before publishing.");
                   setRole("employer");
                   return;
                 }
+                setBusy(true);
                 void (async () => {
-                  const id = await createJob({
-                    required_skill: form.skill,
-                    title: form.title,
-                    description: form.description,
-                    location: form.location,
-                    offered_wage: Number(form.wage),
-                    duration_days: Number(form.duration),
-                    starts_at: form.start,
-                    status: form.status === "draft" ? "draft" : "open",
-                  });
-                  setReview(false);
-                  if (id) void navigate({ to: "/jobs/$jobId", params: { jobId: id } });
+                  try {
+                    const id = await createJob({
+                      required_skill: form.skill,
+                      title: form.title,
+                      description: form.description,
+                      location: form.location,
+                      offered_wage: Number(form.wage),
+                      duration_days: Number(form.duration),
+                      starts_at: form.start,
+                      status: form.status === "draft" ? "draft" : "open",
+                    });
+                    if (id) {
+                      setReview(false);
+                      void navigate({ to: "/jobs/$jobId", params: { jobId: id } });
+                    }
+                  } finally {
+                    setBusy(false);
+                  }
                 })();
               }}
             >
