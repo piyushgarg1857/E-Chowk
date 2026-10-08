@@ -88,6 +88,10 @@ function useDemoState() {
     }
   }
   useEffect(() => {
+    setAgentSessionId(null);
+    setMessages([
+      { id: "hello", role: "assistant", parts: [{ type: "text", text: "नमस्ते! मैं ई-चौक हूँ। Tell me what work you need, or what worker you’re looking for. कैसे मदद करूँ?" }] },
+    ]);
     if (live) void refresh();
     else {
       setMe(null);
@@ -120,16 +124,17 @@ function useDemoState() {
   const demoUser =
     users.find((user) => user.id === (workspaceRole === "employer" ? "e1" : "w1")) ?? seedUsers[0];
   const currentUser: User = live && me ? me : (demoUser as User);
-  async function updateProfile(patch: Partial<User>) {
+  async function updateProfile(patch: Partial<User>): Promise<boolean> {
     if (live) {
       try {
         const updated = await api.updateProfile(patch as Record<string, unknown>);
         setMe(updated);
         toast.success("Profile updated · प्रोफाइल अपडेट हो गई");
+        return true;
       } catch (e) {
         toast.error(errText(e));
+        return false;
       }
-      return;
     }
     setUsers((prev) => prev.map((u) => (u.id === currentUser?.id ? { ...u, ...patch } : u)));
     toast.success("Profile updated · डेमो प्रोफाइल अपडेट हो गई");
