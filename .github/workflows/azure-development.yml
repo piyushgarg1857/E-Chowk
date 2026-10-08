@@ -46,7 +46,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
+      - name: Configure Azure App Service for prebuilt Node deployment
+        run: |
+          az webapp config set             --resource-group echowk-dev-rg             --name echowk-dev-api             --linux-fx-version "NODE|20-lts"             --startup-file "node dist/main.js"
+          az webapp config appsettings set             --resource-group echowk-dev-rg             --name echowk-dev-api             --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false ENABLE_ORYX_BUILD=false
+
+      - name: Deploy prebuilt Backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'echowk-dev-api'
