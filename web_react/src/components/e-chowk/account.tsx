@@ -315,6 +315,7 @@ export function Login() {
 export function Profile() {
   const { role, currentUser, updateProfile } = useDemo();
   const [editing, setEditing] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
   const [form, setForm] = useState({
     name: currentUser?.full_name || "",
     skill: currentUser?.skill_category || "Plumber",
@@ -449,7 +450,7 @@ export function Profile() {
             <Avatar name={currentUser?.full_name || "Worker"} large />
             <h2>{currentUser?.full_name}</h2>
             <p>{role === "worker" ? currentUser?.skill_category : "Employer"} · Jaipur</p>
-            <Rating value={currentUser?.rating || 4.8} />
+            {currentUser?.rating ? <Rating value={currentUser.rating} /> : <span className="muted small">No ratings yet</span>}
             <hr className="rule" />
             <div className="between small mb-2">
               <strong>Profile completeness</strong>
@@ -489,13 +490,24 @@ export function Profile() {
             className="stack"
             onSubmit={(e) => {
               e.preventDefault();
-              updateProfile({
-                full_name: form.name,
-                current_location: form.city,
-                skill_category: form.skill,
-                daily_wage: form.wage,
-              });
-              setEditing(false);
+              if (savingProfile) return;
+              setSavingProfile(true);
+              void (async () => {
+                try {
+                  const payload: Partial<User> = {
+                    full_name: form.name,
+                    current_location: form.city,
+                  };
+                  if (role === "worker") {
+                    payload.skill_category = form.skill;
+                    payload.daily_wage = form.wage;
+                  }
+                  const saved = await updateProfile(payload);
+                  if (saved) setEditing(false);
+                } finally {
+                  setSavingProfile(false);
+                }
+              })();
             }}
           >
             <label className="form-field">
@@ -543,7 +555,7 @@ export function Profile() {
               <Button type="button" variant="outline" onClick={() => setEditing(false)}>
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={savingProfile}>
                 <Save />
                 Confirm & save
               </Button>
