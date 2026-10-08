@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import { useDemo } from "@/lib/e-chowk/store";
 import { api, ApiError, setSession, type Session } from "@/lib/e-chowk/api";
-import { skills, payments, ratings, rupees, dateLabel, type Role } from "@/lib/e-chowk/data";
+import { skills, payments, ratings, rupees, dateLabel, type Role, type User } from "@/lib/e-chowk/data";
 import {
   Brand,
   AppShell,
@@ -675,7 +675,7 @@ export function HistoryPage() {
             onClick={() => {
               const escapeCsv = (value: unknown) => {
                 const text = String(value ?? "");
-                const safe = /^[=+\\-@]/.test(text) ? "'" + text : text;
+                const safe = /^[=+\-@]/.test(text) ? "'" + text : text;
                 return `"${safe.replace(/"/g, '""')}"`;
               };
               const csv =
