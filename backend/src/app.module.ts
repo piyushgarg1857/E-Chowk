@@ -15,7 +15,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { TrustModule } from './trust/trust.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuditModule } from './audit/audit.module';
-import { ExotelModule } from './exotel/exotel.module';
 import { AdminModule } from './admin/admin.module';
 import { RequestContextMiddleware } from './common/http/request-context.middleware';
 
@@ -53,7 +52,6 @@ import { RequestContextMiddleware } from './common/http/request-context.middlewa
     TrustModule,
     PaymentsModule,
     AuditModule,
-    ExotelModule,
     AdminModule,
   ],
   controllers: [AppController],
