@@ -313,7 +313,7 @@ export function Login() {
   );
 }
 export function Profile() {
-  const { role, currentUser, updateProfile } = useDemo();
+  const { role, currentUser, updateProfile, live } = useDemo();
   const [editing, setEditing] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [form, setForm] = useState({
@@ -349,7 +349,7 @@ export function Profile() {
             <UserRound />
             Edit profile
           </Button>
-        ) : undefined}
+        }
       />
       <div className="details-grid">
         <div className="stack">
@@ -582,7 +582,7 @@ export function Notifications() {
       <PageHeading
         title="Notifications"
         hindi="आपके चौक की हर खबर। Stay up to date."
-        action={!live ? (
+        action={
           <Button
             variant="outline"
             className="button-large"
