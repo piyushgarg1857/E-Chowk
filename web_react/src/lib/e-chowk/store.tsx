@@ -138,6 +138,7 @@ function useDemoState() {
     }
     setUsers((prev) => prev.map((u) => (u.id === currentUser?.id ? { ...u, ...patch } : u)));
     toast.success("Profile updated · डेमो प्रोफाइल अपडेट हो गई");
+    return true;
   }
   async function apply(job: Job) {
     if (live) {
