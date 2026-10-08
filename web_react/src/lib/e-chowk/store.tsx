@@ -51,6 +51,7 @@ function useDemoState() {
   const [liveApps, setLiveApps] = useState<JobApplication[]>([]);
   const [liveNotes, setLiveNotes] = useState<typeof seedNotifications | null>(null);
   const [liveWorkers, setLiveWorkers] = useState<User[]>([]);
+  const [agentSessionId, setAgentSessionId] = useState<string | null>(null);
   useEffect(() => {
     setSessionState(getSession());
     return onSessionChange((s) => setSessionState(s)) as unknown as () => void;
@@ -59,30 +60,38 @@ function useDemoState() {
   const live = !!session?.user?.role;
   const liveRole = (session?.user?.role ?? null) as Role | null;
   async function refresh() {
-    if (!getSession()?.user?.role) return;
-    const [meR, jobsR, notesR] = await Promise.allSettled([
-      api.me(),
-      api.jobs({ limit: 50 }),
-      api.notifications(),
-    ]);
+    const current = getSession();
+    if (!current?.user?.role) return;
+    const [meR, notesR] = await Promise.allSettled([api.me(), api.notifications()]);
     if (meR.status === "fulfilled") setMe(meR.value);
-    if (jobsR.status === "fulfilled") setLiveJobs(jobsR.value);
-    else setLiveJobs([]);
     if (notesR.status === "fulfilled") setLiveNotes(notesR.value);
     else setLiveNotes([]);
-    if (getSession()?.user?.role === "employer") {
-      api
-        .matchWorkers({ limit: 50 })
-        .then(setLiveWorkers)
-        .catch(() => setLiveWorkers([]));
-      const myId = meR.status === "fulfilled" ? meR.value.id : String(getSession()?.user.id);
-      const mine =
-        jobsR.status === "fulfilled" ? jobsR.value.filter((j) => j.employer_id === myId) : [];
-      const apps = await Promise.allSettled(mine.map((j) => api.applications(j.id)));
+    if (current.user.role === "worker") {
+      const [jobsR, appsR] = await Promise.allSettled([api.matchingJobs(50), api.myApplications()]);
+      setLiveJobs(jobsR.status === "fulfilled" ? jobsR.value : []);
+      setLiveApps(appsR.status === "fulfilled" ? appsR.value : []);
+      setLiveWorkers([]);
+    } else if (current.user.role === "employer") {
+      const jobsR = await api.myJobs().catch(() => []);
+      setLiveJobs(jobsR);
+      const apps = await Promise.allSettled(jobsR.map((j) => api.applications(j.id)));
       setLiveApps(apps.flatMap((a) => (a.status === "fulfilled" ? a.value : [])));
+      const workers = await Promise.allSettled(jobsR.map((j) => api.matchingWorkersForJob(j.id)));
+      const unique = new Map<string, User>();
+      workers.forEach((r) => r.status === "fulfilled" && r.value.forEach((w) => unique.set(w.id, w)));
+      setLiveWorkers([...unique.values()]);
+    } else {
+      const jobsR = await api.jobs({ limit: 50 }).catch(() => []);
+      setLiveJobs(jobsR);
+      setLiveApps([]);
+      setLiveWorkers([]);
     }
   }
   useEffect(() => {
+    setAgentSessionId(null);
+    setMessages([
+      { id: "hello", role: "assistant", parts: [{ type: "text", text: "नमस्ते! मैं ई-चौक हूँ। Tell me what work you need, or what worker you’re looking for. कैसे मदद करूँ?" }] },
+    ]);
     if (live) void refresh();
     else {
       setMe(null);
@@ -115,14 +124,21 @@ function useDemoState() {
   const demoUser =
     users.find((user) => user.id === (workspaceRole === "employer" ? "e1" : "w1")) ?? seedUsers[0];
   const currentUser: User = live && me ? me : (demoUser as User);
-  function updateProfile(patch: Partial<User>) {
+  async function updateProfile(patch: Partial<User>): Promise<boolean> {
     if (live) {
-      void patch;
-      toast.info("Profile editing isn't available on web yet. No changes were made.");
-      return;
+      try {
+        const updated = await api.updateProfile(patch as Record<string, unknown>);
+        setMe(updated);
+        toast.success("Profile updated · प्रोफाइल अपडेट हो गई");
+        return true;
+      } catch (e) {
+        toast.error(errText(e));
+        return false;
+      }
     }
     setUsers((prev) => prev.map((u) => (u.id === currentUser?.id ? { ...u, ...patch } : u)));
     toast.success("Profile updated · डेमो प्रोफाइल अपडेट हो गई");
+    return true;
   }
   async function apply(job: Job) {
     if (live) {
@@ -196,9 +212,17 @@ function useDemoState() {
     toast.success("Job published in demo · काम पोस्ट हो गया");
     return id;
   }
-  function reviewApplication(id: string, status: JobApplication["status"]) {
+  async function reviewApplication(id: string, status: JobApplication["status"]) {
     if (live) {
-      toast.info("Accept/reject isn't available on web yet. No changes were made.");
+      if (status !== "accepted" && status !== "rejected") return;
+      try {
+        const updated = await api.decideApplication(id, status);
+        setLiveApps((prev) => prev.map((a) => (a.id === id ? updated : a)));
+        await refresh();
+        toast.success(`Application ${status} · आवेदन अपडेट हो गया`);
+      } catch (e) {
+        toast.error(errText(e));
+      }
       return;
     }
     const app = applications.find((a) => a.id === id);
@@ -221,9 +245,42 @@ function useDemoState() {
     }
     setNotifications((prev) => prev.map((n) => (!id || n.id === id ? { ...n, read: true } : n)));
   }
-  function updateJobStatus(id: string, status: Job["status"]) {
+  async function sendAgentMessage(text: string) {
     if (live) {
-      toast.info("Job status changes aren't available on web yet. No changes were made.");
+      try {
+        const result = agentSessionId
+        ? await api.agentSessionMessage(agentSessionId, text)
+        : await api.agentMessage(text);
+        setMessages((prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), role: "assistant", parts: [{ type: "text", text: result.reply }] },
+        ]);
+        if (result.session_id) setAgentSessionId(result.session_id);
+        return result;
+      } catch (e) {
+        toast.error(errText(e));
+        return null;
+      }
+    }
+    return null;
+  }
+  async function updateJobStatus(id: string, status: Job["status"]) {
+    if (live) {
+      try {
+        if (status === "in_progress") {
+          const updated = await api.startJob(id);
+          setLiveJobs((prev) => (prev ?? []).map((j) => (j.id === id ? updated : j)));
+        } else if (status === "completed") {
+          await api.completeJob(id);
+          await refresh();
+        } else {
+          toast.info("This job transition is not available from the current web action.");
+          return;
+        }
+        toast.success(`Job ${status.replace("_", " ")} · status updated`);
+      } catch (e) {
+        toast.error(errText(e));
+      }
       return;
     }
     setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status } : j)));
@@ -256,6 +313,7 @@ function useDemoState() {
     reviewApplication,
     markRead,
     updateJobStatus,
+    sendAgentMessage,
   };
 }
 type DemoState = ReturnType<typeof useDemoState>;

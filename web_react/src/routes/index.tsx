@@ -28,7 +28,7 @@ import {
 } from "@/components/e-chowk/shared";
 import { useDemo } from "@/lib/e-chowk/store";
 import { pageHead, skills } from "@/lib/e-chowk/data";
-import workersPhoto from "@/assets/workers.jpg";
+import workersPhoto from "@/assets/workers-hero.svg";
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead(

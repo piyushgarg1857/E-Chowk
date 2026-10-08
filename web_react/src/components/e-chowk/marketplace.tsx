@@ -69,7 +69,7 @@ export function VoiceBand({ employer = false }: { employer?: boolean }) {
 }
 export function WorkerDashboard() {
   const { currentUser, updateProfile, jobs, applications, notifications } = useDemo();
-  const workerApps = applications.filter((a) => a.worker_id === "w1");
+  const workerApps = applications.filter((a) => a.worker_id === currentUser?.id);
   const active = jobs.find((j) => j.status === "in_progress");
   return (
     <AppShell area="worker">
@@ -83,7 +83,7 @@ export function WorkerDashboard() {
             <Switch
               aria-label="Available for work"
               checked={currentUser?.is_available ?? false}
-              onCheckedChange={(checked) => updateProfile({ is_available: checked })}
+              onCheckedChange={(checked: boolean) => updateProfile({ is_available: checked })}
             />
           </div>
         }
