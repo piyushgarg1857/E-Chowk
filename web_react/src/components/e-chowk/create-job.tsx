@@ -129,6 +129,7 @@ export function CreateJob() {
                   <input
                     type="datetime-local"
                     required
+                    min={initialStart}
                     value={form.start}
                     onChange={(e) => change("start", e.target.value)}
                   />
