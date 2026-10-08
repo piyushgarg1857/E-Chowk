@@ -4,9 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../auth/user.entity';
 import * as TwilioSDK from 'twilio';
 const twilio = (TwilioSDK as any).default || TwilioSDK;
-import Groq from 'groq-sdk';
 import { AgentService } from '../agent/agent.service';
-import { ExotelService } from '../exotel/exotel.service';
 import { VoiceSession } from './voice-session.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { Roles, CurrentUser } from '../auth/auth.decorator';
@@ -14,11 +12,6 @@ import { RolesGuard } from '../auth/roles.guard';
 import { TwilioSignatureGuard } from './twilio-signature.guard';
 import { UseGuards } from '@nestjs/common';
 require('dotenv').config();
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
-
-// In-memory conversation store (keyed by CallSid)
-const conversations: Record<string, { role: 'user' | 'assistant'; content: string }[]> = {};
 
 const SYSTEM_PROMPT = `You are the AI voice assistant for "E-Chowk", a platform connecting Indian daily wage laborers with employers.
 
@@ -40,7 +33,6 @@ export class VoiceController {
     @InjectRepository(VoiceSession)
     private readonly voiceSessions: Repository<VoiceSession>,
     private readonly agent: AgentService,
-    private readonly exotelService: ExotelService,
   ) {}
 
   // ─── GET: Fetch all registered workers (for Employer Screen) ──────────
