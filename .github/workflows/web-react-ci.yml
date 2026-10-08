@@ -11,6 +11,9 @@ on:
       - "web_react/**"
       - ".github/workflows/web-react-ci.yml"
 
+permissions:
+  contents: read
+
 jobs:
   web-react:
     name: React Web
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
