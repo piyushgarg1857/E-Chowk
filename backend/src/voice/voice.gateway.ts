@@ -100,7 +100,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
         try {
           // Ask Groq AI for a response
           const chatCompletion = await groq.chat.completions.create({
-            model: 'llama-3.3-70b-versatile', // Fast, high quality model
+            model: process.env.GROQ_AGENT_MODEL?.trim() || 'openai/gpt-oss-20b',
             messages: [
               { role: 'system', content: SYSTEM_PROMPT },
               ...conversationHistory,
