@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { VoiceController } from './voice.controller';
 import { User } from '../auth/user.entity';
 import { AgentService } from '../agent/agent.service';
-import { ExotelService } from '../exotel/exotel.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { TwilioSignatureGuard } from './twilio-signature.guard';
@@ -19,7 +18,6 @@ describe('VoiceController', () => {
         { provide: getRepositoryToken(User), useValue: {} },
         { provide: getRepositoryToken(VoiceSession), useValue: {} },
         { provide: AgentService, useValue: { chatForPhone: jest.fn() } },
-        { provide: ExotelService, useValue: { connectCall: jest.fn(), sendSms: jest.fn() } },
       ],
     })
       .overrideGuard(AuthGuard)
