@@ -126,60 +126,51 @@ export class VoiceController {
   @Post('webhook')
   handleWebhook(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid || req.query?.CallSid || '';
+    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
     response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga.');
-    response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
-    return res.type('text/xml').send(response.toString());
-  }
-
-  @Get('incoming')
-  handleIncomingGet(@Res() res: any) {
-    const VoiceResponse = twilio.twiml.VoiceResponse;
-    const response = new VoiceResponse();
-    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk incoming voice webhook active hai.');
-    return res.type('text/xml').send(response.toString());
-  }
-
-  @Get('agent-incoming')
-  handleAgentIncomingGet(@Res() res: any) {
-    const VoiceResponse = twilio.twiml.VoiceResponse;
-    const response = new VoiceResponse();
-    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk agent voice webhook active hai.');
+    response.gather({ input: ['speech'], action: `${baseUrl}/voice/agent-respond?callSid=${encodeURIComponent(callSid)}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
     return res.type('text/xml').send(response.toString());
   }
 
   // New agent-backed phone conversation. This is the target voice path.
+  @Get('agent-incoming')
   @Post('agent-incoming')
   @UseGuards(TwilioSignatureGuard)
   agentIncoming(@Req() req: any, @Res() res: any) {
-    const callSid = req.body?.CallSid;
-    const from = req.body?.From;
+    const callSid = req.body?.CallSid || req.query?.CallSid || '';
+    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
     response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga. Aap kya karna chahte hain?');
-    response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
-    res.type('text/xml').send(response.toString());
-    void from;
+    response.gather({ input: ['speech'], action: `${baseUrl}/voice/agent-respond?callSid=${encodeURIComponent(callSid)}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Kripya apna jawaab batayein.');
+    return res.type('text/xml').send(response.toString());
   }
 
+  @Get('agent-respond')
   @Post('agent-respond')
   @UseGuards(TwilioSignatureGuard)
   async agentRespond(@Req() req: any, @Res() res: any) {
-    const callSid = req.query?.callSid || req.body?.CallSid;
-    const from = req.body?.From;
-    const speech = req.body?.SpeechResult?.trim();
+    const callSid = req.query?.callSid || req.body?.CallSid || '';
+    const phone = req.body?.Direction === 'outbound-api' 
+      ? (req.body?.To || req.body?.From) 
+      : (req.body?.From || req.body?.To || req.query?.From || req.query?.To);
+    const speech = (req.body?.SpeechResult || req.query?.SpeechResult || '').trim();
+    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
-    if (!from || !speech) {
+
+    if (!phone || !speech) {
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');
-      response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+      response.gather({ input: ['speech'], action: `${baseUrl}/voice/agent-respond?callSid=${encodeURIComponent(callSid)}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
       return res.type('text/xml').send(response.toString());
     }
     try {
-      const result = await this.agent.chatForPhone(from, speech);
+      const result = await this.agent.chatForPhone(phone, speech);
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, result.reply || 'Ji, batayein.');
-      response.gather({ input: ['speech'], action: `/voice/agent-respond?callSid=${callSid}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
+      response.gather({ input: ['speech'], action: `${baseUrl}/voice/agent-respond?callSid=${encodeURIComponent(callSid)}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
     } catch (error: any) {
       console.error('[Agent Voice Error]', error);
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, technical dikkat aa gayi hai. Kripya thodi der baad dobara call karein.');
@@ -187,12 +178,14 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
-  // Step 1: Twilio calls this when a call comes in
+  // Step 1: Twilio calls this when an inbound call comes in
+  @Get('incoming')
   @Post('incoming')
   @UseGuards(TwilioSignatureGuard)
   async agentAliasIncoming(@Req() req: any, @Res() res: any) {
-    const callSid = req.body?.CallSid || '';
-    const from = req.body?.From || null;
+    const callSid = req.body?.CallSid || req.query?.CallSid || '';
+    const from = req.body?.From || req.query?.From || null;
+    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
     const user = from ? await this.userRepository.findOne({ where: { phone_number: from } }) : null;
     await this.voiceSessions.save(this.voiceSessions.create({
       user_id: user?.id ?? null,
@@ -209,7 +202,7 @@ export class VoiceController {
       'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga. Aap kya karna chahte hain?');
     response.gather({
       input: ['speech'],
-      action: `/voice/respond?callSid=${encodeURIComponent(callSid)}`,
+      action: `${baseUrl}/voice/respond?callSid=${encodeURIComponent(callSid)}`,
       method: 'POST',
       language: 'hi-IN',
       speechTimeout: 'auto',
@@ -218,21 +211,25 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
+  @Get('respond')
   @Post('respond')
   @UseGuards(TwilioSignatureGuard)
   async agentAliasRespond(@Req() req: any, @Res() res: any) {
     const callSid = req.query?.callSid || req.body?.CallSid || '';
-    const from = req.body?.From;
-    const speech = req.body?.SpeechResult?.trim();
+    const phone = req.body?.Direction === 'outbound-api' 
+      ? (req.body?.To || req.body?.From) 
+      : (req.body?.From || req.body?.To || req.query?.From || req.query?.To);
+    const speech = (req.body?.SpeechResult || req.query?.SpeechResult || '').trim();
+    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
 
-    if (!from || !speech) {
+    if (!phone || !speech) {
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
         'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');
       response.gather({
         input: ['speech'],
-        action: `/voice/respond?callSid=${encodeURIComponent(callSid)}`,
+        action: `${baseUrl}/voice/respond?callSid=${encodeURIComponent(callSid)}`,
         method: 'POST',
         language: 'hi-IN',
         speechTimeout: 'auto',
@@ -242,7 +239,7 @@ export class VoiceController {
     }
 
     try {
-      const result = await this.agent.chatForPhone(from, speech);
+      const result = await this.agent.chatForPhone(phone, speech);
       const session = await this.voiceSessions.findOne({ where: { provider: 'twilio', provider_call_id: callSid } });
       if (session) {
         const transcript = Array.isArray(session.transcript) ? session.transcript : [];
@@ -255,7 +252,7 @@ export class VoiceController {
         result.reply || 'Ji, batayein.');
       response.gather({
         input: ['speech'],
-        action: `/voice/respond?callSid=${encodeURIComponent(callSid)}`,
+        action: `${baseUrl}/voice/respond?callSid=${encodeURIComponent(callSid)}`,
         method: 'POST',
         language: 'hi-IN',
         speechTimeout: 'auto',
