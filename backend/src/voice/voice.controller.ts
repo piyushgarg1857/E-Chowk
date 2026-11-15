@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Req, Res, HttpCode } from '@nestjs/common';
+import { Controller, Post, Get, All, Body, Req, Res, HttpCode, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../auth/user.entity';
@@ -10,7 +10,6 @@ import { AuthGuard } from '../auth/auth.guard';
 import { Roles, CurrentUser } from '../auth/auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { TwilioSignatureGuard } from './twilio-signature.guard';
-import { UseGuards } from '@nestjs/common';
 require('dotenv').config();
 
 const SYSTEM_PROMPT = `You are the AI voice assistant for "E-Chowk", a platform connecting Indian daily wage laborers with employers.
@@ -122,8 +121,7 @@ export class VoiceController {
   }
 
   // Webhook endpoint (supports both GET for testing and POST for Twilio webhooks)
-  @Get('webhook')
-  @Post('webhook')
+  @All('webhook')
   handleWebhook(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid || req.query?.CallSid || '';
     const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
@@ -135,8 +133,7 @@ export class VoiceController {
   }
 
   // New agent-backed phone conversation. This is the target voice path.
-  @Get('agent-incoming')
-  @Post('agent-incoming')
+  @All('agent-incoming')
   @UseGuards(TwilioSignatureGuard)
   agentIncoming(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid || req.query?.CallSid || '';
@@ -149,8 +146,7 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
-  @Get('agent-respond')
-  @Post('agent-respond')
+  @All('agent-respond')
   @UseGuards(TwilioSignatureGuard)
   async agentRespond(@Req() req: any, @Res() res: any) {
     const callSid = req.query?.callSid || req.body?.CallSid || '';
@@ -179,8 +175,7 @@ export class VoiceController {
   }
 
   // Step 1: Twilio calls this when an inbound call comes in
-  @Get('incoming')
-  @Post('incoming')
+  @All('incoming')
   @UseGuards(TwilioSignatureGuard)
   async agentAliasIncoming(@Req() req: any, @Res() res: any) {
     const callSid = req.body?.CallSid || req.query?.CallSid || '';
@@ -211,8 +206,7 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
-  @Get('respond')
-  @Post('respond')
+  @All('respond')
   @UseGuards(TwilioSignatureGuard)
   async agentAliasRespond(@Req() req: any, @Res() res: any) {
     const callSid = req.query?.callSid || req.body?.CallSid || '';
