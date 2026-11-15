@@ -63,15 +63,26 @@ function useDemoState() {
     const current = getSession();
     if (!current?.user?.role) return;
     const [meR, notesR] = await Promise.allSettled([api.me(), api.notifications()]);
-    if (meR.status === "fulfilled") setMe(meR.value);
+    let activeUserRole = current.user.role;
+    if (meR.status === "fulfilled") {
+      const freshMe = meR.value;
+      setMe(freshMe);
+      if (freshMe.role && freshMe.role !== current.user.role) {
+        activeUserRole = freshMe.role;
+        const updated = { ...current, user: { ...current.user, ...freshMe, role: freshMe.role } };
+        setSession(updated);
+        setSessionState(updated);
+      }
+    }
     if (notesR.status === "fulfilled") setLiveNotes(notesR.value);
     else setLiveNotes([]);
-    if (current.user.role === "worker") {
+
+    if (activeUserRole === "worker") {
       const [jobsR, appsR] = await Promise.allSettled([api.matchingJobs(50), api.myApplications()]);
       setLiveJobs(jobsR.status === "fulfilled" ? jobsR.value : []);
       setLiveApps(appsR.status === "fulfilled" ? appsR.value : []);
       setLiveWorkers([]);
-    } else if (current.user.role === "employer") {
+    } else if (activeUserRole === "employer") {
       const jobsR = await api.myJobs().catch(() => []);
       setLiveJobs(jobsR);
       const apps = await Promise.allSettled(jobsR.map((j) => api.applications(j.id)));
@@ -87,6 +98,36 @@ function useDemoState() {
       setLiveWorkers([]);
     }
   }
+
+  async function switchRole(targetRole: Role) {
+    if (live) {
+      try {
+        await api.setRole(targetRole);
+        const current = getSession();
+        if (current) {
+          const updated = { ...current, user: { ...current.user, role: targetRole } };
+          setSession(updated);
+          setSessionState(updated);
+        }
+        setRole(targetRole);
+        await refresh();
+        toast.success(targetRole === "worker" ? "Switched to Worker · कारीगर मोड चालू" : "Switched to Employer · नियोक्ता मोड चालू");
+      } catch (e) {
+        toast.error(errText(e));
+      }
+    } else {
+      setRole(targetRole);
+      toast.success("Role switched");
+    }
+  }
+
+  useEffect(() => {
+    const handleFocus = () => {
+      if (live) void refresh();
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [live]);
   useEffect(() => {
     setAgentSessionId(null);
     setMessages([
@@ -314,6 +355,8 @@ function useDemoState() {
     markRead,
     updateJobStatus,
     sendAgentMessage,
+    refresh,
+    switchRole,
   };
 }
 type DemoState = ReturnType<typeof useDemoState>;

@@ -21,6 +21,7 @@ import {
   Languages,
   CircleCheck,
   LockKeyhole,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -313,8 +314,9 @@ export function Login() {
   );
 }
 export function Profile() {
-  const { role, currentUser, updateProfile, live } = useDemo();
+  const { role, currentUser, updateProfile, live, refresh, switchRole } = useDemo();
   const [editing, setEditing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [form, setForm] = useState({
     name: currentUser?.full_name || "",
@@ -334,21 +336,36 @@ export function Profile() {
         title="Your profile"
         hindi="आपकी पहचान, आपका हुनर। Your work story starts here."
         action={
-          <Button
-            className="button-large"
-            onClick={() => {
-              setForm({
-                name: currentUser?.full_name || "",
-                skill: currentUser?.skill_category || "Plumber",
-                city: currentUser?.current_location || "Jaipur",
-                wage: currentUser?.daily_wage || 800,
-              });
-              setEditing(true);
-            }}
-          >
-            <UserRound />
-            Edit profile
-          </Button>
+          <div className="action-row">
+            <Button
+              variant="outline"
+              disabled={refreshing}
+              onClick={async () => {
+                setRefreshing(true);
+                await refresh();
+                setRefreshing(false);
+                toast.success("Profile synced with E-Chowk · डेटा रीफ्रेश हो गया");
+              }}
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+              Sync / Refresh
+            </Button>
+            <Button
+              className="button-large"
+              onClick={() => {
+                setForm({
+                  name: currentUser?.full_name || "",
+                  skill: currentUser?.skill_category || "Plumber",
+                  city: currentUser?.current_location || "Jaipur",
+                  wage: currentUser?.daily_wage || 800,
+                });
+                setEditing(true);
+              }}
+            >
+              <UserRound />
+              Edit profile
+            </Button>
+          </div>
         }
       />
       <div className="details-grid">
@@ -362,17 +379,30 @@ export function Profile() {
               </Pill>
             </div>
             {[
-              ["Full name", currentUser?.full_name],
-              ["Mobile number", `+91 ${currentUser?.phone_number}`],
-              ["Role", role === "admin" ? "Admin demo" : role],
-              ["City / location", currentUser?.current_location],
-              ["Registration source", `${currentUser?.source} · sample registration`],
+              ["Full name", currentUser?.full_name || "—"],
+              ["Mobile number", currentUser?.phone_number ? `+91 ${currentUser.phone_number}` : "—"],
+              ["Role", role === "admin" ? "Admin demo" : role === "worker" ? "Worker / कारीगर" : "Employer / नियोक्ता"],
+              ["City / location", currentUser?.current_location || "—"],
+              ["Registration source", `${currentUser?.source || "voice"} · registration`],
             ].map(([label, value]) => (
               <div key={label} className="profile-fact">
                 <span className="muted">{label}</span>
                 <strong>{value}</strong>
               </div>
             ))}
+            <div className="preference-row mt-4 pt-3 border-t">
+              <div>
+                <strong>Active Mode: {role === "worker" ? "Worker (Find Work)" : "Employer (Hire Workers)"}</strong>
+                <p>Switch between seeking jobs as a worker and posting jobs as an employer.</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => switchRole(role === "worker" ? "employer" : "worker")}
+              >
+                Switch to {role === "worker" ? "Employer Mode" : "Worker Mode"}
+              </Button>
+            </div>
           </section>
           {role === "worker" && (
             <section className="panel">

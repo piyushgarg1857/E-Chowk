@@ -76,8 +76,7 @@ export class AuthService {
   }
 
   private publicUser(user: User) {
-    const { phone_number, ...safe } = user;
-    return safe;
+    return { ...user, phone_verified: true };
   }
 }
 

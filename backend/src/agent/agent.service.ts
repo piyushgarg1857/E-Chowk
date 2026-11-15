@@ -96,10 +96,47 @@ export class AgentService {
     };
   }
 
+  private normalizeSkill(input: string): string {
+    const raw = (input || '').trim().toLowerCase();
+    const map: Record<string, string> = {
+      'carpenter': 'Carpenter',
+      'बढ़ई': 'Carpenter',
+      'कारपेंटर': 'Carpenter',
+      'plumber': 'Plumber',
+      'प्लंबर': 'Plumber',
+      'electrician': 'Electrician',
+      'इलेक्ट्रीशियन': 'Electrician',
+      'इलेक्ट्रिशियन': 'Electrician',
+      'painter': 'Painter',
+      'पेंटर': 'Painter',
+      'रंगसाज': 'Painter',
+      'mason': 'Mason',
+      'राजमिस्त्री': 'Mason',
+      'मिस्त्री': 'Mason',
+      'driver': 'Driver',
+      'ड्राइवर': 'Driver',
+      'चालक': 'Driver',
+      'helper': 'Helper',
+      'हेल्पर': 'Helper',
+      'मजदूर': 'Helper',
+      'welder': 'Welder',
+      'वेल्डर': 'Welder',
+      'mechanic': 'Mechanic',
+      'मैकेनिक': 'Mechanic',
+      'cleaner': 'Cleaner',
+      'सफाईकर्मी': 'Cleaner',
+    };
+    for (const [key, val] of Object.entries(map)) {
+      if (raw.includes(key) || key.includes(raw)) return val;
+    }
+    return input.charAt(0).toUpperCase() + input.slice(1);
+  }
+
   private tools() {
     return [
       { type: 'function', function: { name: 'get_current_user', description: 'Get the current user profile.', parameters: { type: 'object', properties: {}, additionalProperties: false } } },
-      { type: 'function', function: { name: 'update_worker_profile', description: 'Update the current worker profile. Use only fields the user explicitly supplied.', parameters: { type: 'object', properties: { full_name: { type: 'string' }, skill_category: { type: 'string' }, current_location: { type: 'string' }, daily_wage: { type: 'number' }, is_available: { type: 'boolean' } }, additionalProperties: false } } },
+      { type: 'function', function: { name: 'update_worker_profile', description: 'Update user profile (name, skill, city/location, wage, availability, role). Use whenever user shares or updates their info.', parameters: { type: 'object', properties: { full_name: { type: 'string' }, skill_category: { type: 'string' }, current_location: { type: 'string' }, daily_wage: { type: 'number' }, is_available: { type: 'boolean' }, role: { type: 'string', enum: ['worker', 'employer'] } }, additionalProperties: false } } },
+      { type: 'function', function: { name: 'set_user_role', description: 'Switch user role to worker (finding work) or employer (hiring workers).', parameters: { type: 'object', properties: { role: { type: 'string', enum: ['worker', 'employer'] } }, required: ['role'], additionalProperties: false } } },
       { type: 'function', function: { name: 'update_availability', description: 'Change worker availability.', parameters: { type: 'object', properties: { is_available: { type: 'boolean' } }, required: ['is_available'], additionalProperties: false } } },
       { type: 'function', function: { name: 'search_jobs', description: 'Search open jobs by skill and/or location.', parameters: { type: 'object', properties: { skill: { type: 'string' }, location: { type: 'string' }, limit: { type: 'integer' } }, additionalProperties: false } } },
       { type: 'function', function: { name: 'get_job', description: 'Get a job by ID.', parameters: { type: 'object', properties: { job_id: { type: 'string' } }, required: ['job_id'], additionalProperties: false } } },
@@ -115,9 +152,16 @@ export class AgentService {
   private async executeTool(userId: string, name: string, args: any) {
     switch (name) {
       case 'get_current_user': return this.users.getById(userId);
-      case 'update_worker_profile': return this.users.update(userId, args);
+      case 'update_worker_profile': {
+        if (args.skill_category) args.skill_category = this.normalizeSkill(args.skill_category);
+        return this.users.update(userId, args);
+      }
+      case 'set_user_role': return this.users.setRole(userId, args.role);
       case 'update_availability': return this.users.update(userId, { is_available: args.is_available });
-      case 'search_jobs': return this.jobs.search(args);
+      case 'search_jobs': {
+        if (args.skill) args.skill = this.normalizeSkill(args.skill);
+        return this.jobs.search(args);
+      }
       case 'get_job': return this.jobs.get(args.job_id);
       case 'get_application_status': return this.jobs.applicationStatus(userId, args.job_id);
       case 'apply_for_job':
@@ -134,20 +178,27 @@ export class AgentService {
         return this.jobs.complete(userId, args.job_id);
       case 'create_job':
         if (args.confirmed !== true) return { requires_confirmation: true, message: 'Ask the employer to explicitly confirm before publishing.' };
+        if (args.required_skill) args.required_skill = this.normalizeSkill(args.required_skill);
         return this.jobs.create(userId, args);
       default: throw new BadRequestException('Unknown AI tool');
     }
   }
 
   private systemPrompt() {
-    return `You are E-Chowk's Hindi/Hinglish marketplace AI agent.
-Understand the user's intent and use tools instead of inventing data.
-The backend is authoritative: never claim a job/profile change happened unless a tool returned success.
-Keep responses concise and natural for Indian users.
-For consequential actions (applying, publishing, accepting/rejecting an application, starting a job, completing a job), collect missing details, summarize the exact action, ask for explicit confirmation, and only then call the tool with confirmed=true.
+    return `You are E-Chowk's Hindi/Hinglish marketplace AI voice and chat agent.
+Understand the user's intent and ALWAYS use tools instead of inventing data.
+The backend is authoritative: never claim a profile/job change happened unless a tool returned success.
+Keep responses concise, warm, and natural in simple conversational Hindi (1-2 sentences for phone calls).
+
+RULES FOR PROFILE AND ROLE UPDATES:
+1. When the user tells you their name, skill, or city/location, immediately call 'update_worker_profile' with the extracted full_name, skill_category, and current_location.
+2. If the user indicates they want to work, are seeking jobs, or are registering as a worker/karigar, call 'update_worker_profile' (or 'set_user_role') with role='worker'.
+3. If the user wants to hire workers, post jobs, or is an employer/thekedar, call 'set_user_role' with role='employer'.
+4. For skills, normalize to standard English names: Carpenter, Electrician, Plumber, Painter, Mason, Driver, Helper, Welder, Mechanic, Cleaner.
+5. For locations, normalize to clean city name (e.g. Jaipur, Delhi, Mumbai).
+
+For consequential actions (applying for jobs, publishing jobs, accepting/rejecting applications, starting/completing jobs), collect missing details, summarize, ask for explicit confirmation, and only call the tool when confirmed=true.
 Never treat vague replies like "okay" as confirmation unless they clearly refer to the immediately proposed action.
-Respect the user's role: workers cannot manage employer applications; employers cannot apply for worker jobs.
-Never expose internal IDs unless needed.
 If information is missing, ask one clear question at a time.
 `;
   }

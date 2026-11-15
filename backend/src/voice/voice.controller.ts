@@ -132,12 +132,31 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
-  // New agent-backed phone conversation. This is the target voice path.
-  @All('agent-incoming')
-  @UseGuards(TwilioSignatureGuard)
-  agentIncoming(@Req() req: any, @Res() res: any) {
+  // Unified handler for incoming voice calls
+  private async handleVoiceIncoming(req: any, res: any) {
     const callSid = req.body?.CallSid || req.query?.CallSid || '';
+    const from = req.body?.From || req.query?.From || req.body?.To || req.query?.To || null;
     const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
+    
+    if (from) {
+      const cleanPhone = String(from).replace(/[\s\-\(\)]/g, '');
+      const normalizedPhone = cleanPhone.startsWith('+') ? cleanPhone : '+91' + cleanPhone;
+      const user = await this.userRepository.findOne({ where: { phone_number: normalizedPhone } });
+      try {
+        await this.voiceSessions.save(this.voiceSessions.create({
+          user_id: user?.id ?? null,
+          provider: 'twilio',
+          provider_call_id: callSid || null,
+          direction: req.body?.Direction || 'inbound',
+          status: 'active',
+          language: 'hi-IN',
+          started_at: new Date(),
+        }));
+      } catch (e: any) {
+        console.error('[VoiceSession Create Error]', e.message);
+      }
+    }
+
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
     response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga. Aap kya karna chahte hain?');
@@ -146,17 +165,19 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
-  @All('agent-respond')
-  @UseGuards(TwilioSignatureGuard)
-  async agentRespond(@Req() req: any, @Res() res: any) {
+  // Unified handler for voice responses
+  private async handleVoiceRespond(req: any, res: any) {
     const callSid = req.query?.callSid || req.body?.CallSid || '';
-    const phone = req.body?.Direction === 'outbound-api' 
+    const rawPhone = req.body?.Direction === 'outbound-api' 
       ? (req.body?.To || req.body?.From) 
       : (req.body?.From || req.body?.To || req.query?.From || req.query?.To);
     const speech = (req.body?.SpeechResult || req.query?.SpeechResult || '').trim();
     const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
+
+    const clean = String(rawPhone || '').replace(/[\s\-\(\)]/g, '');
+    const phone = clean ? (clean.startsWith('+') ? clean : '+91' + clean) : '';
 
     if (!phone || !speech) {
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');
@@ -165,6 +186,18 @@ export class VoiceController {
     }
     try {
       const result = await this.agent.chatForPhone(phone, speech);
+      try {
+        const session = await this.voiceSessions.findOne({ where: { provider: 'twilio', provider_call_id: callSid } });
+        if (session) {
+          const transcript = Array.isArray(session.transcript) ? session.transcript : [];
+          transcript.push({ role: 'user', content: speech, at: new Date().toISOString() });
+          transcript.push({ role: 'assistant', content: result.reply || '', at: new Date().toISOString() });
+          session.transcript = transcript.slice(-40);
+          await this.voiceSessions.save(session);
+        }
+      } catch (e: any) {
+        console.error('[VoiceSession Transcript Error]', e.message);
+      }
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, result.reply || 'Ji, batayein.');
       response.gather({ input: ['speech'], action: `${baseUrl}/voice/agent-respond?callSid=${encodeURIComponent(callSid)}`, method: 'POST', language: 'hi-IN', speechTimeout: 'auto', timeout: 10 });
     } catch (error: any) {
@@ -174,90 +207,29 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
-  // Step 1: Twilio calls this when an inbound call comes in
+  // Endpoints
+  @All('agent-incoming')
+  @UseGuards(TwilioSignatureGuard)
+  agentIncoming(@Req() req: any, @Res() res: any) {
+    return this.handleVoiceIncoming(req, res);
+  }
+
   @All('incoming')
   @UseGuards(TwilioSignatureGuard)
-  async agentAliasIncoming(@Req() req: any, @Res() res: any) {
-    const callSid = req.body?.CallSid || req.query?.CallSid || '';
-    const from = req.body?.From || req.query?.From || null;
-    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
-    const user = from ? await this.userRepository.findOne({ where: { phone_number: from } }) : null;
-    await this.voiceSessions.save(this.voiceSessions.create({
-      user_id: user?.id ?? null,
-      provider: 'twilio',
-      provider_call_id: callSid || null,
-      direction: 'inbound',
-      status: 'active',
-      language: 'hi-IN',
-      started_at: new Date(),
-    }));
-    const VoiceResponse = twilio.twiml.VoiceResponse;
-    const response = new VoiceResponse();
-    response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
-      'Namaste! E-Chowk mein aapka swagat hai. Main aapki madad karunga. Aap kya karna chahte hain?');
-    response.gather({
-      input: ['speech'],
-      action: `${baseUrl}/voice/respond?callSid=${encodeURIComponent(callSid)}`,
-      method: 'POST',
-      language: 'hi-IN',
-      speechTimeout: 'auto',
-      timeout: 10,
-    });
-    return res.type('text/xml').send(response.toString());
+  agentAliasIncoming(@Req() req: any, @Res() res: any) {
+    return this.handleVoiceIncoming(req, res);
+  }
+
+  @All('agent-respond')
+  @UseGuards(TwilioSignatureGuard)
+  agentRespond(@Req() req: any, @Res() res: any) {
+    return this.handleVoiceRespond(req, res);
   }
 
   @All('respond')
   @UseGuards(TwilioSignatureGuard)
-  async agentAliasRespond(@Req() req: any, @Res() res: any) {
-    const callSid = req.query?.callSid || req.body?.CallSid || '';
-    const phone = req.body?.Direction === 'outbound-api' 
-      ? (req.body?.To || req.body?.From) 
-      : (req.body?.From || req.body?.To || req.query?.From || req.query?.To);
-    const speech = (req.body?.SpeechResult || req.query?.SpeechResult || '').trim();
-    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://echowk-dev-api.azurewebsites.net').replace(/\/$/, '');
-    const VoiceResponse = twilio.twiml.VoiceResponse;
-    const response = new VoiceResponse();
-
-    if (!phone || !speech) {
-      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
-        'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');
-      response.gather({
-        input: ['speech'],
-        action: `${baseUrl}/voice/respond?callSid=${encodeURIComponent(callSid)}`,
-        method: 'POST',
-        language: 'hi-IN',
-        speechTimeout: 'auto',
-        timeout: 10,
-      });
-      return res.type('text/xml').send(response.toString());
-    }
-
-    try {
-      const result = await this.agent.chatForPhone(phone, speech);
-      const session = await this.voiceSessions.findOne({ where: { provider: 'twilio', provider_call_id: callSid } });
-      if (session) {
-        const transcript = Array.isArray(session.transcript) ? session.transcript : [];
-        transcript.push({ role: 'user', content: speech, at: new Date().toISOString() });
-        transcript.push({ role: 'assistant', content: result.reply || '', at: new Date().toISOString() });
-        session.transcript = transcript.slice(-40);
-        await this.voiceSessions.save(session);
-      }
-      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
-        result.reply || 'Ji, batayein.');
-      response.gather({
-        input: ['speech'],
-        action: `${baseUrl}/voice/respond?callSid=${encodeURIComponent(callSid)}`,
-        method: 'POST',
-        language: 'hi-IN',
-        speechTimeout: 'auto',
-        timeout: 10,
-      });
-    } catch (error: any) {
-      console.error('[Agent Voice Error]', error);
-      response.say({ voice: 'Polly.Aditi', language: 'hi-IN' },
-        'Maaf kijiye, technical dikkat aa gayi hai. Kripya thodi der baad dobara call karein.');
-    }
-    return res.type('text/xml').send(response.toString());
+  agentAliasRespond(@Req() req: any, @Res() res: any) {
+    return this.handleVoiceRespond(req, res);
   }
 
   // Database Save Logic

@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { IsBoolean, IsIn, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 
 export class UpdateProfileDto {
   @IsOptional() @IsString() @MaxLength(100) full_name?: string;
@@ -6,4 +6,5 @@ export class UpdateProfileDto {
   @IsOptional() @IsNumber() @Min(0) daily_wage?: number;
   @IsOptional() @IsBoolean() is_available?: boolean;
   @IsOptional() @IsString() @MaxLength(200) current_location?: string;
+  @IsOptional() @IsIn(['worker', 'employer']) role?: 'worker' | 'employer';
 }
