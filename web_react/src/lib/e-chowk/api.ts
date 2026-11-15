@@ -158,7 +158,7 @@ export function toApplication(o: Record<string, unknown>): JobApplication {
     worker_id: str(pick(o, "worker_id", "workerId")),
     status:
       (str(pick(o, "status"), "pending").toLowerCase() as JobApplication["status"]) || "pending",
-    created_at: str(pick(o, "created_at", "createdAt")),
+    created_at: str(pick(o, "created_at", "createdAt", "applied_at", "appliedAt")),
   };
 }
 export function toNotification(o: Record<string, unknown>): Notification {

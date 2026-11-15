@@ -20,6 +20,44 @@ export class AgentService {
 
   async chatForPhone(phone: string, message: string, channel = 'voice') {
     const user = await this.users.findOrCreateByPhone(phone);
+
+    // Fast entity extraction safety net
+    const updatePayload: any = {};
+    const nameMatch = message.match(/(?:mera naam|naam|main)\s+([A-Za-z\u0900-\u097F]+)(?:\s+hoon|\s+hai|\s+bol|$)/i);
+    if (nameMatch && nameMatch[1] && !['ek', 'karigar', 'thekedar', 'worker', 'employer', 'jaipur', 'delhi', 'kaam'].includes(nameMatch[1].toLowerCase())) {
+      updatePayload.full_name = nameMatch[1].trim();
+    }
+
+    const detectedSkill = this.normalizeSkill(message);
+    if (detectedSkill && detectedSkill.toLowerCase() !== message.toLowerCase().trim()) {
+      updatePayload.skill_category = detectedSkill;
+    }
+
+    const cityMatch = message.match(/(jaipur|delhi|mumbai|ahmedabad|kota|jodhpur|udaipur|ajmer|bikaner|alwar|sikar|noida|gurugram|ghaziabad|faridabad|lucknow|kanpur|patna|bhopal|indore|जयपुर|दिल्ली|मुंबई|कोटा|जोधपुर|उदयपुर|अजमेर)/i);
+    if (cityMatch && cityMatch[1]) {
+      const cityMap: Record<string, string> = {
+        'जयपुर': 'Jaipur', 'दिल्ली': 'Delhi', 'मुंबई': 'Mumbai', 'कोटा': 'Kota',
+        'जोधपुर': 'Jodhpur', 'उदयपुर': 'Udaipur', 'अजमेर': 'Ajmer'
+      };
+      const rawCity = cityMatch[1];
+      updatePayload.current_location = cityMap[rawCity] || (rawCity.charAt(0).toUpperCase() + rawCity.slice(1).toLowerCase());
+    }
+
+    if (/kaam chahiye|job chahiye|naukri chahiye|rojgar|karigar|majdoor|mistri/i.test(message)) {
+      updatePayload.role = 'worker';
+    } else if (/kaam karwana|worker chahiye|bande chahiye|thekedar|hire karna|mistri chahiye/i.test(message)) {
+      updatePayload.role = 'employer';
+    }
+
+    if (Object.keys(updatePayload).length > 0) {
+      console.log(`[Fast Extraction] Updating user ${user.id} (${phone}) with:`, updatePayload);
+      try {
+        await this.users.update(user.id, updatePayload);
+      } catch (err: any) {
+        console.error('[Fast Extraction Error]', err.message);
+      }
+    }
+
     return this.chat(user.id, message, channel);
   }
 
@@ -102,29 +140,45 @@ export class AgentService {
       'carpenter': 'Carpenter',
       'बढ़ई': 'Carpenter',
       'कारपेंटर': 'Carpenter',
+      'लकड़ी': 'Carpenter',
+      'furniture': 'Carpenter',
       'plumber': 'Plumber',
       'प्लंबर': 'Plumber',
+      'नल': 'Plumber',
+      'पाइप': 'Plumber',
       'electrician': 'Electrician',
       'इलेक्ट्रीशियन': 'Electrician',
       'इलेक्ट्रिशियन': 'Electrician',
+      'बिजली': 'Electrician',
+      'वायरिंग': 'Electrician',
       'painter': 'Painter',
       'पेंटर': 'Painter',
       'रंगसाज': 'Painter',
+      'रंगाई': 'Painter',
+      'रंग': 'Painter',
       'mason': 'Mason',
       'राजमिस्त्री': 'Mason',
       'मिस्त्री': 'Mason',
+      'चिनाई': 'Mason',
       'driver': 'Driver',
       'ड्राइवर': 'Driver',
       'चालक': 'Driver',
+      'गाड़ी': 'Driver',
       'helper': 'Helper',
       'हेल्पर': 'Helper',
       'मजदूर': 'Helper',
+      'मजदूरी': 'Helper',
+      'लेबर': 'Helper',
+      'labor': 'Helper',
       'welder': 'Welder',
       'वेल्डर': 'Welder',
+      'वेल्डिंग': 'Welder',
       'mechanic': 'Mechanic',
       'मैकेनिक': 'Mechanic',
       'cleaner': 'Cleaner',
       'सफाईकर्मी': 'Cleaner',
+      'सफाई': 'Cleaner',
+      'झाड़ू': 'Cleaner',
     };
     for (const [key, val] of Object.entries(map)) {
       if (raw.includes(key) || key.includes(raw)) return val;
@@ -153,8 +207,34 @@ export class AgentService {
     switch (name) {
       case 'get_current_user': return this.users.getById(userId);
       case 'update_worker_profile': {
-        if (args.skill_category) args.skill_category = this.normalizeSkill(args.skill_category);
-        return this.users.update(userId, args);
+        const payload: any = {};
+        const fullName = args.full_name || args.name;
+        if (fullName) payload.full_name = fullName;
+
+        const skill = args.skill_category || args.skill;
+        if (skill) payload.skill_category = this.normalizeSkill(skill);
+
+        const location = args.current_location || args.city || args.location;
+        if (location) {
+          const cityMap: Record<string, string> = {
+            'जयपुर': 'Jaipur', 'दिल्ली': 'Delhi', 'मुंबई': 'Mumbai', 'कोटा': 'Kota',
+            'जोधपुर': 'Jodhpur', 'उदयपुर': 'Udaipur', 'अजमेर': 'Ajmer'
+          };
+          payload.current_location = cityMap[location] || (location.charAt(0).toUpperCase() + location.slice(1));
+        }
+
+        if (args.daily_wage !== undefined || args.wage !== undefined) {
+          payload.daily_wage = Number(args.daily_wage || args.wage);
+        }
+        if (args.is_available !== undefined) {
+          payload.is_available = Boolean(args.is_available);
+        }
+        if (args.role) {
+          payload.role = args.role;
+        }
+
+        console.log(`[update_worker_profile tool] User ${userId}:`, payload);
+        return this.users.update(userId, payload);
       }
       case 'set_user_role': return this.users.setRole(userId, args.role);
       case 'update_availability': return this.users.update(userId, { is_available: args.is_available });

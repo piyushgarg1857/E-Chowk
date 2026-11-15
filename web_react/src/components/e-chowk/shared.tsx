@@ -147,6 +147,7 @@ export function Confirm({
   label?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const { live } = useDemo();
   return (
     <>
       <span className="inline-flex" onClick={() => setOpen(true)}>
@@ -156,10 +157,11 @@ export function Confirm({
         <DialogContent>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
-          <DemoNote>
-            This is a simulated backend action. Your confirmation is required; no real-world request
-            will be sent.
-          </DemoNote>
+          {!live && (
+            <DemoNote>
+              This is a simulated demo action. Your confirmation is required; sign in for live marketplace requests.
+            </DemoNote>
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel · अभी नहीं
@@ -220,7 +222,7 @@ export function JobCard({ job }: { job: Job }) {
       </div>
       <h3>{job.title}</h3>
       <p className="job-employer">
-        {job.employer} <ShieldCheck className="inline h-3 w-3 text-success" /> · Sample employer
+        {job.employer} <ShieldCheck className="inline h-3 w-3 text-success" />
       </p>
       <div className="job-meta">
         <MapPin />
@@ -273,13 +275,17 @@ export function AppShell({
   children: ReactNode;
   area?: "worker" | "employer" | "admin";
 }) {
-  const { role, setRole, currentUser, notifications } = useDemo();
+  const { role, setRole, currentUser, notifications, live } = useDemo();
   const activeRole = area || role;
   const nav =
     activeRole === "admin" ? adminNav : activeRole === "employer" ? employerNav : workerNav;
   const count = notifications.filter((n) => !n.read).length;
   const [roleOpen, setRoleOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role>(activeRole);
+  const locationLabel = (currentUser?.current_location && currentUser.current_location !== "—")
+    ? currentUser.current_location
+    : "Jaipur, Rajasthan";
+
   return (
     <div className="app-layout">
       <aside className="app-sidebar">
@@ -317,23 +323,25 @@ export function AppShell({
               Voice AI <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-          <div>
-            <div className="sidebar-label">Prototype controls · not sign-in</div>
-            <select
-              aria-label="Demo role"
-              className="role-picker"
-              value={activeRole}
-              onChange={(e) => {
-                setSelectedRole(e.target.value as Role);
-                setRole(e.target.value as Role);
-                setRoleOpen(true);
-              }}
-            >
-              <option value="worker">Worker demo</option>
-              <option value="employer">Employer demo</option>
-              <option value="admin">Admin demo</option>
-            </select>
-          </div>
+          {!live && (
+            <div>
+              <div className="sidebar-label">Prototype controls · not sign-in</div>
+              <select
+                aria-label="Demo role"
+                className="role-picker"
+                value={activeRole}
+                onChange={(e) => {
+                  setSelectedRole(e.target.value as Role);
+                  setRole(e.target.value as Role);
+                  setRoleOpen(true);
+                }}
+              >
+                <option value="worker">Worker demo</option>
+                <option value="employer">Employer demo</option>
+                <option value="admin">Admin demo</option>
+              </select>
+            </div>
+          )}
           <Link to="/architecture" className="nav-item p-0">
             <Server />
             Platform architecture
@@ -341,30 +349,31 @@ export function AppShell({
           <div className="sidebar-profile">
             <Avatar
               name={
-                activeRole === "admin" ? "Platform Admin" : currentUser?.full_name || "Demo account"
+                activeRole === "admin" ? "Platform Admin" : currentUser?.full_name || "Account"
               }
             />
             <span>
-              <strong>{activeRole === "admin" ? "Platform Admin" : currentUser?.full_name}</strong>
+              <strong>{activeRole === "admin" ? "Platform Admin" : currentUser?.full_name || "My Account"}</strong>
               <small>
                 {activeRole === "worker"
-                  ? "Worker · Jaipur"
+                  ? `${currentUser?.skill_category && currentUser.skill_category !== "—" ? currentUser.skill_category : "Worker"} · ${locationLabel}`
                   : activeRole === "employer"
-                    ? "Employer · Jaipur"
+                    ? `Employer · ${locationLabel}`
                     : "System demo"}
               </small>
             </span>
-            <Link to="/" aria-label="Return to E-Chowk home">
+            <Link to="/profile" aria-label="Open profile">
               <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </aside>
       <div className="app-main">
-        <div className="demo-banner">
-          E-CHOWK PRODUCT DEMO · All data and actions are simulated. Existing Flutter + NestJS
-          project remains unchanged.
-        </div>
+        {!live && (
+          <div className="demo-banner">
+            E-CHOWK DEMO MODE · Viewing sample records. Sign in with your phone to use live AI matching and jobs.
+          </div>
+        )}
         <header className="app-header">
           <span className="app-header-title">
             <BriefcaseBusiness className="h-4 w-4" />
@@ -381,22 +390,24 @@ export function AppShell({
           <div className="app-header-actions">
             <span className="header-location">
               <MapPin />
-              Jaipur, Rajasthan
+              {locationLabel}
             </span>
-            <select
-              aria-label="Mobile demo role"
-              className="demo-role-top"
-              value={activeRole}
-              onChange={(e) => {
-                setSelectedRole(e.target.value as Role);
-                setRole(e.target.value as Role);
-                setRoleOpen(true);
-              }}
-            >
-              <option value="worker">Worker demo</option>
-              <option value="employer">Employer demo</option>
-              <option value="admin">Admin demo</option>
-            </select>
+            {!live && (
+              <select
+                aria-label="Mobile demo role"
+                className="demo-role-top"
+                value={activeRole}
+                onChange={(e) => {
+                  setSelectedRole(e.target.value as Role);
+                  setRole(e.target.value as Role);
+                  setRoleOpen(true);
+                }}
+              >
+                <option value="worker">Worker demo</option>
+                <option value="employer">Employer demo</option>
+                <option value="admin">Admin demo</option>
+              </select>
+            )}
             <Button variant="ghost" size="sm" title="Hindi and English are shown together">
               हिंदी / EN
             </Button>
@@ -407,9 +418,9 @@ export function AppShell({
             <Link
               to="/profile"
               className="account-link"
-              aria-label={`Profile for ${currentUser?.full_name || "demo account"}`}
+              aria-label={`Profile for ${currentUser?.full_name || "account"}`}
             >
-              <Avatar name={currentUser?.full_name || "RK"} />
+              <Avatar name={currentUser?.full_name || "User"} />
             </Link>
           </div>
         </header>

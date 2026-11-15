@@ -68,13 +68,18 @@ export function VoiceBand({ employer = false }: { employer?: boolean }) {
   );
 }
 export function WorkerDashboard() {
-  const { currentUser, updateProfile, jobs, applications, notifications } = useDemo();
-  const workerApps = applications.filter((a) => a.worker_id === currentUser?.id);
+  const { currentUser, updateProfile, jobs, applications, notifications, live } = useDemo();
+  const workerApps = applications.filter((a) => a.worker_id === currentUser?.id || (!live && a.worker_id === "w1"));
   const active = jobs.find((j) => j.status === "in_progress");
+  const pendingCount = workerApps.filter((a) => a.status === "pending").length;
+  const completedCount = live ? workerApps.filter((a) => a.status === "completed").length : 12;
+  const ratingVal = currentUser?.rating ? currentUser.rating.toFixed(1) : (live ? "5.0" : "4.8");
+  const wageLabel = currentUser?.daily_wage ? rupees(currentUser.daily_wage) : (live ? "Not set" : "₹12,450");
+
   return (
     <AppShell area="worker">
       <PageHeading
-        title={`Namaste, ${currentUser?.full_name.split(" ")[0]}`}
+        title={`Namaste, ${currentUser?.full_name ? currentUser.full_name.split(" ")[0] : "Karmik"}`}
         hindi="आपका अपना चौक। Let’s find your next opportunity."
         action={
           <div className={`availability-row ${currentUser?.is_available ? "available" : ""}`}>
@@ -91,18 +96,18 @@ export function WorkerDashboard() {
       <div className="stats-row">
         <Stat
           label="Applications"
-          value={workerApps.filter((a) => a.status === "pending").length}
+          value={pendingCount}
           note="Awaiting employer review"
           icon={<BriefcaseBusiness />}
         />
-        <Stat label="Completed jobs" value="12" note="Sample lifetime total" icon={<Check />} />
+        <Stat label="Completed jobs" value={completedCount} note={live ? "Verified jobs" : "Sample lifetime total"} icon={<Check />} />
         <Stat
-          label="Earnings recorded"
-          value="₹12,450"
-          note="Digital khata · sample total"
+          label="Expected wage"
+          value={wageLabel}
+          note={live ? "Per day rate" : "Digital khata · sample total"}
           icon={<Wallet />}
         />
-        <Stat label="Your rating" value="4.8" note="From 12 sample reviews" icon={<Star />} />
+        <Stat label="Your rating" value={ratingVal} note={live ? "Marketplace trust score" : "From 12 sample reviews"} icon={<Star />} />
       </div>
       <VoiceBand />
       <div className="dashboard-columns">
@@ -111,7 +116,11 @@ export function WorkerDashboard() {
             <div className="section-title">
               <div>
                 <h2 className="text-xl!">Recommended for you</h2>
-                <p>आपके हुनर के लिए · Jobs near Mansarovar</p>
+                <p>
+                  {currentUser?.skill_category && currentUser.skill_category !== "—"
+                    ? `आपके हुनर (${currentUser.skill_category}) के लिए`
+                    : "Jobs near you"}
+                </p>
               </div>
               <Link to="/find-work" className="text-link">
                 View all <ArrowRight />
@@ -251,7 +260,7 @@ export function WorkerDashboard() {
   );
 }
 export function FindWork() {
-  const { jobs } = useDemo();
+  const { jobs, live, refresh } = useDemo();
   const [query, setQuery] = useState("");
   const [skill, setSkill] = useState("All");
   const [location, setLocation] = useState("All Jaipur");
@@ -282,10 +291,11 @@ export function FindWork() {
           </Button>
         }
       />
-      <DemoNote>
-        Sample opportunities in Jaipur. Matching shown here is a demo; the advanced matching engine
-        is coming soon.
-      </DemoNote>
+      {!live && (
+        <DemoNote>
+          Viewing sample opportunities. Sign in with your phone to access live opportunities.
+        </DemoNote>
+      )}
       <div className="filters">
         <label className="filter-search">
           <Search />
@@ -330,17 +340,18 @@ export function FindWork() {
       </div>
       <div className="between mb-5">
         <span className="small muted">
-          <strong className="text-foreground">{filtered.length} jobs</strong> available in the demo
+          <strong className="text-foreground">{filtered.length} jobs</strong> available {live ? "live" : "in the demo"}
         </span>
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => {
+          onClick={async () => {
             setLoading(true);
+            if (live) await refresh();
             setTimeout(() => {
               setLoading(false);
-              toast.success("Sample job list refreshed");
-            }, 650);
+              toast.success("Job list refreshed");
+            }, 500);
           }}
         >
           Refresh
@@ -585,15 +596,15 @@ export function FindWorkers() {
   );
 }
 export function EmployerDashboard() {
-  const { jobs, applications, users, currentUser, reviewApplication } = useDemo();
-  const own = jobs.filter((j) => j.employer_id === "e1");
+  const { jobs, applications, users, currentUser, reviewApplication, live } = useDemo();
+  const own = jobs.filter((j) => j.employer_id === currentUser?.id || (!live && j.employer_id === "e1"));
   const candidates = applications.filter(
     (a) => a.status === "pending" && own.some((j) => j.id === a.job_id),
   );
   return (
     <AppShell area="employer">
       <PageHeading
-        title={`Namaste, ${currentUser?.full_name.split(" ")[0] || "Employer"}`}
+        title={`Namaste, ${currentUser?.full_name ? currentUser.full_name.split(" ")[0] : "Employer"}`}
         hindi="आपकी टीम, आपका भरोसा। Let’s get the work done."
         action={
           <Button asChild className="button-large">
@@ -623,12 +634,12 @@ export function EmployerDashboard() {
           note="Work happening today"
           icon={<Clock3 />}
         />
-        <Stat label="Employer rating" value="4.9" note="Sample trusted profile" icon={<Star />} />
+        <Stat label="Employer rating" value={currentUser?.rating ? currentUser.rating.toFixed(1) : (live ? "5.0 ★" : "4.9")} note={live ? "Verified employer profile" : "Sample trusted profile"} icon={<Star />} />
       </div>
       <VoiceBand employer />
       <div className="panel-title">
         <h3>Your job pipeline</h3>
-        <Pill tone="neutral">Sample marketplace</Pill>
+        <Pill tone={live ? "success" : "neutral"}>{live ? "Live pipeline" : "Sample marketplace"}</Pill>
       </div>
       <div className="pipeline">
         {(["open", "assigned", "in_progress", "completed"] as const).map((status) => (
@@ -762,7 +773,7 @@ export function EmployerDashboard() {
   );
 }
 export function JobDetails({ jobId }: { jobId: string }) {
-  const { jobs, role, applications, apply, updateJobStatus, reviewApplication, users } = useDemo();
+  const { jobs, role, applications, apply, updateJobStatus, reviewApplication, users, currentUser, live } = useDemo();
   const job = jobs.find((j) => j.id === jobId);
   if (!job)
     return (
@@ -770,15 +781,15 @@ export function JobDetails({ jobId }: { jobId: string }) {
         <div className="empty-state">
           <BriefcaseBusiness />
           <h3>Job not found</h3>
-          <p className="mt-2">This sample job may have been removed.</p>
+          <p className="mt-2">This job may have been completed or removed.</p>
           <Button asChild className="mt-5">
             <Link to="/find-work">Find other work</Link>
           </Button>
         </div>
       </AppShell>
     );
-  const app = applications.find((a) => a.job_id === jobId && a.worker_id === "w1");
-  const own = role === "employer" && job.employer_id === "e1";
+  const app = applications.find((a) => a.job_id === jobId && (a.worker_id === currentUser?.id || (!live && a.worker_id === "w1")));
+  const own = role === "employer" && (job.employer_id === currentUser?.id || (!live && job.employer_id === "e1"));
   const candidates = applications.filter((a) => a.job_id === jobId);
   return (
     <AppShell>

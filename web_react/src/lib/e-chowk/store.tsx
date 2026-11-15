@@ -79,7 +79,13 @@ function useDemoState() {
 
     if (activeUserRole === "worker") {
       const [jobsR, appsR] = await Promise.allSettled([api.matchingJobs(50), api.myApplications()]);
-      setLiveJobs(jobsR.status === "fulfilled" ? jobsR.value : []);
+      const matched = jobsR.status === "fulfilled" ? jobsR.value : [];
+      if (matched.length > 0) {
+        setLiveJobs(matched);
+      } else {
+        const fallbackJobs = await api.jobs({ limit: 50 }).catch(() => []);
+        setLiveJobs(fallbackJobs);
+      }
       setLiveApps(appsR.status === "fulfilled" ? appsR.value : []);
       setLiveWorkers([]);
     } else if (activeUserRole === "employer") {
@@ -90,6 +96,10 @@ function useDemoState() {
       const workers = await Promise.allSettled(jobsR.map((j) => api.matchingWorkersForJob(j.id)));
       const unique = new Map<string, User>();
       workers.forEach((r) => r.status === "fulfilled" && r.value.forEach((w) => unique.set(w.id, w)));
+      if (unique.size === 0) {
+        const generalWorkers = await api.matchWorkers({ limit: 25 }).catch(() => []);
+        generalWorkers.forEach((w) => unique.set(w.id, w));
+      }
       setLiveWorkers([...unique.values()]);
     } else {
       const jobsR = await api.jobs({ limit: 50 }).catch(() => []);
@@ -297,6 +307,7 @@ function useDemoState() {
           { id: crypto.randomUUID(), role: "assistant", parts: [{ type: "text", text: result.reply }] },
         ]);
         if (result.session_id) setAgentSessionId(result.session_id);
+        void refresh();
         return result;
       } catch (e) {
         toast.error(errText(e));
