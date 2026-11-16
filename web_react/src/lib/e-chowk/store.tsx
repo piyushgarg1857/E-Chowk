@@ -13,7 +13,7 @@ import {
   type AgentConversation,
 } from "./data";
 import { mockMarketplaceService } from "./mock-service";
-import { api, ApiError, getSession, onSessionChange, setSession, type Session } from "./api";
+import { api, ApiError, getSession, onSessionChange, setSession, toUser, type Session } from "./api";
 const errText = (e: unknown) =>
   e instanceof ApiError ? e.message : "Something went wrong. Please try again.";
 function useDemoState() {
@@ -108,7 +108,7 @@ function useDemoState() {
       const unique = new Map<string, User>();
       workers.forEach((r) => r.status === "fulfilled" && r.value.forEach((w) => unique.set(w.id, w)));
       if (unique.size === 0) {
-        const generalWorkers = await api.matchWorkers({ limit: 25 }).catch(() => []);
+        const generalWorkers = (await api.matchWorkers({ limit: 25 }).catch(() => [])) as User[];
         generalWorkers.forEach((w) => unique.set(w.id, w));
       }
       setLiveWorkers([...unique.values()]);
