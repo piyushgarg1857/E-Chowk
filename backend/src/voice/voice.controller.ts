@@ -132,6 +132,22 @@ export class VoiceController {
     return res.type('text/xml').send(response.toString());
   }
 
+  private normalizePhone(phone: string): string {
+    const digits = (phone || '').replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.length === 10) return '+91' + digits;
+    if (digits.startsWith('91') && digits.length >= 12) {
+      return '+91' + digits.slice(-10);
+    }
+    if (digits.length === 11 && digits.startsWith('1')) {
+      return '+' + digits;
+    }
+    if (digits.length >= 10) {
+      return '+91' + digits.slice(-10);
+    }
+    return '+' + digits;
+  }
+
   // Unified handler for incoming voice calls
   private async handleVoiceIncoming(req: any, res: any) {
     const callSid = req.body?.CallSid || req.query?.CallSid || '';
@@ -143,8 +159,7 @@ export class VoiceController {
     
     let normalizedPhone = '';
     if (rawCaller) {
-      const cleanPhone = String(rawCaller).replace(/[\s\-\(\)]/g, '');
-      normalizedPhone = cleanPhone.startsWith('+') ? cleanPhone : '+91' + cleanPhone;
+      normalizedPhone = this.normalizePhone(String(rawCaller));
       const user = await this.userRepository.findOne({ where: { phone_number: normalizedPhone } });
       try {
         await this.voiceSessions.save(this.voiceSessions.create({
@@ -189,8 +204,7 @@ export class VoiceController {
     const VoiceResponse = twilio.twiml.VoiceResponse;
     const response = new VoiceResponse();
 
-    const clean = String(rawPhone || '').replace(/[\s\-\(\)]/g, '');
-    const phone = clean ? (clean.startsWith('+') ? clean : '+91' + clean) : '';
+    const phone = this.normalizePhone(String(rawPhone || ''));
 
     if (!phone || !speech) {
       response.say({ voice: 'Polly.Aditi', language: 'hi-IN' }, 'Maaf kijiye, mujhe sunai nahi diya. Kripya dobara batayein.');

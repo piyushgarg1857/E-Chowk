@@ -9,11 +9,22 @@ export class UsersService {
   constructor(@InjectRepository(User) private readonly users: Repository<User>) {}
 
   normalizePhone(phone: string): string {
-    const clean = (phone || '').replace(/[\s\-\(\)]/g, '');
-    if (clean.startsWith('+')) return clean;
-    if (/^\d{10}$/.test(clean)) return '+91' + clean;
-    if (clean.startsWith('91') && clean.length === 12) return '+' + clean;
-    return clean ? '+' + clean : '';
+    const digits = (phone || '').replace(/\D/g, '');
+    if (!digits) return '';
+    // If Indian number (starts with 91 or 10 digits)
+    if (digits.length === 10) return '+91' + digits;
+    if (digits.startsWith('91') && digits.length >= 12) {
+      return '+91' + digits.slice(-10);
+    }
+    // US number (11 digits starting with 1)
+    if (digits.length === 11 && digits.startsWith('1')) {
+      return '+' + digits;
+    }
+    // General fallback for Indian numbers >= 10 digits
+    if (digits.length >= 10) {
+      return '+91' + digits.slice(-10);
+    }
+    return '+' + digits;
   }
 
   async findOrCreateByPhone(rawPhone: string) {
