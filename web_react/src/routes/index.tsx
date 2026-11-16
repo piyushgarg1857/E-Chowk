@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
   Mic,
@@ -16,6 +16,7 @@ import {
   BrickWall,
   Car,
   HardHat,
+  UserRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +29,8 @@ import {
 } from "@/components/e-chowk/shared";
 import { useDemo } from "@/lib/e-chowk/store";
 import { pageHead, skills } from "@/lib/e-chowk/data";
+import { api, ApiError, type Session } from "@/lib/e-chowk/api";
+import { toast } from "sonner";
 import workersPhoto from "@/assets/workers-hero.svg";
 export const Route = createFileRoute("/")({
   head: () =>
@@ -39,8 +42,80 @@ export const Route = createFileRoute("/")({
 });
 const skillIcons = [Wrench, Zap, Hammer, Paintbrush, BrickWall, Car, HardHat];
 function Home() {
-  const { jobs, setRole } = useDemo();
+  const navigate = useNavigate();
+  const { jobs, setRole, live, currentUser, role, signIn, signOut } = useDemo();
   const [skill, setSkill] = useState("All");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [loginStep, setLoginStep] = useState<"phone" | "otp">("phone");
+  const [busy, setBusy] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  const quickDemoLogin = async (demoPhone: string, targetRole: "worker" | "employer") => {
+    setLoginError("");
+    setBusy(true);
+    try {
+      const res = await api.verifyOtp(demoPhone, "123456");
+      const r = res as unknown as Record<string, unknown>;
+      const token = String(r["access_token"] ?? r["accessToken"] ?? "");
+      if (!token || !r["user"]) throw new ApiError("Sign-in failed.", 500);
+      const s = { access_token: token, user: r["user"] as Session["user"] };
+      signIn(s);
+      setRole(targetRole);
+      toast.success(`Demo signed in as ${targetRole === "worker" ? "Worker" : "Employer"} · स्वागत है`);
+      void navigate({ to: targetRole === "worker" ? "/worker" : "/employer" });
+    } catch (e) {
+      const msg = e instanceof ApiError ? e.message : "Error signing in";
+      setLoginError(msg);
+      toast.error(msg);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handlePhoneSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    if (loginStep === "phone") {
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        setLoginError("Enter valid 10-digit Indian mobile number");
+        return;
+      }
+      setBusy(true);
+      try {
+        await api.sendOtp(`+91${phone}`);
+        setLoginStep("otp");
+        toast.success("OTP sent · कोड भेज दिया");
+      } catch (err) {
+        setLoginError(err instanceof ApiError ? err.message : "Failed to send OTP");
+      } finally {
+        setBusy(false);
+      }
+    } else {
+      if (!/^\d{6}$/.test(otp)) {
+        setLoginError("Enter 6-digit OTP");
+        return;
+      }
+      setBusy(true);
+      try {
+        const res = await api.verifyOtp(`+91${phone}`, otp);
+        const r = res as unknown as Record<string, unknown>;
+        const token = String(r["access_token"] ?? r["accessToken"] ?? "");
+        if (!token || !r["user"]) throw new ApiError("Sign-in failed", 500);
+        const s = { access_token: token, user: r["user"] as Session["user"] };
+        signIn(s);
+        const userRole = (s.user.role as "worker" | "employer") || "worker";
+        setRole(userRole);
+        toast.success("Signed in · स्वागत है");
+        void navigate({ to: userRole === "worker" ? "/worker" : "/employer" });
+      } catch (err) {
+        setLoginError(err instanceof ApiError ? err.message : "Verification failed");
+      } finally {
+        setBusy(false);
+      }
+    }
+  };
+
   const openJobs = jobs
     .filter((j) => j.status === "open" && (skill === "All" || j.required_skill === skill))
     .slice(0, 3);
@@ -71,6 +146,143 @@ function Home() {
               <p className="hero-desc">
                 Find work or hire nearby — just say what you need. अपनी बात बोलिए।
               </p>
+
+              {live ? (
+                <div className="p-4 rounded-2xl bg-card/95 border shadow-sm my-4 backdrop-blur">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                        {currentUser?.full_name ? currentUser.full_name.slice(0, 2) : "EC"}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm flex items-center gap-2">
+                          <span>नमस्ते, {currentUser?.full_name || "उपयोगकर्ता"}!</span>
+                          <span className="pill tone-success text-[11px] py-0 px-2">सक्रिय लॉगिन</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {currentUser?.role === "employer" ? "🏢 Employer (नियोक्ता)" : "🛠️ Worker (कारीगर)"}
+                          {currentUser?.phone_number ? ` · +91 ${currentUser.phone_number}` : ""}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button asChild size="sm">
+                        <Link to={role === "employer" ? "/employer" : "/worker"}>
+                          Workspace <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm">
+                        <Link to="/voice">
+                          <Mic className="h-3.5 w-3.5 mr-1" />
+                          Voice AI
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm">
+                        <Link to="/profile">
+                          <UserRound className="h-3.5 w-3.5 mr-1" />
+                          Profile
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs text-muted-foreground hover:text-destructive"
+                        onClick={() => {
+                          signOut();
+                          toast.success("Signed out · लॉगआउट हो गए");
+                        }}
+                      >
+                        Sign out
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 rounded-2xl bg-card/95 border shadow-sm my-4 max-w-xl">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="dot" />
+                      <strong className="text-sm">Main Page Instant Login · तुरंत लॉगिन</strong>
+                    </div>
+                    <span className="text-[11px] text-muted-foreground">बार-बार लॉगिन नहीं करना पड़ेगा</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="justify-start text-xs h-auto py-2 px-3 border-primary/30 hover:border-primary"
+                      disabled={busy}
+                      onClick={() => quickDemoLogin("+919999999999", "worker")}
+                    >
+                      <UserRound className="h-4 w-4 mr-2 text-primary shrink-0" />
+                      <div className="text-left">
+                        <div className="font-semibold">🚀 Demo Worker (कारीगर)</div>
+                        <div className="muted text-[10px]">+91 99999 99999</div>
+                      </div>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="justify-start text-xs h-auto py-2 px-3 border-primary/30 hover:border-primary"
+                      disabled={busy}
+                      onClick={() => quickDemoLogin("+918888888888", "employer")}
+                    >
+                      <UsersRound className="h-4 w-4 mr-2 text-primary shrink-0" />
+                      <div className="text-left">
+                        <div className="font-semibold">🏢 Demo Employer (नियोक्ता)</div>
+                        <div className="muted text-[10px]">+91 88888 88888</div>
+                      </div>
+                    </Button>
+                  </div>
+
+                  <form onSubmit={handlePhoneSubmit} className="flex flex-col sm:flex-row items-center gap-2">
+                    {loginStep === "phone" ? (
+                      <div className="auth-phone flex-1 w-full">
+                        <span>🇮🇳 +91</span>
+                        <input
+                          type="tel"
+                          maxLength={10}
+                          placeholder="Enter 10-digit mobile"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                          className="text-xs"
+                        />
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="Enter 6-digit OTP (demo: 123456)"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                        className="input text-xs flex-1 w-full"
+                      />
+                    )}
+                    <Button type="submit" size="sm" disabled={busy} className="w-full sm:w-auto shrink-0">
+                      {busy ? "Wait..." : loginStep === "phone" ? "Get OTP" : "Verify & Login"}
+                    </Button>
+                    {loginStep === "otp" && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setLoginStep("phone");
+                          setOtp("");
+                        }}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
+                    )}
+                  </form>
+                  {loginError && <p className="text-destructive text-xs mt-1.5">{loginError}</p>}
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    💡 Client Demo: Any number works with demo OTP <strong className="text-foreground">123456</strong> without SMS delay.
+                  </p>
+                </div>
+              )}
               <div className="hero-actions">
                 <div className="hero-ctas">
                   <Button asChild variant="outline" className="button-large">

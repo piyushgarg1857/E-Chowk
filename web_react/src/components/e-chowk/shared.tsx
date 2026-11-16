@@ -461,22 +461,38 @@ export function AppShell({
   );
 }
 export function SiteHeader() {
-  const { setRole } = useDemo();
+  const { setRole, live, currentUser, role, signOut } = useDemo();
   return (
     <header className="site-header">
       <div className="container site-header-inner">
         <Brand />
         <nav className="site-nav">
-          <Link to="/find-work" onClick={() => setRole("worker")}>
-            Find Work
-          </Link>
-          <Link to="/find-workers" onClick={() => setRole("employer")}>
-            Hire Workers
-          </Link>
-          <Link to="/voice">
-            Voice AI <Pill tone="success">बोलकर काम</Pill>
-          </Link>
-          <Link to="/architecture">How it works</Link>
+          {live ? (
+            <>
+              <Link to={role === "employer" ? "/employer" : "/worker"}>
+                {role === "employer" ? "Employer Chowk" : "My Chowk"}
+              </Link>
+              <Link to="/find-work">Find Work</Link>
+              <Link to="/find-workers">Hire Workers</Link>
+              <Link to="/voice">
+                Voice AI <Pill tone="success">बोलकर काम</Pill>
+              </Link>
+              <Link to="/profile">My Profile · प्रोफाइल</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/find-work" onClick={() => setRole("worker")}>
+                Find Work
+              </Link>
+              <Link to="/find-workers" onClick={() => setRole("employer")}>
+                Hire Workers
+              </Link>
+              <Link to="/voice">
+                Voice AI <Pill tone="success">बोलकर काम</Pill>
+              </Link>
+              <Link to="/architecture">How it works</Link>
+            </>
+          )}
         </nav>
         <div className="site-header-actions">
           <Button
@@ -487,14 +503,43 @@ export function SiteHeader() {
           >
             हिंदी <span className="muted">/ EN</span>
           </Button>
-          <Button asChild variant="ghost" size="sm" className="header-login">
-            <Link to="/login">Log in</Link>
-          </Button>
-          <Button asChild className="button-large">
-            <Link to="/login">
-              Get started <ArrowRight />
-            </Link>
-          </Button>
+          {live ? (
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link to="/profile" className="flex items-center gap-1.5">
+                  <UserRound className="h-3.5 w-3.5" />
+                  <span>{currentUser?.full_name ? currentUser.full_name.split(" ")[0] : "Profile"}</span>
+                </Link>
+              </Button>
+              <Button asChild className="button-large">
+                <Link to={role === "employer" ? "/employer" : "/worker"}>
+                  Workspace <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-muted-foreground hover:text-destructive"
+                onClick={() => {
+                  signOut();
+                  toast.success("Signed out · लॉगआउट हो गए");
+                }}
+              >
+                Sign out
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm" className="header-login">
+                <Link to="/login">Log in · लॉगिन</Link>
+              </Button>
+              <Button asChild className="button-large">
+                <Link to="/login">
+                  Get started <ArrowRight />
+                </Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

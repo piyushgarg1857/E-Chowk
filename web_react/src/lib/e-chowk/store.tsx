@@ -45,16 +45,27 @@ function useDemoState() {
       ],
     },
   ]);
-  const [session, setSessionState] = useState<Session | null>(null);
-  const [me, setMe] = useState<User | null>(null);
+  const [session, setSessionState] = useState<Session | null>(() => getSession());
+  const [me, setMe] = useState<User | null>(() => {
+    const s = getSession();
+    return s?.user ? toUser(s.user as Record<string, unknown>) : null;
+  });
   const [liveJobs, setLiveJobs] = useState<Job[] | null>(null);
   const [liveApps, setLiveApps] = useState<JobApplication[]>([]);
   const [liveNotes, setLiveNotes] = useState<typeof seedNotifications | null>(null);
   const [liveWorkers, setLiveWorkers] = useState<User[]>([]);
   const [agentSessionId, setAgentSessionId] = useState<string | null>(null);
   useEffect(() => {
-    setSessionState(getSession());
-    return onSessionChange((s) => setSessionState(s)) as unknown as () => void;
+    const initial = getSession();
+    if (initial) {
+      setSessionState(initial);
+      if (initial.user) setMe(toUser(initial.user as Record<string, unknown>));
+    }
+    return onSessionChange((s) => {
+      setSessionState(s);
+      if (s?.user) setMe(toUser(s.user as Record<string, unknown>));
+      else setMe(null);
+    }) as unknown as () => void;
   }, []);
   const loggedIn = !!session;
   const live = !!session?.user?.role;
@@ -153,11 +164,29 @@ function useDemoState() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [live, session?.access_token]);
-  function setLoggedIn(value: boolean) {
-    if (!value) setSession(null);
+  function signIn(newSession: Session) {
+    setSession(newSession);
+    setSessionState(newSession);
+    if (newSession.user?.role) {
+      setRole(newSession.user.role as Role);
+    }
+    void refresh();
   }
+
+  function setLoggedIn(value: boolean) {
+    if (!value) {
+      signOut();
+    }
+  }
+
   function signOut() {
     setSession(null);
+    setSessionState(null);
+    setMe(null);
+    setLiveJobs(null);
+    setLiveNotes(null);
+    setLiveApps([]);
+    setLiveWorkers([]);
   }
   async function ensureJob(id: string) {
     if (!live) return;
@@ -172,14 +201,21 @@ function useDemoState() {
       if (!(e instanceof ApiError && e.status === 404)) toast.error(errText(e));
     }
   }
+  const liveUser = me || (session?.user ? toUser(session.user as Record<string, unknown>) : null);
   const demoUser =
     users.find((user) => user.id === (workspaceRole === "employer" ? "e1" : "w1")) ?? seedUsers[0];
-  const currentUser: User = live && me ? me : (demoUser as User);
+  const currentUser: User = live && liveUser ? liveUser : (demoUser as User);
   async function updateProfile(patch: Partial<User>): Promise<boolean> {
     if (live) {
       try {
         const updated = await api.updateProfile(patch as Record<string, unknown>);
         setMe(updated);
+        const current = getSession();
+        if (current) {
+          const updatedSession = { ...current, user: { ...current.user, ...updated } };
+          setSession(updatedSession);
+          setSessionState(updatedSession);
+        }
         toast.success("Profile updated · प्रोफाइल अपडेट हो गई");
         return true;
       } catch (e) {
@@ -343,6 +379,7 @@ function useDemoState() {
     setRole,
     live,
     session,
+    signIn,
     signOut,
     ensureJob,
     users: live ? [currentUser, ...liveWorkers] : users,

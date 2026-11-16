@@ -50,7 +50,7 @@ import {
 import { toast } from "sonner";
 export function Login() {
   const navigate = useNavigate();
-  const { setRole } = useDemo();
+  const { setRole, signIn } = useDemo();
   const [pending, setPending] = useState<Session | null>(null);
   const fail = (e: unknown) => {
     const msg = e instanceof ApiError ? e.message : "Something went wrong. Please try again.";
@@ -63,6 +63,26 @@ export function Login() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [chosen, setChosen] = useState<Role>("worker");
+
+  const quickDemoLogin = async (demoPhone: string, targetRole: Role) => {
+    setError("");
+    setBusy(true);
+    try {
+      const res = await api.verifyOtp(demoPhone, "123456");
+      const r = res as unknown as Record<string, unknown>;
+      const token = String(r["access_token"] ?? r["accessToken"] ?? "");
+      if (!token || !r["user"]) throw new ApiError("Unexpected sign-in response.", 500);
+      const s = { access_token: token, user: r["user"] as Session["user"] };
+      signIn(s);
+      setRole(targetRole);
+      toast.success(`Demo signed in as ${targetRole === "worker" ? "Worker" : "Employer"} · स्वागत है`);
+      void navigate({ to: targetRole === "worker" ? "/worker" : "/employer" });
+    } catch (e) {
+      fail(e);
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <div className="auth-layout">
       <aside className="auth-brand-panel">
@@ -144,13 +164,13 @@ export function Login() {
                         throw new ApiError("Unexpected sign-in response.", 500);
                       const s = { access_token: token, user: r["user"] as Session["user"] };
                       if (s.user.role === "worker" || s.user.role === "employer") {
-                        setSession(s);
+                        signIn(s);
                         setRole(s.user.role);
                         toast.success("Signed in · स्वागत है");
                         void navigate({ to: s.user.role === "worker" ? "/worker" : "/employer" });
                       } else {
                         setPending(s);
-                        setSession(s);
+                        signIn(s);
                         setStep("role");
                       }
                     })
@@ -277,7 +297,7 @@ export function Login() {
                           ...pending?.user,
                           role: chosen,
                         }) as Session["user"];
-                      setSession({
+                      signIn({
                         access_token: token,
                         user: { ...user, role: user.role ?? chosen },
                       });
@@ -293,11 +313,51 @@ export function Login() {
               </Button>
             </>
           )}
-          <div className="mt-5">
+          <div className="mt-5 p-4 border rounded-xl bg-card">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="dot" />
+              <strong className="text-sm">Instant Demo Access · बिना SMS तुरंत लॉगिन</strong>
+            </div>
+            <p className="small muted mb-3">
+              Press one button to sign in directly without waiting for Twilio SMS:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="justify-start text-xs h-auto py-2.5 px-3"
+                disabled={busy}
+                onClick={() => quickDemoLogin("+919999999999", "worker")}
+              >
+                <UserRound className="h-4 w-4 mr-2 text-primary shrink-0" />
+                <div className="text-left">
+                  <div className="font-semibold">Demo Worker (कारीगर)</div>
+                  <div className="muted text-[11px]">+91 99999 99999</div>
+                </div>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="justify-start text-xs h-auto py-2.5 px-3"
+                disabled={busy}
+                onClick={() => quickDemoLogin("+918888888888", "employer")}
+              >
+                <UsersRound className="h-4 w-4 mr-2 text-primary shrink-0" />
+                <div className="text-left">
+                  <div className="font-semibold">Demo Employer (नियोक्ता)</div>
+                  <div className="muted text-[11px]">+91 88888 88888</div>
+                </div>
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Tip: Any mobile number accepts demo OTP <code className="font-mono font-bold text-foreground">123456</code>.
+            </p>
+          </div>
+          <div className="mt-4">
             <Button asChild variant="outline" className="button-large">
               <Link to="/voice">
-                <Phone />
-                Continue with voice call
+                <Mic className="h-4 w-4" />
+                In-App Voice AI · बोलकर काम
               </Link>
             </Button>
           </div>

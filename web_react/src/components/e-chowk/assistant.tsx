@@ -12,7 +12,11 @@ import {
   Clock3,
   Check,
   Volume2,
+  VolumeX,
   Languages,
+  Sparkles,
+  Send,
+  Square,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,28 +48,201 @@ import {
 } from "./shared";
 import { toast } from "sonner";
 export function VoiceExperience() {
-  const { jobs } = useDemo();
-  const [stage, setStage] = useState<"ready" | "listening" | "understood">("ready");
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
+  const { jobs, role, currentUser, live, sendAgentMessage, refresh } = useDemo();
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [typedInput, setTypedInput] = useState("");
+  const [history, setHistory] = useState<
+    Array<{ id: string; role: "user" | "assistant"; text: string; time: string }>
+  >([
+    {
+      id: "initial",
+      role: "assistant",
+      text: "नमस्ते! मैं ई-चौक लाइव वॉइस असिस्टेंट हूँ। आप माइक दबाकर सीधे हिंदी या English में बोल सकते हैं—जैसे अपना नाम, हुनर, शहर बदलना या काम खोजना। बोलिए, मैं सुन रहा हूँ!",
+      time: "Just now",
     },
-    [],
-  );
-  const [registration, setRegistration] = useState(false);
-  const listen = () => {
-    if (stage === "listening") {
-      if (timer.current) clearTimeout(timer.current);
-      setStage("ready");
-      return;
+  ]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = typeof window !== "undefined" ? (window as unknown as Record<string, any>) : {};
+    const SpeechRecognitionAPI = w.SpeechRecognition || w.webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) return;
+
+    try {
+      const recognition = new SpeechRecognitionAPI();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = "hi-IN";
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setTranscript("");
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recognition.onresult = (event: any) => {
+        let current = "";
+        for (let i = 0; i < event.results.length; i++) {
+          current += event.results[i][0].transcript;
+        }
+        setTranscript(current);
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recognition.onerror = (event: any) => {
+        setIsListening(false);
+        if (event.error !== "no-speech") {
+          toast.error(`Microphone notice: ${event.error}. You can also type below.`);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    } catch (e) {
+      console.warn("Speech recognition not initialized:", e);
     }
-    setStage("listening");
-    timer.current = setTimeout(() => {
-      setStage("understood");
-      toast.success("Sample Hindi request understood · no audio recorded");
-    }, 2200);
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch {
+          // ignore
+        }
+      }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  const speak = (text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const clean = text.replace(/[*#_~`]/g, "");
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = "hi-IN";
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(
+      (v) =>
+        v.lang.toLowerCase().includes("hi") ||
+        v.lang.toLowerCase().includes("in") ||
+        v.name.toLowerCase().includes("india"),
+    );
+    if (hindiVoice) utterance.voice = hindiVoice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
   };
+
+  const stopSpeaking = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  };
+
+  const handleSend = async (textToSend: string) => {
+    const text = textToSend.trim();
+    if (!text || isProcessing) return;
+
+    if (isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // ignore
+      }
+    }
+    setIsListening(false);
+    stopSpeaking();
+
+    const userMsgId = crypto.randomUUID();
+    const userMsg = {
+      id: userMsgId,
+      role: "user" as const,
+      text,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setHistory((prev) => [...prev, userMsg]);
+    setTranscript("");
+    setTypedInput("");
+    setIsProcessing(true);
+
+    try {
+      let reply = "";
+      if (live) {
+        const res = await sendAgentMessage(text);
+        reply = res?.reply || "आपकी बात नोट कर ली गई है।";
+        await refresh();
+      } else {
+        const understood = await mockMarketplaceService.understand(text, role, jobs);
+        reply =
+          understood.parts.map((p) => p.text).join(" ") ||
+          "मैंने आपकी बात समझ ली है। कृपया अपने वर्कस्पेस में चेक करें।";
+      }
+
+      const botMsg = {
+        id: crypto.randomUUID(),
+        role: "assistant" as const,
+        text: reply,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setHistory((prev) => [...prev, botMsg]);
+      speak(reply);
+    } catch {
+      toast.error("AI Assistant request failed. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const toggleListen = () => {
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      setIsListening(false);
+      if (transcript.trim()) {
+        void handleSend(transcript);
+      }
+    } else {
+      stopSpeaking();
+      setTranscript("");
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch {
+          toast.info("Microphone ready. Speak clearly into your mic.");
+        }
+      } else {
+        toast.info("Browser speech recognition not detected. You can type in Hindi/English below!");
+      }
+    }
+  };
+
+  const presets = [
+    "मेरा नाम राहुल है, मैं जयपुर में बढ़ई हूँ और ₹850 रोज़ लेता हूँ",
+    "मुझे कल के लिए 2 पेंटर चाहिए ₹700 में",
+    "जयपुर में उपलब्ध इलेक्ट्रीशियन के काम दिखाओ",
+    "मेरी प्रोफाइल और दैनिक मजदूरी चेक करो",
+  ];
+
   return (
     <AppShell>
       <div className="voice-page">
@@ -73,168 +250,207 @@ export function VoiceExperience() {
           <Link to="/" className="text-link">
             ← Back to E-Chowk
           </Link>
-          <Pill tone="neutral">VOICE EXPERIENCE · DEMO</Pill>
+          <div className="flex items-center gap-2">
+            <Pill tone="success">LIVE IN-APP VOICE AI</Pill>
+            {live && (
+              <Pill tone="neutral">
+                {currentUser?.role === "employer" ? "Employer" : "Worker"} · {currentUser?.full_name || "Active"}
+              </Pill>
+            )}
+          </div>
         </div>
+
         <div className="voice-main">
           <span className="section-kicker justify-center">
             <Languages className="h-4 w-4" />
-            HINDI-FIRST. HUMAN-FIRST.
+            HINDI-FIRST VOICE ASSISTANT · बोलकर काम करें
           </span>
           <h1>
-            Voice AI<span className="bilingual-subtext">बोलकर काम</span>
+            Live Voice AI<span className="bilingual-subtext">अपनी बात बोलिए, ई-चौक समझेगा</span>
           </h1>
           <p>
-            {registration
-              ? "Voice registration demo · “Mera naam Ramesh hai, main plumber hoon.”"
-              : "Apni baat bolo. E-Chowk kaam samjhega."}
+            {isListening
+              ? "सुन रहा हूँ… अपनी बात बोलिए (Finish speaking to send)"
+              : isProcessing
+                ? "AI समझ रहा है और आपके काम को अपडेट कर रहा है…"
+                : isSpeaking
+                  ? "AI बोल रहा है… सुनिए"
+                  : "माइक दबाकर बोलिए या नीचे लिखकर अपना काम करवाइए"}
           </p>
+
           <Button
-            aria-label={stage === "listening" ? "Stop demo listening" : "Start voice demo"}
-            onClick={listen}
-            className={`mic-button ${stage === "listening" ? "listening" : ""}`}
+            aria-label={isListening ? "Stop listening and send" : "Start speaking"}
+            onClick={toggleListen}
+            disabled={isProcessing}
+            className={`mic-button ${isListening ? "listening" : ""} ${isSpeaking ? "speaking animate-pulse" : ""}`}
           >
-            <Mic />
+            {isListening ? <Square className="h-6 w-6" /> : isSpeaking ? <Volume2 className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
           </Button>
+
           <div
-            className={`voice-wave ${stage === "listening" ? "listening" : ""}`}
+            className={`voice-wave ${isListening || isSpeaking ? "listening" : ""}`}
             aria-hidden="true"
           >
             {Array.from({ length: 19 }, (_, i) => (
               <span key={i} />
             ))}
           </div>
+
           <strong className="block small text-success" aria-live="polite">
-            {stage === "listening"
-              ? "Listening simulation… सुन रहा हूँ।"
-              : stage === "understood"
-                ? "Samajh gaya! Your request is understood."
-                : "Tap to try the voice demo · बोल कर देखिए"}
+            {isListening
+              ? "Listening… बोलिए (समाप्त करने के लिए फिर से क्लिक करें)"
+              : isProcessing
+                ? "Processing with Groq Llama 3.3 70B AI…"
+                : isSpeaking
+                  ? "Speaking reply in Hindi…"
+                  : "Tap mic to speak · माइक दबाकर बोलें"}
           </strong>
-          <p className="mt-2 text-xs!">No microphone recording. This plays a scripted example.</p>
-          <div className="action-row voice-actions">
-            <Confirm
-              title="Request a call?"
-              description="The phone AI pathway is a prototype. This action simulates a callback request; no phone call will be placed."
-              trigger={
-                <Button variant="outline" className="button-large">
-                  <Phone />
-                  Call me instead
+
+          {transcript && (
+            <div className="mt-3 p-3 bg-muted/60 border rounded-xl text-sm font-medium text-foreground max-w-lg mx-auto">
+              <span className="text-muted-foreground text-xs block mb-1">आप बोल रहे हैं:</span>
+              “{transcript}”
+              <div className="mt-2 flex justify-center gap-2">
+                <Button size="sm" onClick={() => void handleSend(transcript)} disabled={isProcessing}>
+                  Send this <ArrowRight className="h-3.5 w-3.5 ml-1" />
                 </Button>
-              }
-              label="Simulate callback"
-              onConfirm={() => toast.success("Demo callback requested · no call placed")}
-            />
-            <Button asChild variant="outline" className="button-large">
-              <Link to="/assistant">
-                <MessageCircle />
-                AI Assistant
-              </Link>
-            </Button>
+                <Button size="sm" variant="ghost" onClick={() => setTranscript("")}>
+                  Clear
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {isSpeaking && (
+            <div className="mt-2">
+              <Button size="sm" variant="outline" onClick={stopSpeaking} className="text-xs">
+                <VolumeX className="h-3.5 w-3.5 mr-1" />
+                Mute Voice / आवाज़ रोकें
+              </Button>
+            </div>
+          )}
+
+          {/* Quick presets */}
+          <div className="mt-5 max-w-xl mx-auto">
+            <span className="text-xs text-muted-foreground block mb-2">
+              💡 Example commands · आप ऐसा बोल सकते हैं:
+            </span>
+            <div className="flex flex-wrap gap-1.5 justify-center">
+              {presets.map((preset, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  disabled={isProcessing}
+                  onClick={() => void handleSend(preset)}
+                  className="text-xs bg-card hover:bg-accent border px-2.5 py-1.5 rounded-lg text-left transition-colors cursor-pointer"
+                >
+                  “{preset}”
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Fallback Text Input */}
+          <div className="mt-6 max-w-lg mx-auto w-full">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (typedInput.trim()) void handleSend(typedInput);
+              }}
+              className="flex items-center gap-2"
+            >
+              <input
+                type="text"
+                placeholder="यहाँ हिंदी या English में टाइप भी कर सकते हैं…"
+                value={typedInput}
+                onChange={(e) => setTypedInput(e.target.value)}
+                disabled={isProcessing}
+                className="input flex-1 text-sm py-2 px-3 rounded-xl border bg-background"
+              />
+              <Button type="submit" size="sm" disabled={isProcessing || !typedInput.trim()}>
+                <Send className="h-4 w-4 mr-1" />
+                Send
+              </Button>
+            </form>
           </div>
         </div>
-        <section className="panel">
+
+        {/* Live Conversation Transcript */}
+        <section className="panel mt-6">
           <div className="panel-title">
-            <h3>{registration ? "Voice registration example" : "A conversation, not a form."}</h3>
-            <Pill tone="success">हिंदी + English</Pill>
-          </div>
-          <div className="voice-transcript">
-            <div className="transcript-line">
-              <span className="avatar">RK</span>
-              <div>
-                <strong>RAMESH · WORKER</strong>
-                <p>
-                  {registration
-                    ? "“Mera naam Ramesh Kumar hai. Main Jaipur mein plumber hoon, 800 rupaye roz leta hoon.”"
-                    : "“Bhai mujhe kal Jaipur mein plumber ka kaam chahiye.”"}
-                </p>
-              </div>
+            <h3>Voice conversation · बातचीत का इतिहास</h3>
+            <div className="flex items-center gap-2">
+              <Pill tone="success">Real-Time Sync</Pill>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setHistory([
+                    {
+                      id: "initial",
+                      role: "assistant",
+                      text: "नमस्ते! मैं ई-चौक हूँ। आपकी क्या मदद करूँ?",
+                      time: "Just now",
+                    },
+                  ]);
+                }}
+                className="text-xs"
+              >
+                Clear
+              </Button>
             </div>
-            <div className="transcript-line">
-              <span className="avatar tone-1">
-                <Mic className="h-4 w-4" />
-              </span>
-              <div>
-                <strong>E-CHOWK · AI UNDERSTANDING (SIMULATED)</strong>
-                <p>
-                  {stage === "listening"
-                    ? "आपकी बात समझ रहा हूँ…"
-                    : registration
-                      ? "नमस्ते रमेश जी! I understood your name, skill, city, and wage. Please review your profile before confirming any change."
-                      : "समझ गया, रमेश जी! You need plumber work in Jaipur tomorrow. Let’s look at your options — nothing will be applied to without your confirmation."}
-                </p>
-                <div className="intent-chips">
-                  <Pill>intent: {registration ? "register_worker" : "find_job"}</Pill>
-                  <Pill>skill: plumber</Pill>
-                  <Pill>location: Jaipur</Pill>
-                  <Pill tone="success">
-                    {registration ? "daily_wage: ₹800" : "availability: tomorrow"}
-                  </Pill>
+          </div>
+
+          <div className="voice-transcript">
+            {history.map((msg) => (
+              <div key={msg.id} className="transcript-line">
+                <span className={`avatar ${msg.role === "assistant" ? "tone-1" : ""}`}>
+                  {msg.role === "assistant" ? <Sparkles className="h-4 w-4" /> : "ME"}
+                </span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <strong>{msg.role === "assistant" ? "E-CHOWK AI" : "YOU"}</strong>
+                    <span className="text-[11px] text-muted-foreground">{msg.time}</span>
+                  </div>
+                  <p className="mt-1 text-sm">{msg.text}</p>
+                  {msg.role === "assistant" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs mt-1 h-7 px-2"
+                      onClick={() => speak(msg.text)}
+                    >
+                      <Volume2 className="h-3.5 w-3.5 mr-1" />
+                      Listen again
+                    </Button>
+                  )}
                 </div>
               </div>
-            </div>
+            ))}
           </div>
+
           <hr className="rule" />
           <div className="flex-row small muted">
             <ShieldCheck className="h-4 w-4 text-success" />
             <span>
-              AI understands your request → requests a backend action → backend validates
-              permissions → returns a result.
+              Voice/Text input → Llama 3.3 70B AI intent parsing → backend tools (update profile, post job, find matches) → Hindi speech reply.
             </span>
           </div>
         </section>
-        {!registration && (
-          <section className="mt-7">
-            <div className="section-title">
-              <div>
-                <h2 className="text-xl!">Jobs from the sample request</h2>
-                <p>Review the details before confirming an application.</p>
-              </div>
-              <Pill tone="neutral">Mock results</Pill>
-            </div>
-            <div className="grid-3">
-              {jobs
-                .filter((j) => j.status === "open" && j.required_skill === "Plumber")
-                .slice(0, 3)
-                .map((j) => (
-                  <JobCard key={j.id} job={j} />
-                ))}
-            </div>
-          </section>
-        )}
-        {registration && (
-          <div className="mt-5">
-            <Button asChild className="button-large">
-              <Link to="/profile">
-                Review sample profile <ArrowRight />
-              </Link>
-            </Button>
-          </div>
-        )}
-        <details className="how-ai">
-          <summary>How AI works · समझिए ई-चौक कैसे काम करता है</summary>
-          <p>
-            Speech/text → context & user memory → intent understanding → tool selection → backend
-            validation → marketplace → result → AI response → speech/text. The LLM never accesses
-            SQL or bypasses authorization.
-          </p>
-          <ArchitectureStrip />
-          <p>
-            Twilio, Groq, and Hindi voice flows exist as repository prototypes. Live telephony and
-            production AI tool calling are not connected in this UI.
-          </p>
-          <Link to="/architecture" className="text-link mt-3">
-            Explore the full architecture <ArrowRight />
-          </Link>
-        </details>
-        <Button
-          variant="link"
-          onClick={() => {
-            setRegistration(!registration);
-            setStage("ready");
-          }}
-        >
-          {registration ? "Try finding work instead" : "Prefer phone registration? Try the example"}
-        </Button>
+
+        <div className="mt-5 flex justify-center gap-3">
+          <Button asChild className="button-large">
+            <Link to={role === "employer" ? "/employer" : "/worker"}>
+              View Your Workspace <ArrowRight className="h-4 w-4 ml-1" />
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="button-large">
+            <Link to="/profile">
+              <UserRound className="h-4 w-4 mr-1" />
+              Check Profile
+            </Link>
+          </Button>
+        </div>
       </div>
     </AppShell>
   );
