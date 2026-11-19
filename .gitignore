@@ -1,5 +1,7 @@
 # Flutter
 .dart_tool/
+**/build/
+**/.dart_tool/
 .packages
 build/
 .flutter-plugins
@@ -37,3 +39,4 @@ deployments/
 
 *.log
 backend/*.log
+
