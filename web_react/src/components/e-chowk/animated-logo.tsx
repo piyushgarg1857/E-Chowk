@@ -1,24 +1,24 @@
-import topLeft from "@/assets/echowk-logo-tl.png.asset.json";
-import topRight from "@/assets/echowk-logo-tr.png.asset.json";
-import bottomLeft from "@/assets/echowk-logo-bl.png.asset.json";
-import bottomRight from "@/assets/echowk-logo-br.png.asset.json";
-import hub from "@/assets/echowk-logo-hub.png.asset.json";
+import topLeft from "@/assets/echowk-logo-tl.png";
+import topRight from "@/assets/echowk-logo-tr.png";
+import bottomLeft from "@/assets/echowk-logo-bl.png";
+import bottomRight from "@/assets/echowk-logo-br.png";
+import hub from "@/assets/echowk-logo-hub.png";
 
 const parts = [
-  { name: "tl", asset: topLeft },
-  { name: "tr", asset: topRight },
-  { name: "bl", asset: bottomLeft },
-  { name: "br", asset: bottomRight },
-  { name: "hub", asset: hub },
+  { name: "tl", src: topLeft },
+  { name: "tr", src: topRight },
+  { name: "bl", src: bottomLeft },
+  { name: "br", src: bottomRight },
+  { name: "hub", src: hub },
 ];
 
 export function AnimatedLogo() {
   return (
     <span className="brand-mark animated-logo" aria-hidden="true">
-      {parts.map(({ name, asset }) => (
+      {parts.map(({ name, src }) => (
         <img
           key={name}
-          src={asset.url}
+          src={src}
           className={`logo-part logo-part-${name}`}
           alt=""
           width={509}
