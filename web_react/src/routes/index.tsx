@@ -31,7 +31,7 @@ import { useDemo } from "@/lib/e-chowk/store";
 import { pageHead, skills } from "@/lib/e-chowk/data";
 import { api, ApiError, type Session } from "@/lib/e-chowk/api";
 import { toast } from "sonner";
-import workersPhoto from "@/assets/workers-hero.svg";
+import workersPhoto from "@/assets/workers.jpg";
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
