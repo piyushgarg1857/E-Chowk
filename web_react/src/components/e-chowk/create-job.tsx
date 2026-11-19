@@ -275,7 +275,9 @@ export function CreateJob() {
           </div>
           <p className="small muted">{form.description}</p>
           <DemoNote>
-            Creates a sample job in this session only. Nothing is posted to the real marketplace.
+            {live
+              ? "This job will be published live to the E-Chowk marketplace."
+              : "Creates a sample job in this session only. Nothing is posted to the real marketplace."}
           </DemoNote>
           <DialogFooter>
             <Button variant="outline" onClick={() => setReview(false)}>

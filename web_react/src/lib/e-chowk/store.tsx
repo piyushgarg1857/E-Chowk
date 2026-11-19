@@ -276,7 +276,17 @@ function useDemoState() {
   ): Promise<string | null> {
     if (live) {
       try {
-        const created = await api.createJob({ ...job });
+        const payload: Record<string, unknown> = {
+          required_skill: job.required_skill,
+          title: job.title || undefined,
+          description: job.description || job.title || undefined,
+          location: job.location,
+          offered_wage: job.offered_wage ? Number(job.offered_wage) : undefined,
+          duration_days: job.duration_days ? Number(job.duration_days) : 1,
+          starts_at: job.starts_at || undefined,
+          status: job.status === "draft" ? "draft" : "open",
+        };
+        const created = await api.createJob(payload);
         setLiveJobs((prev) => [created, ...(prev ?? [])]);
         toast.success("Job published · काम पोस्ट हो गया");
         return created.id || null;

@@ -23,15 +23,18 @@ export class JobsService {
   async create(employerId: string, dto: CreateJobDto) {
     const employer = await this.users.findOne({ where: { id: employerId } });
     if (!employer || employer.role !== 'employer') throw new ForbiddenException('Employer role required');
+    const description = dto.description
+      ? (dto.title && !dto.description.includes(dto.title) ? `${dto.title} - ${dto.description}` : dto.description)
+      : (dto.title ?? null);
     const job = this.jobs.create({
       employer_id: employerId,
       required_skill: dto.required_skill,
-      description: dto.description ?? null,
+      description,
       location: dto.location,
       offered_wage: dto.offered_wage ?? null,
       duration_days: dto.duration_days ?? 1,
       starts_at: dto.starts_at ? new Date(dto.starts_at) : null,
-      status: 'open',
+      status: dto.status === 'draft' ? 'draft' : 'open',
     });
     const saved = await this.jobs.save(job);
     await this.audit.record(employerId, 'job.created', 'job', saved.id, { required_skill: saved.required_skill, location: saved.location });
