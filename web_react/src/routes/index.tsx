@@ -48,6 +48,7 @@ function Home() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [loginStep, setLoginStep] = useState<"phone" | "otp">("phone");
+  const [loginChannel, setLoginChannel] = useState<"sms" | "whatsapp">("sms");
   const [busy, setBusy] = useState(false);
   const [loginError, setLoginError] = useState("");
 
@@ -83,9 +84,9 @@ function Home() {
       }
       setBusy(true);
       try {
-        await api.sendOtp(`+91${phone}`);
+        const res = await api.sendOtp(`+91${phone}`, loginChannel);
         setLoginStep("otp");
-        toast.success("OTP sent · कोड भेज दिया");
+        toast.success(res.message || `${loginChannel.toUpperCase()} OTP sent · कोड भेज दिया`);
       } catch (err) {
         setLoginError(err instanceof ApiError ? err.message : "Failed to send OTP");
       } finally {
@@ -235,6 +236,33 @@ function Home() {
                       </div>
                     </Button>
                   </div>
+
+                  {loginStep === "phone" && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <button
+                        type="button"
+                        onClick={() => setLoginChannel("sms")}
+                        className={`flex-1 py-1 px-2.5 rounded text-xs font-medium flex items-center justify-center gap-1.5 border transition-all ${
+                          loginChannel === "sms"
+                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                            : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
+                        }`}
+                      >
+                        <span>📲</span> SMS OTP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLoginChannel("whatsapp")}
+                        className={`flex-1 py-1 px-2.5 rounded text-xs font-medium flex items-center justify-center gap-1.5 border transition-all ${
+                          loginChannel === "whatsapp"
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                            : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
+                        }`}
+                      >
+                        <span>💬</span> WhatsApp OTP
+                      </button>
+                    </div>
+                  )}
 
                   <form onSubmit={handlePhoneSubmit} className="flex flex-col sm:flex-row items-center gap-2">
                     {loginStep === "phone" ? (

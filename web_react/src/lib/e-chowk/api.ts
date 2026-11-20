@@ -176,10 +176,16 @@ export function toNotification(o: Record<string, unknown>): Notification {
 }
 
 export const api = {
-  sendOtp: (phone: string) =>
-    request<unknown>("/auth/send-otp", { method: "POST", body: { phone }, auth: false }),
+  sendOtp: (phone: string, channel: "sms" | "whatsapp" = "sms") =>
+    request<{ success: boolean; message: string; channel?: string; debugCode?: string }>("/auth/send-otp", {
+      method: "POST",
+      body: { phone, channel },
+      auth: false,
+    }),
   verifyOtp: (phone: string, otp: string) =>
     request<Session>("/auth/verify-otp", { method: "POST", body: { phone, otp }, auth: false }),
+  firebaseLogin: (body: { phone: string; idToken?: string; role?: Role; fullName?: string }) =>
+    request<Session>("/auth/firebase-login", { method: "POST", body, auth: false }),
   setRole: (role: Role) =>
     request<Partial<Session> & { user?: ApiUser }>("/auth/role", {
       method: "PATCH",

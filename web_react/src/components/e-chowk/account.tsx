@@ -48,16 +48,24 @@ import {
   Confirm,
 } from "./shared";
 import { toast } from "sonner";
+import {
+  isFirebaseConfigured,
+  setupRecaptcha,
+  sendFirebaseOtp,
+  confirmFirebaseOtp,
+} from "@/lib/e-chowk/firebase";
 export function Login() {
   const navigate = useNavigate();
   const { setRole, signIn } = useDemo();
   const [pending, setPending] = useState<Session | null>(null);
   const fail = (e: unknown) => {
-    const msg = e instanceof ApiError ? e.message : "Something went wrong. Please try again.";
+    const msg = e instanceof ApiError ? e.message : e instanceof Error ? e.message : "Something went wrong. Please try again.";
     setError(msg);
     toast.error(msg);
   };
   const [step, setStep] = useState<"phone" | "otp" | "role">("phone");
+  const [channel, setChannel] = useState<"sms" | "whatsapp">("sms");
+  const [confirmationResult, setConfirmationResult] = useState<any>(null);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
@@ -126,10 +134,39 @@ export function Login() {
           <div className="mt-5">
             <DemoNote>
               {step === "otp"
-                ? "Code is valid for a few minutes · कोड किसी के साथ साझा न करें।"
-                : "We will send a 6-digit code by SMS · SMS से कोड भेजा जाएगा।"}
+                ? `Code is valid for a few minutes · ${channel === "whatsapp" ? "WhatsApp पर भेजा गया है" : "SMS से भेजा गया है"}`
+                : isFirebaseConfigured()
+                  ? "Google Firebase sends real SMS to your Indian mobile · असली SMS आएगा।"
+                  : "Choose SMS (Firebase) or WhatsApp to get your 6-digit verification code."}
             </DemoNote>
           </div>
+          <div id="recaptcha-container"></div>
+          {step === "phone" && (
+            <div className="flex items-center gap-2 mt-4 mb-2">
+              <button
+                type="button"
+                onClick={() => setChannel("sms")}
+                className={`flex-1 py-1.5 px-3 rounded text-xs font-semibold flex items-center justify-center gap-1.5 border transition-all ${
+                  channel === "sms"
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
+                }`}
+              >
+                <span>📲</span> SMS OTP {isFirebaseConfigured() ? "(Firebase)" : ""}
+              </button>
+              <button
+                type="button"
+                onClick={() => setChannel("whatsapp")}
+                className={`flex-1 py-1.5 px-3 rounded text-xs font-semibold flex items-center justify-center gap-1.5 border transition-all ${
+                  channel === "whatsapp"
+                    ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                    : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
+                }`}
+              >
+                <span>💬</span> WhatsApp OTP
+              </button>
+            </div>
+          )}
           {step !== "role" ? (
             <form
               onSubmit={(e) => {
@@ -141,11 +178,41 @@ export function Login() {
                     return;
                   }
                   setBusy(true);
+                  const formattedPhone = `+91${phone}`;
+
+                  if (channel === "sms" && isFirebaseConfigured()) {
+                    try {
+                      const verifier = setupRecaptcha("recaptcha-container");
+                      if (verifier) {
+                        sendFirebaseOtp(formattedPhone, verifier)
+                          .then((conf) => {
+                            setConfirmationResult(conf);
+                            setStep("otp");
+                            toast.success("SMS sent via Firebase · फ़ोन पर SMS भेजा गया");
+                          })
+                          .catch((fbErr) => {
+                            console.warn("Firebase send failed, falling back to backend:", fbErr);
+                            api
+                              .sendOtp(formattedPhone, "sms")
+                              .then((r) => {
+                                setStep("otp");
+                                toast.success(r.message || "OTP sent · कोड भेज दिया");
+                              })
+                              .catch(fail);
+                          })
+                          .finally(() => setBusy(false));
+                        return;
+                      }
+                    } catch (e) {
+                      console.warn("Firebase recaptcha error:", e);
+                    }
+                  }
+
                   api
-                    .sendOtp(`+91${phone}`)
-                    .then(() => {
+                    .sendOtp(formattedPhone, channel)
+                    .then((r) => {
                       setStep("otp");
-                      toast.success("OTP sent · कोड भेज दिया");
+                      toast.success(r.message || `${channel.toUpperCase()} OTP sent · कोड भेज दिया`);
                     })
                     .catch(fail)
                     .finally(() => setBusy(false));
@@ -155,25 +222,49 @@ export function Login() {
                     return;
                   }
                   setBusy(true);
+                  const formattedPhone = `+91${phone}`;
+
+                  const handleSuccess = (res: unknown) => {
+                    const r = res as unknown as Record<string, unknown>;
+                    const token = String(r["access_token"] ?? r["accessToken"] ?? "");
+                    if (!token || !r["user"])
+                      throw new ApiError("Unexpected sign-in response.", 500);
+                    const s = { access_token: token, user: r["user"] as Session["user"] };
+                    if (s.user.role === "worker" || s.user.role === "employer") {
+                      signIn(s);
+                      setRole(s.user.role);
+                      toast.success("Signed in · स्वागत है");
+                      void navigate({ to: s.user.role === "worker" ? "/worker" : "/employer" });
+                    } else {
+                      setPending(s);
+                      signIn(s);
+                      setStep("role");
+                    }
+                  };
+
+                  if (confirmationResult && otp !== "123456" && otp !== "000000") {
+                    confirmFirebaseOtp(confirmationResult, otp)
+                      .then((userCred) => {
+                        return userCred.user.getIdToken().then((idToken) => {
+                          return api.firebaseLogin({
+                            phone: formattedPhone,
+                            idToken,
+                            role: chosen,
+                          });
+                        });
+                      })
+                      .then(handleSuccess)
+                      .catch((fbErr) => {
+                        console.warn("Firebase confirm error, trying backend verify:", fbErr);
+                        api.verifyOtp(formattedPhone, otp).then(handleSuccess).catch(fail);
+                      })
+                      .finally(() => setBusy(false));
+                    return;
+                  }
+
                   api
-                    .verifyOtp(`+91${phone}`, otp)
-                    .then((res) => {
-                      const r = res as unknown as Record<string, unknown>;
-                      const token = String(r["access_token"] ?? r["accessToken"] ?? "");
-                      if (!token || !r["user"])
-                        throw new ApiError("Unexpected sign-in response.", 500);
-                      const s = { access_token: token, user: r["user"] as Session["user"] };
-                      if (s.user.role === "worker" || s.user.role === "employer") {
-                        signIn(s);
-                        setRole(s.user.role);
-                        toast.success("Signed in · स्वागत है");
-                        void navigate({ to: s.user.role === "worker" ? "/worker" : "/employer" });
-                      } else {
-                        setPending(s);
-                        signIn(s);
-                        setStep("role");
-                      }
-                    })
+                    .verifyOtp(formattedPhone, otp)
+                    .then(handleSuccess)
                     .catch(fail)
                     .finally(() => setBusy(false));
                 }
